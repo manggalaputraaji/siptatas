@@ -1,0 +1,67 @@
+body {
+    background-color: #a0bbe1 !important;
+    font-family: "Lexend", sans-serif;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    border: none;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #648bb3;
+}
+
+.logo-image {
+    width: 250px;
+}
+a {
+    font-size: 17.4px;
+    text-decoration: solid;
+}
+a:hover {
+    color:aliceblue !important;
+}
+a:active {
+    color:#2c3e50
+}
+/* Kotak pembungkus ikon agar ukuran seragam */
+.icon-box {
+    width: 150px;     /* Atur lebar kotak */
+    height: 150px;    /* Atur tinggi kotak */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: transform 0.3s ease;
+}
+
+/* Gambar di dalam kotak */
+.halamandepan {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Agar gambar tidak gepeng */
+}
+
+/* Efek hover biar lebih interaktif */
+.icon-box:hover {
+    transform: scale(1.1);
+}
+
+/* Untuk tampilan HP agar tidak terlalu besar */
+@media (max-width: 576px) {
+    .icon-box {
+        width: 100px;
+        height: 100px;
+    }
+    h5 {
+        font-size: 0.9rem;
+    }
+}
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');

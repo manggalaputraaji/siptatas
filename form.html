@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPTATAS LEXA CORE Admin | Input Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h4 class="text-center mb-4">Input Pelanggaran Siswa</h4>
+                <form id="formPelanggaran">
+                    <div class="mb-3">
+                        <label class="form-label">Nama Siswa</label>
+                        <input type="text" name="nama" class="form-control" placeholder="Nama lengkap..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Kelas</label>
+                        <input type="text" name="kelas" class="form-control" placeholder="Contoh: X PPLG A" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Jenis Pelanggaran</label>
+                        <select name="pelanggaran" class="form-select">
+                            <option value="Terlambat">Terlambat</option>
+                            <option value="Rambut Tidak Rapi">Rambut Tidak Rapi</option>
+                            <option value="Atribut Tidak Lengkap">Atribut Tidak Lengkap</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Poin</label>
+                        <input type="number" name="poin" class="form-control" value="10">
+                    </div>
+                    <button type="submit" id="btnSimpan" class="btn btn-primary w-100">Simpan ke Sheets</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
