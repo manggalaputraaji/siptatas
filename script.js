@@ -1,4 +1,4 @@
-const scriptURL = 'https://script.google.com/macros/s/AKfycbzKk8vgJmAI7CbpRjvt-FvH-NBTJrCt0KqyDXg8nSz2z0kJCgJh5tZm7peEGdi24gmj/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycbyzAzzp27sudKWsncEd9n_kUBcK7ZPuic7UXLxzsHppORE0y7JeAuAuJSXItVvZctX2/exec';
 const form = document.getElementById('formPelanggaran');
 const btn = document.getElementById('btnSimpan');
 
@@ -23,6 +23,7 @@ form.addEventListener('submit', e => {
         btn.disabled = false;
         btn.innerHTML = "Simpan ke Sheets";
         form.reset();
+        window.location.href = 'index.html';
     })
     .catch(error => {
         alert('Gagal! Cek koneksi.');
