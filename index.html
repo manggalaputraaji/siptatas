@@ -1,37 +1,69 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIPTATAS LEXACORE | ADMIN</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEXACORE | Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap');
+        * { font-family: 'Lexend', sans-serif; }
+        body { background: #f8f9fa; display: flex; align-items: center; min-height: 100vh; margin: 0; }
+        .card { width: 100%; max-width: 400px; padding: 35px; border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .btn-primary { background: #007bff; border: none; padding: 12px; border-radius: 10px; font-weight: 600; }
+    </style>
 </head>
 <body>
+    <div class="container d-flex justify-content-center">
+        <div class="card text-center">
+            <img src="logo.png" alt="Logo" style="max-width: 200px; margin: 0 auto 25px;">
+            <h4 class="fw-bold mb-4">Login Akun</h4>
+            <form id="loginForm" class="text-start">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Username</label>
+                    <input type="text" id="user" class="form-control" placeholder="Username" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold">Password</label>
+                    <input type="password" id="pass" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" id="btnLogin" class="btn btn-primary w-100">MASUK SEKARANG</button>
+            </form>
+        </div>
+    </div>
 
-  <div class="container mt-5">
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-        <img src="logo.png" alt="SIPTATAS LEXACORE Logo" class="mb-4" style="display: block; margin: 25px auto 0; width: 280px;">
-      </div>
-    </div>
-    <div class="row justify-content-center text-center">
-    <div class="col-md-4 mb-4">
-        <a href="form.html" class="btn btn-outline-primary p-4 d-block">
-            <img src="form.svg" alt="POS" style="width: 100px; height: auto;">
-            <p class="mt-2 mb-0 fw-bold text-dark">INPUT PELANGGARAN</p>
-        </a>
-    </div>
+    <script>
+        const SHEET_ID = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const userVal = document.getElementById('user').value.trim();
+            const passVal = document.getElementById('pass').value.trim();
+            const btn = document.getElementById('btnLogin');
+            btn.disabled = true; btn.innerText = "Verifikasi...";
 
-    <div class="col-md-4 mb-4">
-        <a href="https://docs.google.com/spreadsheets/d/12c0_2Dp3okLJPClmbJk5dk6PYD8N67RDjvzYPxadGqI/edit?usp=sharing" class="btn btn-outline-primary p-4 d-block">
-            <img src="sheet.svg" alt="Input Pelanggaran" style="width: 100px; height: auto;">
-            <p class="mt-2 mb-0 fw-bold text-dark">DATABASE PELANGGAR</p>
-        </a>
-    </div>
-</div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+            try {
+                const res = await fetch(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Akun%20Admin`);
+                const text = await res.text();
+                const json = JSON.parse(text.substr(47).slice(0, -2));
+                const rows = json.table.rows;
+
+                let found = rows.find(r => r.c[1] && r.c[1].v == userVal && r.c[2] && r.c[2].v == passVal);
+                
+                if (found) {
+                    localStorage.setItem('siswaLogin', userVal);
+                    localStorage.setItem('namaLengkap', found.c[0] ? found.c[0].v : userVal);
+                    localStorage.setItem('fotoProfil', found.c[3] ? found.c[3].v : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
+                    // Cek jika admin atau siswa (Sederhananya kita arahkan ke dashboard admin)
+                    window.location.href = 'dashboard-admin.html';
+                } else {
+                    alert("Username/Password Salah!");
+                    btn.disabled = false; btn.innerText = "MASUK SEKARANG";
+                }
+            } catch (err) {
+                alert("Gagal koneksi database.");
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
-</html> 
+</html>
