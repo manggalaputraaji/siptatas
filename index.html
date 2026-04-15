@@ -30,53 +30,31 @@
 </div>
 
 <script>
-    // ID Spreadsheet Admin Login
-    const SHEET_ID = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
-    
-    // Menggunakan Google Visualization API untuk membaca data
-    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
+    const SHEET_ID = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const userVal = document.getElementById('user').value.trim();
         const passVal = document.getElementById('pass').value.trim();
         const btn = document.getElementById('btnLogin');
-
         btn.disabled = true;
         btn.innerText = "Memverifikasi...";
-
         try {
             const res = await fetch(GVIZ_URL);
             const text = await res.text();
-            // Membersihkan format JSON dari Google
             const json = JSON.parse(text.substr(47).slice(0, -2));
             const rows = json.table.rows;
-
-            /* URUTAN KOLOM SPREADSHEET:
-               Kolom A (index 0) = Nama Lengkap
-               Kolom B (index 1) = Username
-               Kolom C (index 2) = Password
-               Kolom D (index 3) = Foto Profile
-            */
             let foundAcc = rows.find(r => {
-                // Pastikan sel Username dan Password tidak kosong
                 if (!r.c[1] || !r.c[2]) return false;
-
-                // Mengambil nilai tampilan (.f) atau nilai asli (.v) agar konsisten
                 const dbUser = (r.c[1].f || String(r.c[1].v)).trim();
                 const dbPass = (r.c[2].f || String(r.c[2].v)).trim();
-
                 return dbUser === userVal && dbPass === passVal;
             });
-            
             if (foundAcc) {
-                // Simpan Nama Lengkap
                 localStorage.setItem('namaLengkap', foundAcc.c[0] ? foundAcc.c[0].v : userVal);
-                
-                // Simpan Foto Profil dari Kolom D
                 const fotoUrl = (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : 'https://via.placeholder.com/45x60';
                 localStorage.setItem('fotoProfil', fotoUrl);
-                
                 console.log("Login Sukses. Data disimpan.");
                 window.location.href = 'dashboard.html'; 
             } else {
