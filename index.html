@@ -58,11 +58,13 @@
                Kolom C (2) = Password
                Kolom D (3) = Foto Profile (.png)
             */
-            let foundAcc = rows.find(r => 
-                r.c[1] && r.c[2] && 
-                r.c[1].v.toString().trim() === userVal && 
-                r.c[2].v.toString().trim() === passVal
-            );
+            let foundAcc = rows.find(r => {
+               if (!r.c[1] || !r.c[2]) return false;
+               const dbUser = String(r.c[1].v).trim();
+               const dbPass = String(r.c[2].v).trim();
+
+               return dbUser === userVal && dbPass === passVal;
+            });
             
             if (foundAcc) {
                 // Simpan Nama Lengkap dari Kolom A (Indeks 0)
