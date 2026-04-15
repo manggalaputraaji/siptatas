@@ -65,3 +65,35 @@ a:active {
     }
 }
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+
+/* --- TAMBAHAN KHUSUS SECTION DASHBOARD --- */
+.header-profile {
+    padding: 20px 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.user-meta {
+    text-align: right;
+    margin-right: 12px;
+}
+
+.user-meta b {
+    display: block;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-meta span {
+    font-size: 12px;
+    color: #666;
+}
+
+.profile-pic {
+    width: 45px;
+    height: 60px; /* Rasio 3:4 */
+    border-radius: 4px;
+    object-fit: cover;
+    border: 1px solid #eee;
+}

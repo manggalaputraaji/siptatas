@@ -3,74 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEXACORE | Login Admin</title>
+    <title>LEXACORE Login | Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700&display=swap');
-        * { font-family: 'Lexend', sans-serif; }
-        body { background: #f4f7f6; display: flex; align-items: center; min-height: 100vh; margin: 0; }
-        .card-login { width: 100%; max-width: 400px; padding: 40px; border-radius: 20px; background: #fff; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .btn-login { background: #007bff; border: none; padding: 12px; font-weight: 600; border-radius: 10px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container d-flex justify-content-center">
-        <div class="card-login text-center">
-            <img src="logo.png" alt="Logo" style="max-width: 160px; margin-bottom: 25px;">
-            <h4 class="fw-bold mb-4">Admin Login</h4>
-            <form id="loginForm" class="text-start">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold">Username</label>
-                    <input type="text" id="user" class="form-control" placeholder="Username" required>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label small fw-bold">Password</label>
-                    <input type="password" id="pass" class="form-control" placeholder="Password" required>
-                </div>
-                <button type="submit" id="btnLogin" class="btn btn-primary btn-login w-100 text-white">MASUK</button>
-            </form>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
+    <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 20px; border: none;">
+        <div class="text-center mb-4">
+            <img src="logo.png" alt="Logo" style="width: 180px;">
+            <h4 class="fw-bold mt-3" style="color: #2c3e50;">Admin Login</h4>
         </div>
+        <form id="loginForm">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Username</label>
+                <input type="text" id="user" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-bold">Password</label>
+                <input type="password" id="pass" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" id="btnLogin" class="btn btn-primary w-100 py-2 fw-bold">MASUK</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        const SHEET_ID = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
-        
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const userVal = document.getElementById('user').value.trim();
-            const passVal = document.getElementById('pass').value.trim();
-            const btn = document.getElementById('btnLogin');
+<script>
+    // ID Spreadsheet Admin Login sesuai screenshot kamu
+    const SHEET_ID = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
+    
+    // URL Web App (Hanya jika kamu butuh kirim data POST, tapi untuk login kita pakai GVIZ agar cepat)
+    const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const userVal = document.getElementById('user').value.trim();
+        const passVal = document.getElementById('pass').value.trim();
+        const btn = document.getElementById('btnLogin');
+
+        btn.disabled = true;
+        btn.innerText = "Memverifikasi...";
+
+        try {
+            const res = await fetch(GVIZ_URL);
+            const text = await res.text();
+            // Membersihkan format JSON dari Google
+            const json = JSON.parse(text.substr(47).slice(0, -2));
+            const rows = json.table.rows;
+
+            /* SESUAI SCREENSHOT KAMU:
+               Kolom A (0) = Nama Lengkap
+               Kolom B (1) = Username
+               Kolom C (2) = Password
+               Kolom D (3) = Foto Profile (.png)
+            */
+            let foundAcc = rows.find(r => 
+                r.c[1] && r.c[2] && 
+                r.c[1].v.toString().trim() === userVal && 
+                r.c[2].v.toString().trim() === passVal
+            );
             
-            btn.disabled = true;
-            btn.innerText = "Memverifikasi...";
-
-            try {
-                // Mengambil data dari tab "Akun Admin"
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Akun%20Admin`;
-                const res = await fetch(url);
-                const text = await res.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = json.table.rows;
-
-                // Cek Kolom B (Username) dan C (Password)
-                let found = rows.find(r => r.c[1] && r.c[1].v == userVal && r.c[2] && r.c[2].v == passVal);
+            if (foundAcc) {
+                // Simpan Nama Lengkap dari Kolom A (Indeks 0)
+                localStorage.setItem('namaLengkap', foundAcc.c[0] ? foundAcc.c[0].v : userVal);
                 
-                if (found) {
-                    localStorage.setItem('adminLogin', userVal);
-                    localStorage.setItem('namaLengkap', found.c[0] ? found.c[0].v : userVal);
-                    localStorage.setItem('fotoProfil', found.c[3] ? found.c[3].v : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png');
-                    window.location.href = 'dashboardadm.html';
-                } else {
-                    alert("Akun tidak ditemukan!");
-                    btn.disabled = false;
-                    btn.innerText = "MASUK";
-                }
-            } catch (err) {
-                alert("Gagal memuat database. Pastikan koneksi stabil.");
+                // Simpan Foto dari Kolom D (Indeks 3)
+                // Karena kamu pakai Direct Link .png dari Postimages, tidak perlu dimodifikasi lagi
+                const fotoUrl = (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : 'https://via.placeholder.com/45x60';
+                localStorage.setItem('fotoProfil', fotoUrl);
+                
+                console.log("Login Sukses. Foto disimpan:", fotoUrl);
+                window.location.href = 'dashboard.html'; 
+            } else {
+                alert("Username atau Password Salah!");
                 btn.disabled = false;
                 btn.innerText = "MASUK";
             }
-        });
-    </script>
+        } catch (err) {
+            console.error(err);
+            alert("Database tidak merespon. Pastikan Spreadsheet sudah SHARE -> Anyone with link (Viewer)");
+            btn.disabled = false;
+            btn.innerText = "MASUK";
+        }
+    });
+</script>
+
 </body>
 </html>

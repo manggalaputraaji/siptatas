@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SIPTATAS LEXACORE | ADMIN</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="header-profile">
+    <div class="user-meta">
+        <b id="adminName">Admin Name</b>
+        <span>Administrator</span>
+    </div>
+    <img id="fotoSiswa" src="https://via.placeholder.com/45x60" class="profile-pic" alt="Profile">
+  </div>
+
+  <div class="container mt-2"> <div class="row justify-content-center">
+      <div class="col-md-6">
+        <img src="logo.png" alt="SIPTATAS LEXACORE Logo" class="mb-4" style="display: block; margin: 25px auto 0; width: 280px;">
+      </div>
+    </div>
+    <div class="row justify-content-center text-center">
+    <div class="col-md-4 mb-4">
+        <a href="form.html" class="btn btn-outline-primary p-4 d-block">
+            <img src="form.svg" alt="POS" style="width: 100px; height: auto;">
+            <p class="mt-2 mb-0 fw-bold text-dark">INPUT PELANGGARAN</p>
+        </a>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <a href="https://docs.google.com/spreadsheets/d/12c0_2Dp3okLJPClmbJk5dk6PYD8N67RDjvzYPxadGqI/edit?usp=sharing" class="btn btn-outline-primary p-4 d-block">
+            <img src="sheet.svg" alt="Input Pelanggaran" style="width: 100px; height: auto;">
+            <p class="mt-2 mb-0 fw-bold text-dark">DATABASE PELANGGAR</p>
+        </a>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const nameStored = localStorage.getItem('namaLengkap');
+        const fotoStored = localStorage.getItem('fotoProfil');
+
+        if (nameStored) {
+            document.getElementById('adminName').innerText = nameStored;
+        }
+        
+        // Menampilkan foto profile 3:4
+        if (fotoStored) {
+            const imgEl = document.getElementById('fotoSiswa');
+            imgEl.src = fotoStored;
+            // Jika link mati, tampilkan placeholder
+            imgEl.onerror = function() {
+                this.src = 'https://via.placeholder.com/45x60';
+            };
+        }
+    });
+</script>
+</body>
+</html>
