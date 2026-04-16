@@ -9,11 +9,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <div class="header-profile">
     <div class="user-meta">
-        <b id="adminName">Admin Name</b>
-        <span>Administrator</span>
+        <h6 class="text-dark me-3">Halo!</h6>
+        <h5 id="adminName">Admin Name</h5><span>Administrator</span>
     </div>
     <img id="fotoSiswa" src="https://via.placeholder.com/45x60" class="profile-pic" alt="Profile">
   </div>
@@ -36,6 +35,10 @@
         </a>
     </div>
 </div>
+<footer>
+  <button class="btn btn-outline-danger btn-md fw-bold" onclick="logout()">Keluar</button>
+</footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
    <script>
 
@@ -53,7 +56,10 @@
             };
         }
     });
-
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'index.html';
+    }
 </script>
 
 </body>

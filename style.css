@@ -1,6 +1,9 @@
 body {
     background-color: #a0bbe1 !important;
     font-family: "Lexend", sans-serif;
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
 }
 
 .card {
@@ -63,12 +66,16 @@ a:active {
     h5 {
         font-size: 0.9rem;
     }
+    footer {
+        right: 20px; 
+        bottom: 20px;
+    }
 }
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
 
 /* --- TAMBAHAN KHUSUS SECTION DASHBOARD --- */
 .header-profile {
-    padding: 20px 40px;
+    padding: 30px 60px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -76,24 +83,30 @@ a:active {
 
 .user-meta {
     text-align: right;
-    margin-right: 12px;
+    margin-right: 10px;
 }
 
-.user-meta b {
+.user-meta h5, .user-meta span h6{
     display: block;
-    font-size: 14px;
+    font-size: 21px;
     color: #333;
 }
 
 .user-meta span {
-    font-size: 12px;
+    font-size: 16px;
     color: #666;
 }
 
 .profile-pic {
-    width: 45px;
-    height: 60px; /* Rasio 3:4 */
+    width: 67.5px;
+    height: 90px; /* Rasio 3:4 */
     border-radius: 4px;
     object-fit: cover;
     border: 1px solid #eee;
+}
+footer {
+    position: fixed;
+    bottom: 30px;
+    right: 60px; 
+    z-index: 1000;
 }
