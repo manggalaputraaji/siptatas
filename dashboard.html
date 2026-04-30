@@ -239,7 +239,7 @@
                             <td class="fw-bold">${r.nama}</td>
                             <td>${r.kelas}</td>
                             <td class="text-uppercase small">${r.hal}</td>
-                            <td><span class="badge bg-danger p-2 px-3">${r.poin}</span></td>
+                            <td><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td>
                             <td class="text-muted small">${r.tgl}</td>
                         </tr>`;
                     });
@@ -323,7 +323,13 @@
         };
 
         function logout() { localStorage.clear(); window.location.href = 'index.html'; }
-        
+
+        function getPoinColor(p) {
+            if (p === 'Ringan') return 'bg-success';
+            if (p === 'Sedang') return 'bg-warning text-dark';
+            if (p === 'Berat') return 'bg-danger';
+            return 'bg-secondary';
+        }
     </script>
 </body>
 </html>
