@@ -1,54 +1,196 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIPTATAS LEXACORE Input | Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <title>LEXACORE | Input Pelanggaran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body style="background-color: #fff; overflow-x: hidden;">
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <img src="logof.png" alt="SIPTATAS LEXACORE Logo" class="mb-4" style="display: block; margin: 25px auto 0; width: 280px;">
-            <h4 class="text-center mb-4">Sistem Informasi Pelanggaran Tata Tertib Siswa</h4>
+    <div class="sidebar-container">
+        <div class="nav-menu">
+            <img src="logo.png" class="sidebar-logo">
+            <a href="dashboard.html" class="nav-link-custom">HOME DASHBOARD</a>
+            <a href="form.html" class="nav-link-custom active">INPUT PELANGGARAN</a>
+            <a href="database.html" class="nav-link-custom">DATABASE PELANGGAR</a>
         </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
-                <h4 class="text-center mb-4">Form Pelanggaran</h4>
-                <form id="formPelanggaran">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Siswa</label>
-                        <input type="text" name="nama" class="form-control" placeholder="e.g., John Doe, Jane Doe" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Kelas</label>
-                        <input type="text" name="kelas" class="form-control" placeholder="e.g., X PPLG A, XI TO E" required pattern="[A-Z\s]+" title="Wajib pakai huruf KAPITAL semua ya!">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Pelanggaran</label>
-                        <input type="text" name="pelanggaran" class="form-control" placeholder="e.g., Terlambat, Tidak Memakai Wearpack" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Poin</label>
-                        <select name="poin" class="form-select" required>
-                            <option value="">Pilih Poin Kualitatif</option>
-                            <option class="bg-success text-white" value="Ringan">Ringan</option>
-                            <option class="bg-warning text-dark" value="Sedang">Sedang</option>
-                            <option class="bg-danger text-white" value="Berat">Berat</option>
-                        </select>
-                    </div>
-                    <button type="submit" id="btnSimpan" class="btn btn-primary w-100">Simpan ke Sheets</button>
-                </form>
+        
+        <div class="profile-section">
+            <div class="profile-box">
+                <img id="fotoSiswa" src="" class="profile-pic-sm">
+                <div>
+                    <small class="fw-bold d-block">HALO!</small>
+                    <span id="adminName" class="fw-bold d-block" style="font-size: 13px;">Admin</span>
+                    <small style="font-size: 9px;">Administrator</small>
+                </div>
             </div>
+            <button class="btn btn-dark w-100 mt-3 fw-bold" onclick="logout()" style="border: 3px solid #000; border-radius: 12px;">LOGOUT</button>
         </div>
     </div>
-</div>
 
-<script src="script.js"></script>
+    <div class="main-content" style="margin-left: 330px; padding: 50px 40px 50px 0; width: calc(100% - 330px);">
+        <h1 style="font-weight: 800; font-size: 55px; margin-bottom: 5px;">INPUT DATA</h1>
+        <p class="text-muted fw-bold mb-5" style="letter-spacing: 1px;">MASUKKAN DETAIL PELANGGARAN SISWA SECARA LENGKAP</p>
+
+        <div class="d-flex gap-4 align-items-stretch" style="width: 100%;">
+            
+            <div style="flex: 0 0 380px;">
+                <div class="glosarium-box">
+                    <h5 class="fw-800 mb-4" style="font-size: 18px; letter-spacing: 1px;">GLOSARIUM POIN</h5>
+                    
+                    <div class="glosarium-item">
+                        <span class="badge-glos bg-success text-white">RINGAN</span>
+                        <p>Siswa yang melakukan pelanggaran ringan akan diberikan teguran lisan dan pembinaan oleh wali kelas.</p>
+                    </div>
+
+                    <div class="glosarium-item">
+                        <span class="badge-glos bg-warning text-dark">SEDANG</span>
+                        <p>Siswa yang melakukan pelanggaran sedang akan diberikan surat peringatan dan pemanggilan orang tua.</p>
+                    </div>
+
+                    <div class="glosarium-item">
+                        <span class="badge-glos bg-danger text-white">BERAT</span>
+                        <p>Siswa yang melakukan pelanggaran berat akan dikenakan sanksi skorsing atau dikembalikan kepada orang tua.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex: 1;">
+                <div class="box-bawah" style="padding: 40px; margin: 0; height: 100%;">
+                    <form id="violationForm">
+                        <div class="mb-4">
+                            <label class="stat-label mb-2">NAMA LENGKAP SISWA</label>
+                            <input type="text" name="nama" class="form-control custom-input" placeholder="TULIS NAMA LENGKAP..." required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="stat-label mb-2">KELAS</label>
+                                <input type="text" name="kelas" class="form-control custom-input" placeholder="CONTOH: XI PPLG 1" required>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="stat-label mb-2">POIN PELANGGARAN</label>
+                                <select name="poin" class="form-select custom-input" required>
+                                    <option value="Ringan">RINGAN</option>
+                                    <option value="Sedang">SEDANG</option>
+                                    <option value="Berat">BERAT</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="stat-label mb-2">HAL YANG DILANGGAR</label>
+                            <textarea name="hal" class="form-control custom-input" rows="5" placeholder="DETAIL PELANGGARAN..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 btn-submit-custom">
+                            KIRIM DATA PELANGGARAN
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <style>
+        .custom-input {
+            border: 4px solid #000 !important;
+            border-radius: 18px !important;
+            padding: 15px 20px !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+        }
+
+        .custom-input:focus {
+            box-shadow: 6px 6px 0px #000 !important;
+            transform: translate(-3px, -3px);
+            outline: none;
+        }
+
+        .btn-submit-custom {
+            padding: 20px !important;
+            border-radius: 20px !important;
+            font-weight: 800 !important;
+            font-size: 18px !important;
+            border: 4px solid #000 !important;
+            transition: 0.2s;
+        }
+
+        .glosarium-box {
+            background-color: #c3d7f0;
+            border: 4px solid #000;
+            border-radius: 30px;
+            padding: 35px 25px;
+            height: 100%;
+        }
+
+        .badge-glos {
+            display: inline-block;
+            padding: 6px 15px;
+            border: 3px solid #000;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .glosarium-item p {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.6 !important; /* Fix teks penyet */
+            color: #000;
+            margin-bottom: 25px;
+        }
+
+        .fw-800 { font-weight: 800; }
+    </style>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOMWyP0a_L2vhNVy-q4GsG1buIB6f7Koou8R-A1iFEBbPnkXmT8KJoNiuWpIAnGrSP/exec';
+
+        document.getElementById('violationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerText = "MENGIRIM...";
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            
+            // Kirim sebagai JSON dengan type field (sesuai Apps Script)
+            const data = {
+                type: "INPUT_PELANGGARAN",
+                nama: formData.get('nama'),
+                kelas: formData.get('kelas'),
+                pelanggaran: formData.get('hal'),
+                poin: formData.get('poin')
+            };
+
+            try {
+                const res = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                alert('BERHASIL!');
+                e.target.reset();
+            } catch (error) {
+                alert('ERROR: ' + error.message);
+            } finally {
+                btn.innerText = "KIRIM DATA PELANGGARAN";
+                btn.disabled = false;
+            }
+        });
+
+        window.onload = () => {
+            document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin';
+            const foto = localStorage.getItem('fotoProfil');
+            if (foto) document.getElementById('fotoSiswa').src = foto;
+        };
+
+        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+    </script>
 </body>
 </html>

@@ -1,26 +1,30 @@
-const scriptURL = 'https://script.google.com/macros/s/AKfycbyzAzzp27sudKWsncEd9n_kUBcK7ZPuic7UXLxzsHppORE0y7JeAuAuJSXItVvZctX2/exec';
+const scriptURL = 'https://script.google.com/macros/s/AKfycby9WYcW3GCwSRTEYav-hhP361Au2j5HuZ6Ghi04TIbHrGOh65J20juuF_R3dsfWvhFA/exec';
 const form = document.getElementById('formPelanggaran');
 const btn = document.getElementById('btnSimpan');
+
 form.addEventListener('submit', e => {
     e.preventDefault();
     btn.disabled = true;
-    btn.innerHTML = "Sabar, lagi ngirim...";
+    btn.innerHTML = "Sedang Menyimpan...";
+
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
-    data.type = "INPUT_PELANGGARAN";
+    
+    // Menambahkan timestamp otomatis jika dibutuhkan oleh script GAS kamu
+    data.timestamp = new Date().toLocaleString();
+
     fetch(scriptURL, { 
         method: 'POST', 
-        body: JSON.stringify(data)
+        body: new URLSearchParams(formData) // Menggunakan URLSearchParams agar sesuai dengan doPost standar GAS
     })
     .then(response => {
-        alert('Data berhasil masuk ke Google Sheets!');
+        alert('Berhasil! Data telah tersimpan di Database Pelanggar.');
         btn.disabled = false;
         btn.innerHTML = "Simpan ke Sheets";
         form.reset();
-        window.location.href = 'dashboard.html';
     })
     .catch(error => {
-        alert('Gagal! Cek koneksi.');
+        alert('Gagal mengirim data! Cek koneksi internet.');
         btn.disabled = false;
         btn.innerHTML = "Simpan ke Sheets";
     });
