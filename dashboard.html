@@ -8,27 +8,47 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* Fix responsivitas total untuk kontainer grafik */
-    .box-grafik {
-      display: flex;
-      flex-direction: column;
-      min-height: auto !important; /* Menghapus batasan tinggi dari style.css */
+    /* SIDEBAR & CONTENT WIDTH ADJUSTMENT (Desktop)[cite: 7] */
+    .sidebar-container { width: 350px !important; } 
+    .main-content { margin-left: 390px !important; width: calc(100% - 390px) !important; padding: 40px 28px; }
+
+    /* MOBILE DISPLAY ADJUSTMENT - AGAR TIDAK TERLALU KE ATAS[cite: 7] */
+    @media (max-width: 1100px) { 
+      .main-content { 
+        margin-left: 0 !important; 
+        width: 100% !important; 
+        padding-top: 100px !important; /* Menurunkan seluruh konten dari atas[cite: 7] */
+      } 
+      h1 { margin-top: 20px !important; margin-bottom: 40px !important; }
     }
-    .chart-container {
-      position: relative;
-      width: 100%;
-      /* Di desktop, gunakan tinggi yang cukup */
-      height: 300px; 
+
+    /* PAGE TRANSITION[cite: 7] */
+    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    /* SKELETON LOADING[cite: 7] */
+    .skeleton { background: linear-gradient(90deg, #e5e5e5 25%, #f4f4f4 50%, #e5e5e5 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite linear; border-radius: 6px; color: transparent !important; border-color: transparent !important; user-select: none; display: inline-block; }
+    @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* BOLD CONTAINERS[cite: 7] */
+    .box-statistik, .box-grafik, .box-bawah { 
+      border: 4px solid #000 !important; 
+      border-radius: 28px !important; 
+      padding: 28px !important;
+      background: #fff;
     }
-    @media (max-width: 767.98px) {
-      .chart-container {
-        /* Di mobile, biarkan tinggi menyesuaikan konten agar label tidak terpotong */
-        height: auto;
-        min-height: 250px;
-      }
-      .page-title, h1 {
-        font-size: 38px !important; /* Mencegah judul terlalu besar di device kecil */
-      }
+    
+    .stat-label { font-weight: 800; font-size: 16px; text-transform: uppercase; }
+    .stat-number { font-size: 68px; font-weight: 900; line-height: 1; margin: 14px 0; }
+
+    .box-grafik { display: flex; flex-direction: column; min-height: auto !important; }
+    .chart-container { position: relative; width: 100%; height: 300px; }
+    .table-responsive { border: 4px solid #000 !important; border-radius: 20px !important; }
+
+    @media (max-width: 767.98px) { 
+      .chart-container { height: auto; min-height: 250px; } 
+      h1 { font-size: 38px !important; } 
+      .stat-number { font-size: 54px !important; }
     }
   </style>
 </head>
@@ -39,51 +59,58 @@
   <div class="sidebar-container">
     <div class="nav-menu">
       <img src="logo.png" class="sidebar-logo" alt="Logo">
-      <a href="dashboard.html" class="nav-link-custom active">HOME DASHBOARD</a>
-      <a href="form.html" class="nav-link-custom">INPUT PELANGGARAN</a>
-      <a href="database.html" class="nav-link-custom">DATABASE PELANGGAR</a>
+      <a href="dashboard.html" class="nav-link-custom active" style="border-width: 4px !important;">HOME DASHBOARD</a>
+      <a href="form.html" class="nav-link-custom" style="border-width: 4px !important;">INPUT PELANGGARAN</a>
+      <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
     </div>
 
+    <!-- PROFILE BOX ID CARD - BOLD[cite: 7] -->
     <div class="profile-section">
-      <div class="profile-box">
-        <img id="fotoSiswa" src="" class="profile-pic-sm" alt="P">
-        <div>
-          <small class="fw-bold d-block">HALO!</small>
-          <span id="adminName" class="fw-bold d-block" style="font-size: 13px;">Admin</span>
-          <small style="font-size: 9px;">Administrator</small>
+      <div class="profile-box" style="padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
+        <img id="fotoSiswa" src="" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
+        <div style="flex: 1; word-break: break-word;">
+          <div id="adminName" style="font-size: 20px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN NAME</div>
+          <div style="font-size: 13px; margin-top: 8px; font-weight: 800; color: #000; opacity: 0.75; text-transform: uppercase;">Administrator</div>
         </div>
       </div>
-      <button class="btn btn-dark w-100 mt-3 fw-bold" onclick="logout()" style="border: 3px solid #000; border-radius: 12px;">LOGOUT</button>
+      <button onclick="logout()" style="width: 100%; margin-top: 15px; background: #ff2a2a; color: #fff; border: 4px solid #000; border-radius: 14px; padding: 15px; font-size: 20px; font-weight: 900; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; transition: transform 0.1s; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
+        LOGOUT
+      </button>
     </div>
   </div>
 
   <div class="main-content">
-    <h1 style="font-weight: 800; font-size: 55px; margin-bottom: 45px;">DASHBOARD ADMIN</h1>
+    <h1 style="font-weight: 900; font-size: 55px; text-transform: uppercase;">DASHBOARD ADMIN</h1>
 
-    <div class="stats-row">
-      <div class="box-statistik">
-        <span class="stat-label">KEMARIN</span>
-        <div id="countLalu" class="stat-number" style="color: #bbb;">0</div>
-        <hr style="border: 2px solid #000; opacity: 1; margin: 25px 0;">
-        <span class="stat-label">HARI INI</span>
-        <div class="d-flex align-items-center">
-          <div id="countSekarang" class="stat-number">0</div>
-          <span id="trend" class="ms-3 fs-2 fw-bold" style="color: red;">▲</span>
+    <!-- GRID ADJUSTMENT[cite: 7] -->
+    <div class="row g-4 align-items-stretch">
+      <div class="col-12 col-lg-3 d-flex">
+        <div class="box-statistik w-100">
+          <span class="stat-label">KEMARIN</span>
+          <div id="countLalu" class="stat-number skeleton" style="color: #bbb; min-width: 40px;">0</div>
+          <hr style="border: 2px solid #000; opacity: 1; margin: 25px 0;">
+          <span class="stat-label">HARI INI</span>
+          <div class="d-flex align-items-center">
+            <div id="countSekarang" class="stat-number skeleton" style="min-width: 40px;">0</div>
+            <span id="trend" class="ms-3 fs-2 fw-bold skeleton" style="color: red; min-width: 30px;">▲</span>
+          </div>
         </div>
       </div>
 
-      <div class="box-grafik">
-        <span class="stat-label mb-3 d-block">STATISTIK PELANGGAR</span>
-        <div class="chart-container">
-          <canvas id="chartPelanggaran"></canvas>
+      <div class="col-12 col-lg-9 d-flex">
+        <div class="box-grafik w-100">
+          <span class="stat-label mb-3 d-block">STATISTIK PELANGGAR</span>
+          <div class="chart-container">
+            <canvas id="chartPelanggaran"></canvas>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="box-bawah">
+    <div class="box-bawah mt-4">
       <span class="stat-label mb-4 d-block">PELANGGARAN TERAKHIR</span>
       <div class="table-responsive">
-        <table class="table text-center">
+        <table class="table text-center align-middle">
           <thead>
             <tr>
               <th>NAMA</th>
@@ -94,7 +121,7 @@
             </tr>
           </thead>
           <tbody id="tableContent">
-            <tr><td colspan="5">Memproses Data Sheets...</td></tr>
+            <tr><td><div class="skeleton skeleton-text">X</div></td><td><div class="skeleton skeleton-text">X</div></td><td><div class="skeleton skeleton-text" style="width: 90%;">X</div></td><td><div class="skeleton skeleton-badge">X</div></td><td><div class="skeleton skeleton-text" style="width: 60%;">X</div></td></tr>
           </tbody>
         </table>
       </div>
@@ -102,6 +129,7 @@
   </div>
 
   <script>
+  /* SCRIPT LOGIC UTUH 100%[cite: 7] */
   (function(){
     if (window.__lexacore_dashboard_init) return;
     window.__lexacore_dashboard_init = true;
@@ -109,187 +137,137 @@
     const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
     const url = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json`;
 
-    function parseDate(dateStr) {
-      if (!dateStr) return null;
-      if (dateStr instanceof Date) return dateStr;
-      let d = Date.parse(String(dateStr).replace(/,/g, ''));
-      if (!isNaN(d)) return new Date(d);
-      const parts = String(dateStr).split(/[\/\s:]+/);
-      if (parts.length >= 3) {
-        let day = parseInt(parts[0]), month = parseInt(parts[1]), year = parseInt(parts[2]);
-        if (year < 1000) year += 2000;
-        if (month > 12) [day, month] = [month, day];
-        return new Date(year, month - 1, day);
-      }
-      return new Date(dateStr);
+    let lerp = { x1: null, x2: null, hx: null, tX1: null, tX2: null, tHx: null, active: false, index: 0 };
+
+    function parseDate(dStr) {
+      if(!dStr)return null; if(dStr instanceof Date)return dStr;
+      let d=Date.parse(String(dStr).replace(/,/g,'')); if(!isNaN(d))return new Date(d);
+      const p=String(dStr).split(/[\/\s:]+/); if(p.length>=3){let day=parseInt(p[0]),month=parseInt(p[1]),year=parseInt(p[2]); if(year<1000)year+=2000; if(month > 12)[day,month]=[month,day]; return new Date(year,month-1,day);}
+      return new Date(dStr);
     }
 
     function calculateDailyData(rows) {
-      const now = new Date();
-      const days = [];
-      for (let i = 6; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
-        d.setHours(0,0,0,0);
-        const dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-        days.push({ date: d, label: dayNames[d.getDay()], fullLabel: `${d.getDate()}/${d.getMonth()+1}`, count: 0 });
-      }
-      rows.forEach(r => {
-        const tgl = r.c[4]?.f || r.c[4]?.v;
-        if (!tgl) return;
-        const date = parseDate(tgl);
-        if (!date || isNaN(date.getTime())) return;
-        days.forEach(day => {
-          const start = new Date(day.date); start.setHours(0,0,0,0);
-          const end = new Date(day.date); end.setHours(23,59,59,999);
-          if (date >= start && date <= end) day.count++;
-        });
-      });
+      const now = new Date(); const days = [];
+      for (let i = 6; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate() - i); d.setHours(0,0,0,0); const dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab']; days.push({ date: d, label: dayNames[d.getDay()], count: 0 }); }
+      rows.forEach(r => { const tgl = r.c[4]?.f || r.c[4]?.v; if (!tgl) return; const date = parseDate(tgl); if (!date || isNaN(date.getTime())) return; days.forEach(day => { const start = new Date(day.date); start.setHours(0,0,0,0); const end = new Date(day.date); end.setHours(23,59,59,999); if (date >= start && date <= end) day.count++; }); });
       return days;
     }
 
     function calculateStats(rows) {
-      const now = new Date(); now.setHours(0,0,0,0);
-      const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
+      const now = new Date(); now.setHours(0,0,0,0); const yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
       let countSekarang = 0, countLalu = 0;
-      rows.forEach(r => {
-        const tgl = r.c[4]?.f || r.c[4]?.v;
-        if (!tgl) return;
-        const date = parseDate(tgl);
-        if (!date || isNaN(date.getTime())) return;
-        const dateOnly = new Date(date); dateOnly.setHours(0,0,0,0);
-        if (dateOnly.getTime() === now.getTime()) countSekarang++;
-        else if (dateOnly.getTime() === yesterday.getTime()) countLalu++;
-      });
+      rows.forEach(r => { const tgl = r.c[4]?.f || r.c[4]?.v; if (!tgl) return; const date = parseDate(tgl); if (!date || isNaN(date.getTime())) return; const dateOnly = new Date(date); dateOnly.setHours(0,0,0,0); if (dateOnly.getTime() === now.getTime()) countSekarang++; else if (dateOnly.getTime() === yesterday.getTime()) countLalu++; });
       return { countSekarang, countLalu };
     }
 
-    function getPoinColor(p) {
-      if (p === 'Ringan') return 'bg-success';
-      if (p === 'Sedang') return 'bg-warning text-dark';
-      if (p === 'Berat') return 'bg-danger';
-      return 'bg-secondary';
+    function getPoinColor(p) { if (p === 'Ringan') return 'bg-success'; if (p === 'Sedang') return 'bg-warning text-dark'; if (p === 'Berat') return 'bg-danger'; return 'bg-secondary'; }
+    
+    let chartInstance = null;
+
+    function getCurveY(meta, targetX) {
+      if (!meta || !meta.data || meta.data.length === 0) return 0; const data = meta.data;
+      if (targetX <= data[0].x) return data[0].y; if (targetX >= data[data.length - 1].x) return data[data.length - 1].y;
+      for (let i = 0; i < data.length - 1; i++) {
+        let p0 = data[i]; let p1 = data[i+1];
+        if (targetX >= p0.x && targetX <= p1.x) {
+          let t = (targetX - p0.x) / (p1.x - p0.x); 
+          if (p0.cp2x === undefined || p1.cp1x === undefined) return p0.y + t * (p1.y - p0.y);
+          return Math.pow(1-t, 3) * p0.y + 3 * Math.pow(1-t, 2) * t * p0.cp2y + 3 * (1-t) * Math.pow(t, 2) * p1.cp1y + Math.pow(t, 3) * p1.y;
+        }
+      }
+      return data[data.length - 1].y;
     }
 
-    let chartInstance = null;
     function renderChart(dailyData) {
-      const ctx = document.getElementById('chartPelanggaran').getContext('2d');
-      const labels = dailyData.map(d => d.label);
-      const data = dailyData.map(d => d.count);
-      if (chartInstance) chartInstance.destroy();
+      const canvas = document.getElementById('chartPelanggaran'); const ctx = canvas.getContext('2d'); if (chartInstance) chartInstance.destroy();
+      const baseLineColor = '#b84d61'; const highlightColor = '#800020'; const fillOpacityColor = 'rgba(128, 0, 32, 0.15)'; 
       chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: { labels, datasets: [{ label: 'Pelanggaran', data, borderColor: '#dc3545', backgroundColor: 'rgba(220,53,69,0.1)', borderWidth: 4, fill: true, tension: 0.4, pointBackgroundColor: '#000', pointBorderColor: '#fff', pointBorderWidth: 3, pointRadius: 6, pointHoverRadius: 8 }]},
+        type: 'line', data: { labels: dailyData.map(d => d.label), datasets: [{ data: dailyData.map(d => d.count), borderColor: baseLineColor, borderWidth: 2.5, fill: false, tension: 0.4, pointRadius: 0 }] },
         options: {
-          responsive: true, 
-          maintainAspectRatio: true, // Ubah ke true agar grafik menjaga rasio di layar kecil
-          aspectRatio: window.innerWidth < 600 ? 1.5 : 2.5, // Rasio berbeda untuk mobile vs desktop
-          layout: {
-            padding: {
-              bottom: 25, // Memberi ruang aman untuk label hari agar tidak keluar kotak
-              left: 10,
-              right: 10
+          animation: false, responsive: true, maintainAspectRatio: true, aspectRatio: window.innerWidth < 600 ? 1.4 : 3.5,
+          events: ['mousemove', 'mouseout', 'touchstart', 'touchmove'], interaction: { mode: 'index', intersect: false }, hover: { animationDuration: 0 },
+          plugins: { legend: { display: false }, tooltip: { enabled: false } },
+          scales: { 
+            y: { beginAtZero: true, border: { display: false }, ticks: { display: true, color: '#888', font: { weight: '600' }, padding: 10, precision: 0 }, grid: { display: true, color: '#e5e7eb', drawTicks: false } }, 
+            x: { border: { display: false }, grid: { display: false }, ticks: { font: { weight: '600' }, color: '#888' } } 
+          }
+        },
+        plugins: [{
+          id: 'sweepReveal',
+          beforeDatasetsDraw(chart) {
+            if (!chart._sweepStartTime) chart._sweepStartTime = performance.now();
+            let elapsed = performance.now() - chart._sweepStartTime; let progress = Math.min(elapsed / 1200, 1);
+            let ease = -(Math.cos(Math.PI * progress) - 1) / 2;
+            const { ctx, chartArea } = chart; ctx.save(); ctx.beginPath(); ctx.rect(chartArea.left, chartArea.top - 50, chartArea.width * ease, chartArea.height + 100); ctx.clip();
+            if (progress < 1) requestAnimationFrame(() => chart.draw());
+          },
+          afterDatasetsDraw(chart) { chart.ctx.restore(); }
+        }, {
+          id: 'fluidInteraction',
+          afterEvent(chart, args) {
+            if (args.event.type === 'mouseout') { lerp.active = false; } else {
+              const active = chart.getElementsAtEventForMode(args.event, 'index', { intersect: false }, true);
+              if (active.length > 0) {
+                const idx = active[0].index; const meta = chart.getDatasetMeta(0); const i1 = Math.max(0, idx - 1); const i2 = Math.min(meta.data.length - 1, idx + 1);
+                lerp.tX1 = meta.data[i1].x; lerp.tX2 = meta.data[i2].x; lerp.tHx = meta.data[idx].x; lerp.index = idx; lerp.active = true;
+                if (lerp.x1 === null) { lerp.x1 = lerp.tX1; lerp.x2 = lerp.tX2; lerp.hx = lerp.tHx; }
+              }
             }
           },
-          animation: {
-            duration: 2000,
-            easing: 'easeInOutQuart',
-          },
-          animations: {
-            y: { from: 500 }
-          },
-          plugins: { 
-            legend: { display: false }, 
-            tooltip: { backgroundColor: '#000', padding: 12, cornerRadius: 8, callbacks: { label: function(context){ return `${dailyData[context.dataIndex].fullLabel}: ${context.raw} pelanggaran`; } } } 
-          },
-          scales: { 
-            y: { 
-              beginAtZero: true, 
-              ticks: { stepSize: 1, font: { size: 10 } }, 
-              grid: { color: 'rgba(0,0,0,0.1)' } 
-            }, 
-            x: { 
-              grid: { display: false },
-              ticks: {
-                padding: 12,
-                font: { 
-                  size: window.innerWidth < 400 ? 9 : 11, // Font mengecil otomatis di device kecil
-                  weight: '600'
-                }
-              }
-            } 
+          afterDraw(chart) {
+            if (!lerp.active || lerp.x1 === null) return;
+            const speed = 0.12; lerp.x1 += (lerp.tX1 - lerp.x1) * speed; lerp.x2 += (lerp.tX2 - lerp.x2) * speed; lerp.hx += (lerp.tHx - lerp.hx) * speed;
+            const meta = chart.getDatasetMeta(0); if (!meta.data || meta.data.length === 0) return;
+            const y1 = getCurveY(meta, lerp.x1); const y2 = getCurveY(meta, lerp.x2); const hy = getCurveY(meta, lerp.hx);
+            const { ctx, chartArea: { top, bottom } } = chart;
+            ctx.save(); ctx.beginPath(); ctx.rect(lerp.x1, top - 50, lerp.x2 - lerp.x1, chart.height + 100); ctx.clip();
+            ctx.beginPath(); ctx.moveTo(meta.data[0].x, meta.data[0].y);
+            for(let i = 1; i < meta.data.length; i++) {
+              const pt = meta.data[i]; const prev = meta.data[i-1]; if (prev.cp2x !== undefined && pt.cp1x !== undefined) ctx.bezierCurveTo(prev.cp2x, prev.cp2y, pt.cp1x, pt.cp1y, pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+            }
+            ctx.lineTo(meta.data[meta.data.length - 1].x, bottom); ctx.lineTo(meta.data[0].x, bottom); ctx.closePath();
+            ctx.fillStyle = fillOpacityColor; ctx.fill();
+            ctx.beginPath(); ctx.moveTo(meta.data[0].x, meta.data[0].y);
+            for(let i = 1; i < meta.data.length; i++) {
+              const pt = meta.data[i]; const prev = meta.data[i-1]; if (prev.cp2x !== undefined && pt.cp1x !== undefined) ctx.bezierCurveTo(prev.cp2x, prev.cp2y, pt.cp1x, pt.cp1y, pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
+            }
+            ctx.lineWidth = 5; ctx.strokeStyle = highlightColor; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore();
+            const drawDot = (x, y, color) => { ctx.beginPath(); ctx.arc(x, y, 5.5, 0, Math.PI * 2); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = color; ctx.stroke(); };
+            drawDot(lerp.x1, y1, highlightColor); drawDot(lerp.x2, y2, highlightColor);
+            const namaHariPenuh = { 'Min': 'Minggu', 'Sen': 'Senin', 'Sel': 'Selasa', 'Rab': 'Rabu', 'Kam': 'Kamis', 'Jum': 'Jumat', 'Sab': 'Sabtu' };
+            const text = `${namaHariPenuh[chart.data.labels[lerp.index]] || chart.data.labels[lerp.index]} ${chart.data.datasets[0].data[lerp.index]} Kasus`;
+            ctx.font = 'bold 12px Inter'; const textWidth = ctx.measureText(text).width; const capW = textWidth + 24; const capH = 28;
+            let capY = hy - 40; if (capY < top) capY = top + 5;
+            let capX = Math.max(chart.chartArea.left + capW/2, Math.min(chart.chartArea.right - capW/2, lerp.hx));
+            ctx.beginPath(); ctx.fillStyle = highlightColor; ctx.roundRect(capX - capW/2, capY, capW, capH, 14); ctx.fill();
+            ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, capX, capY + capH/2);
+            if (Math.abs(lerp.tX1 - lerp.x1) > 0.5 || Math.abs(lerp.tX2 - lerp.x2) > 0.5 || Math.abs(lerp.tHx - lerp.hx) > 0.5) requestAnimationFrame(() => chart.draw());
           }
-        }
+        }]
       });
     }
 
     async function init() {
       try {
-        const res = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows || [];
-
-        const stats = calculateStats(rows);
-        const dailyData = calculateDailyData(rows);
-
-        document.getElementById('countSekarang').innerText = stats.countSekarang;
-        document.getElementById('countLalu').innerText = stats.countLalu;
-
-        const trendEl = document.getElementById('trend');
-        const diff = stats.countSekarang - stats.countLalu;
-        if (diff > 0) { trendEl.innerHTML = '▲'; trendEl.style.color = 'red'; }
-        else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.style.color = 'green'; }
-        else { trendEl.innerHTML = '═'; trendEl.style.color = 'gray'; }
-
-        const allViolations = rows.map(r => ({
-          nama: r.c[0]?.v || '-',
-          kelas: r.c[1]?.v || '-',
-          hal: r.c[2]?.v || '-',
-          poin: r.c[3]?.v || '-',
-          tgl: r.c[4]?.f || r.c[4]?.v || '-',
-          date: parseDate(r.c[4]?.f || r.c[4]?.v)
-        })).filter(r => r.date).sort((a,b) => b.date - a.date);
-
-        let html = '';
-        if (allViolations.length === 0) {
-          html = '<tr><td colspan="5" class="text-muted">Tidak ada data</td></tr>';
-        } else {
-          allViolations.forEach(r => {
-            html += `<tr><td class="fw-bold">${r.nama}</td><td>${r.kelas}</td><td class="text-uppercase small">${r.hal}</td><td><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td><td class="text-muted small">${r.tgl}</td></tr>`;
-          });
-        }
-        document.getElementById('tableContent').innerHTML = html;
-        renderChart(dailyData);
+        const res = await fetch(url); const text = await res.text(); const json = JSON.parse(text.substr(47).slice(0, -2)); const rows = json.table.rows || [];
+        const stats = calculateStats(rows); const dailyData = calculateDailyData(rows);
+        document.getElementById('countSekarang').classList.remove('skeleton'); document.getElementById('countLalu').classList.remove('skeleton'); document.getElementById('trend').classList.remove('skeleton');
+        document.getElementById('countSekarang').innerText = stats.countSekarang; document.getElementById('countLalu').innerText = stats.countLalu;
+        const trendEl = document.getElementById('trend'); const diff = stats.countSekarang - stats.countLalu;
+        if (diff > 0) { trendEl.innerHTML = '▲'; trendEl.style.color = 'red'; } else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.style.color = 'green'; } else { trendEl.innerHTML = '═'; trendEl.style.color = 'gray'; }
+        const allV = rows.map(r => ({ nama: r.c[0]?.v || '-', kelas: r.c[1]?.v || '-', hal: r.c[2]?.v || '-', poin: r.c[3]?.v || '-', tgl: r.c[4]?.f || r.c[4]?.v || '-', date: parseDate(r.c[4]?.f || r.c[4]?.v) })).filter(r => r.date).sort((a,b) => b.date - a.date);
+        let html = ''; if (allV.length === 0) html = '<tr><td colspan="5" class="text-muted">Tidak ada data</td></tr>';
+        else allV.forEach(r => { html += `<tr><td class="fw-bold">${r.nama}</td><td>${r.kelas}</td><td class="text-uppercase small">${r.hal}</td><td><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td><td class="text-muted small">${r.tgl}</td></tr>`; });
+        document.getElementById('tableContent').innerHTML = html; renderChart(dailyData);
       } catch (e) { console.error('Error:', e); }
     }
 
-    // Menangani perubahan ukuran layar secara real-time
-    window.addEventListener('resize', () => {
-      const dailyData = calculateDailyData([]); // Hanya pemicu, data asli dari init
-      init(); 
-    });
-
-    setInterval(init, 30000);
-
+    window.addEventListener('resize', () => { init(); }); setInterval(init, 30000);
     (function initMenuToggle(){
-      const sidebar = document.querySelector('.sidebar-container');
-      const toggle = document.querySelector('.mobile-nav-toggle');
-      const main = document.querySelector('.main-content');
-      if (!sidebar || !toggle) return;
-      toggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        main.classList.toggle('menu-open-offset');
-      });
+      const sidebar = document.querySelector('.sidebar-container'); const toggle = document.querySelector('.mobile-nav-toggle'); const main = document.querySelector('.main-content');
+      if (!sidebar || !toggle) return; toggle.addEventListener('click', () => { sidebar.classList.toggle('active'); main.classList.toggle('menu-open-offset'); });
     })();
-
-    window.addEventListener('load', () => {
-      document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin';
-      const foto = localStorage.getItem('fotoProfil');
-      if (foto) document.getElementById('fotoSiswa').src = foto;
-      init();
-    });
-
+    window.addEventListener('load', () => { document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; const foto = localStorage.getItem('fotoProfil'); if (foto) document.getElementById('fotoSiswa').src = foto; init(); });
     window.logout = function(){ localStorage.clear(); window.location.href = 'index.html'; };
   })();
   </script>
