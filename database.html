@@ -142,5 +142,46 @@
       document.addEventListener('keydown', function(e){ if (e.key === 'Escape') sidebar.classList.remove('active'); });
     })();
   </script>
+  <script>
+(function(){
+  if (window.__lexacore_page_transition) return;
+  window.__lexacore_page_transition = true;
+
+  // Add initial class immediately so the browser picks up the start state
+  document.documentElement.classList.add('page-transitioning');
+  document.documentElement.classList.add('page-enter');
+
+  function runEnter() {
+    // Force a reflow so the transition always runs
+    void document.documentElement.offsetWidth;
+    document.documentElement.classList.add('page-enter-active');
+
+    // Clean up after animation ends
+    function cleanup() {
+      document.documentElement.classList.remove('page-enter', 'page-enter-active', 'page-transitioning');
+      document.removeEventListener('animationend', onAnimEnd, true);
+    }
+    function onAnimEnd(e){
+      if (e.animationName === 'pageEnterAnim') cleanup();
+    }
+    document.addEventListener('animationend', onAnimEnd, true);
+
+    // Fallback: ensure cleanup after 1s in case animationend doesn't fire
+    setTimeout(cleanup, 1000);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', runEnter);
+  } else {
+    runEnter();
+  }
+
+  // Optional: add a quick exit class when navigating away (improves perceived speed)
+  window.addEventListener('beforeunload', function(){
+    document.documentElement.classList.add('page-exit-active');
+  });
+})();
+</script>
+
 </body>
 </html>
