@@ -289,33 +289,3 @@ input.form-control, textarea.form-control, .form-select, .custom-input, #searchI
 .box-bawah {
   margin-top: 28px;        /* separate the lower table box from the stats row */
 }
-/* Page load transition: fade + subtle slide up */
-.page-enter {
-  opacity: 0;
-  transform: translateY(10px);
-  will-change: opacity, transform;
-}
-
-.page-enter-active {
-  animation: pageEnterAnim 420ms cubic-bezier(.2,.9,.2,1) forwards;
-}
-
-@keyframes pageEnterAnim {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Optional exit state (not used automatically) */
-.page-exit-active {
-  animation: pageExitAnim 320ms ease-in forwards;
-}
-@keyframes pageExitAnim {
-  from { opacity: 1; transform: translateY(0); }
-  to   { opacity: 0; transform: translateY(-8px); }
-}
-
-/* Make sure the animation doesn't interfere with layout */
-html.page-transitioning, body.page-transitioning {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
