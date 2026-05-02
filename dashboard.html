@@ -10,6 +10,8 @@
 <body>
 
     <div class="sidebar-container">
+        <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
+        <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
         <div class="nav-menu">
             <img src="logo.png" class="sidebar-logo">
             <a href="dashboard.html" class="nav-link-custom active">HOME DASHBOARD</a>
@@ -323,6 +325,10 @@
         };
 
         function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+        document.querySelector('.mobile-nav-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar-container').classList.toggle('active');
+        });
 
         function getPoinColor(p) {
             if (p === 'Ringan') return 'bg-success';
