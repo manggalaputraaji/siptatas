@@ -1,31 +1,40 @@
-const scriptURL = 'https://script.google.com/macros/s/AKfycby9WYcW3GCwSRTEYav-hhP361Au2j5HuZ6Ghi04TIbHrGOh65J20juuF_R3dsfWvhFA/exec';
-const form = document.getElementById('formPelanggaran');
-const btn = document.getElementById('btnSimpan');
+// script.js — idempotent form submit (safe to include once)
+(function(){
+  if (window.__lexacore_scriptjs_installed) return;
+  window.__lexacore_scriptjs_installed = true;
 
-form.addEventListener('submit', e => {
+  const scriptURL = 'https://script.google.com/macros/s/AKfycby9WYcW3GCwSRTEYav-hhP361Au2j5HuZ6Ghi04TIbHrGOh65J20juuF_R3dsfWvhFA/exec';
+  const form = document.getElementById('formPelanggaran') || document.getElementById('violationForm');
+  const btn = document.getElementById('btnSimpan') || document.querySelector('button[type="submit"]');
+
+  if (!form) return;
+
+  // Remove previous handler if present
+  if (form.__submit_handler) form.removeEventListener('submit', form.__submit_handler);
+
+  const handler = function(e){
     e.preventDefault();
-    btn.disabled = true;
-    btn.innerHTML = "Sedang Menyimpan...";
+    if (btn) { btn.disabled = true; btn.innerHTML = "Sedang Menyimpan..."; }
 
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    // Menambahkan timestamp otomatis jika dibutuhkan oleh script GAS kamu
-    data.timestamp = new Date().toLocaleString();
+    // Add timestamp if needed
+    formData.append('timestamp', new Date().toLocaleString());
 
-    fetch(scriptURL, { 
-        method: 'POST', 
-        body: new URLSearchParams(formData) // Menggunakan URLSearchParams agar sesuai dengan doPost standar GAS
+    fetch(scriptURL, {
+      method: 'POST',
+      body: new URLSearchParams(formData)
     })
-    .then(response => {
-        alert('Berhasil! Data telah tersimpan di Database Pelanggar.');
-        btn.disabled = false;
-        btn.innerHTML = "Simpan ke Sheets";
-        form.reset();
+    .then(() => {
+      alert('Berhasil! Data telah tersimpan di Database Pelanggar.');
+      if (btn) { btn.disabled = false; btn.innerHTML = btn.getAttribute('data-original') || "Simpan ke Sheets"; }
+      form.reset();
     })
-    .catch(error => {
-        alert('Gagal mengirim data! Cek koneksi internet.');
-        btn.disabled = false;
-        btn.innerHTML = "Simpan ke Sheets";
+    .catch(() => {
+      alert('Gagal mengirim data! Cek koneksi internet.');
+      if (btn) { btn.disabled = false; btn.innerHTML = btn.getAttribute('data-original') || "Simpan ke Sheets"; }
     });
-});
+  };
+
+  form.__submit_handler = handler;
+  form.addEventListener('submit', handler);
+})();

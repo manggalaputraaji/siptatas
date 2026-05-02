@@ -1,187 +1,199 @@
 <!doctype html>
 <html lang="id">
 <head>
-    <meta charset="utf-8">
-    <title>LEXACORE | Input Pelanggaran</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <title>LEXACORE | Input Pelanggaran</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body style="background-color: #fff; overflow-x: hidden;">
 
-    <div class="sidebar-container">
-        <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
-        <div class="nav-menu">
-            <img src="logo.png" class="sidebar-logo">
-            <a href="dashboard.html" class="nav-link-custom">HOME DASHBOARD</a>
-            <a href="form.html" class="nav-link-custom active">INPUT PELANGGARAN</a>
-            <a href="database.html" class="nav-link-custom">DATABASE PELANGGAR</a>
-        </div>
-        
-        <div class="profile-section">
-            <div class="profile-box">
-                <img id="fotoSiswa" src="" class="profile-pic-sm">
-                <div>
-                    <small class="fw-bold d-block">HALO!</small>
-                    <span id="adminName" class="fw-bold d-block" style="font-size: 13px;">Admin</span>
-                    <small style="font-size: 9px;">Administrator</small>
-                </div>
-            </div>
-            <button class="btn btn-dark w-100 mt-3 fw-bold" onclick="logout()" style="border: 3px solid #000; border-radius: 12px;">LOGOUT</button>
-        </div>
+  <!-- MOBILE TOGGLE: OUTSIDE THE SIDEBAR -->
+  <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
+
+  <div class="sidebar-container">
+    <div class="nav-menu">
+      <img src="logo.png" class="sidebar-logo" alt="Logo">
+      <a href="dashboard.html" class="nav-link-custom">HOME DASHBOARD</a>
+      <a href="form.html" class="nav-link-custom active">INPUT PELANGGARAN</a>
+      <a href="database.html" class="nav-link-custom">DATABASE PELANGGAR</a>
     </div>
 
-    <div class="main-content">
-        <h1 class="page-title">INPUT DATA</h1>
-        <p class="text-muted fw-bold mb-5 subtitle-page">MASUKKAN DETAIL PELANGGARAN SISWA SECARA LENGKAP</p>
-        <div class="row g-4 align-items-stretch flex-lg-nowrap">
-            <!-- Glosarium -->
-            <div class="col-12 col-lg-4 d-flex">
-                <div class="glosarium-box w-100">
-                    <h5 class="fw-800 mb-4 glosarium-title">GLOSARIUM POIN</h5>
-                    <div class="glosarium-item">
-                        <span class="badge-glos bg-success text-white">RINGAN</span>
-                        <p>Siswa yang melakukan pelanggaran ringan akan diberikan teguran lisan dan pembinaan oleh wali kelas.</p>
-                    </div>
-                    <div class="glosarium-item">
-                        <span class="badge-glos bg-warning text-dark">SEDANG</span>
-                        <p>Siswa yang melakukan pelanggaran sedang akan diberikan surat peringatan dan pemanggilan orang tua.</p>
-                    </div>
-                    <div class="glosarium-item">
-                        <span class="badge-glos bg-danger text-white">BERAT</span>
-                        <p>Siswa yang melakukan pelanggaran berat akan dikenakan sanksi skorsing atau dikembalikan kepada orang tua.</p>
-                    </div>
-                </div>
-            </div>
-            <!-- Form -->
-            <div class="col-12 col-lg-8 d-flex">
-                <div class="box-bawah w-100 form-box-responsive">
-                    <form id="violationForm">
-                        <div class="mb-4">
-                            <label class="stat-label mb-2">NAMA LENGKAP SISWA</label>
-                            <input type="text" name="nama" class="form-control custom-input" placeholder="TULIS NAMA LENGKAP..." required>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 col-md-6 mb-4">
-                                <label class="stat-label mb-2">KELAS</label>
-                                <input type="text" name="kelas" class="form-control custom-input" placeholder="CONTOH: XI PPLG 1" required>
-                            </div>
-                            <div class="col-12 col-md-6 mb-4">
-                                <label class="stat-label mb-2">POIN PELANGGARAN</label>
-                                <select name="poin" class="form-select custom-input" required>
-                                    <option value="Ringan">RINGAN</option>
-                                    <option value="Sedang">SEDANG</option>
-                                    <option value="Berat">BERAT</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="mb-5">
-                            <label class="stat-label mb-2">HAL YANG DILANGGAR</label>
-                            <textarea name="hal" class="form-control custom-input" rows="5" placeholder="DETAIL PELANGGARAN..." required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-dark w-100 btn-submit-custom">
-                            KIRIM DATA PELANGGARAN
-                        </button>
-                    </form>
-                </div>
-            </div>
+    <div class="profile-section">
+      <div class="profile-box">
+        <img id="fotoSiswa" src="" class="profile-pic-sm" alt="P">
+        <div>
+          <small class="fw-bold d-block">HALO!</small>
+          <span id="adminName" class="fw-bold d-block" style="font-size: 13px;">Admin</span>
+          <small style="font-size: 9px;">Administrator</small>
         </div>
+      </div>
+      <button class="btn btn-dark w-100 mt-3 fw-bold" onclick="logout()" style="border: 3px solid #000; border-radius: 12px;">LOGOUT</button>
     </div>
+  </div>
 
-    <style>
-        .page-title {
-            font-weight: 800;
-            font-size: 55px;
-            margin-bottom: 10px;
-            letter-spacing: 1px;
-        }
-        .subtitle-page {
-            letter-spacing: 1px;
-        }
-        .glosarium-title {
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-        @media (max-width: 991.98px) {
-            .main-content {
-                padding: 20px !important;
-            }
-            .form-box-responsive, .glosarium-box {
-                padding: 20px !important;
-            }
-        }
-        @media (max-width: 767.98px) {
-            .main-content {
-                margin-left: 0 !important;
-                width: 100% !important;
-                padding: 10px !important;
-            }
-            .page-title {
-                font-size: 32px !important;
-                margin-bottom: 8px;
-            }
-            .subtitle-page {
-                font-size: 13px !important;
-                margin-bottom: 20px !important;
-            }
-            .glosarium-title {
-                font-size: 15px !important;
-            }
-            .glosarium-box, .form-box-responsive {
-                border-radius: 18px !important;
-                padding: 12px !important;
-            }
-        }
-    </style>
+  <div class="main-content">
+    <h1 class="page-title">INPUT DATA</h1>
+    <p class="text-muted fw-bold mb-5 subtitle-page">MASUKKAN DETAIL PELANGGARAN SISWA SECARA LENGKAP</p>
 
-    <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOMWyP0a_L2vhNVy-q4GsG1buIB6f7Koou8R-A1iFEBbPnkXmT8KJoNiuWpIAnGrSP/exec';
+    <div class="row g-4 align-items-stretch flex-lg-nowrap">
+      <div class="col-12 col-lg-4 d-flex">
+        <div class="glosarium-box w-100">
+          <h5 class="fw-800 mb-4 glosarium-title">GLOSARIUM POIN</h5>
+          <div class="glosarium-item">
+            <span class="badge-glos bg-success text-white">RINGAN</span>
+            <p>Siswa yang melakukan pelanggaran ringan akan diberikan teguran lisan dan pembinaan oleh wali kelas.</p>
+          </div>
+          <div class="glosarium-item">
+            <span class="badge-glos bg-warning text-dark">SEDANG</span>
+            <p>Siswa yang melakukan pelanggaran sedang akan diberikan surat peringatan dan pemanggilan orang tua.</p>
+          </div>
+          <div class="glosarium-item">
+            <span class="badge-glos bg-danger text-white">BERAT</span>
+            <p>Siswa yang melakukan pelanggaran berat akan dikenakan sanksi skorsing atau dikembalikan kepada orang tua.</p>
+          </div>
+        </div>
+      </div>
 
-        document.getElementById('violationForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            btn.innerText = "MENGIRIM...";
-            btn.disabled = true;
+      <div class="col-12 col-lg-8 d-flex">
+        <div class="box-bawah w-100 form-box-responsive">
+          <form id="violationForm">
+            <div class="mb-4">
+              <label class="stat-label mb-2">NAMA LENGKAP SISWA</label>
+              <input type="text" name="nama" class="form-control custom-input" placeholder="TULIS NAMA LENGKAP..." required>
+            </div>
+            <div class="row">
+              <div class="col-12 col-md-6 mb-4">
+                <label class="stat-label mb-2">KELAS</label>
+                <input type="text" name="kelas" class="form-control custom-input" placeholder="CONTOH: XI PPLG 1" required>
+              </div>
+              <div class="col-12 col-md-6 mb-4">
+                <label class="stat-label mb-2">POIN PELANGGARAN</label>
+                <select name="poin" class="form-select custom-input" required>
+                  <option value="Ringan">RINGAN</option>
+                  <option value="Sedang">SEDANG</option>
+                  <option value="Berat">BERAT</option>
+                </select>
+              </div>
+            </div>
 
-            const formData = new FormData(e.target);
-            
-            // Kirim sebagai JSON dengan type field (sesuai Apps Script)
-            const data = {
-                type: "INPUT_PELANGGARAN",
-                nama: formData.get('nama'),
-                kelas: formData.get('kelas'),
-                pelanggaran: formData.get('hal'),
-                poin: formData.get('poin')
-            };
+            <div class="mb-5">
+              <label class="stat-label mb-2">HAL YANG DILANGGAR</label>
+              <textarea name="hal" class="form-control custom-input" rows="5" placeholder="DETAIL PELANGGARAN..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-dark w-100 btn-submit-custom">KIRIM DATA PELANGGARAN</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-            try {
-                const res = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-                alert('BERHASIL!');
-                e.target.reset();
-            } catch (error) {
-                alert('ERROR: ' + error.message);
-            } finally {
-                btn.innerText = "KIRIM DATA PELANGGARAN";
-                btn.disabled = false;
-            }
-        });
+  <!-- Consolidated form + UI script (idempotent) -->
+  <script>
+  (function(){
+    if (window.__lexacore_form_init) return;
+    window.__lexacore_form_init = true;
 
-        window.onload = () => {
-            document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin';
-            const foto = localStorage.getItem('fotoProfil');
-            if (foto) document.getElementById('fotoSiswa').src = foto;
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOMWyP0a_L2vhNVy-q4GsG1buIB6f7Koou8R-A1iFEBbPnkXmT8KJoNiuWpIAnGrSP/exec';
+    const sidebar = document.querySelector('.sidebar-container');
+    const main = document.querySelector('.main-content');
+
+    // Form submit (idempotent)
+    (function initForm(){
+      const form = document.getElementById('violationForm');
+      if (!form) return;
+      if (form.__handler) form.removeEventListener('submit', form.__handler);
+
+      const handler = async function(e){
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"], button') || null;
+        if (btn) { btn.innerText = "MENGIRIM..."; btn.disabled = true; }
+
+        const formData = new FormData(e.target);
+        const data = {
+          type: "INPUT_PELANGGARAN",
+          nama: formData.get('nama'),
+          kelas: formData.get('kelas'),
+          pelanggaran: formData.get('hal'),
+          poin: formData.get('poin')
         };
 
-        function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+        try {
+          await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+          alert('BERHASIL!');
+          e.target.reset();
+        } catch (err) {
+          alert('ERROR: ' + (err && err.message ? err.message : err));
+        } finally {
+          if (btn) { btn.innerText = "KIRIM DATA PELANGGARAN"; btn.disabled = false; }
+        }
+      };
 
-        document.querySelector('.mobile-nav-toggle').addEventListener('click', function() {
-            document.querySelector('.sidebar-container').classList.toggle('active');
-        });
-    </script>
+      form.__handler = handler;
+      form.addEventListener('submit', handler);
+    })();
+
+    // Menu toggle (idempotent, class-only)
+    (function initMenuToggle(){
+      if (!sidebar) return;
+      let toggle = document.querySelector('.mobile-nav-toggle');
+      if (!toggle) {
+        toggle = document.createElement('button');
+        toggle.className = 'mobile-nav-toggle';
+        toggle.type = 'button';
+        toggle.setAttribute('aria-label','Toggle menu');
+        toggle.innerHTML = '<span></span>';
+        document.body.appendChild(toggle);
+      }
+
+      toggle.setAttribute('aria-expanded','false');
+
+      function openSidebar(){ sidebar.classList.add('active'); toggle.setAttribute('aria-expanded','true'); main?.classList.add('menu-open-offset'); }
+      function closeSidebar(){ sidebar.classList.remove('active'); toggle.setAttribute('aria-expanded','false'); main?.classList.remove('menu-open-offset'); }
+      function toggleSidebar(e){ e?.stopPropagation(); sidebar.classList.contains('active') ? closeSidebar() : openSidebar(); }
+
+      if (toggle.__click) toggle.removeEventListener('click', toggle.__click);
+      toggle.__click = function(e){ e.stopPropagation(); toggleSidebar(); };
+      toggle.addEventListener('click', toggle.__click);
+
+      if (document.__outside) document.removeEventListener('click', document.__outside);
+      document.__outside = function(e){
+        if (window.innerWidth <= 992 && sidebar.classList.contains('active')) {
+          if (!sidebar.contains(e.target) && !toggle.contains(e.target)) closeSidebar();
+        }
+      };
+      document.addEventListener('click', document.__outside);
+
+      if (document.__esc) document.removeEventListener('keydown', document.__esc);
+      document.__esc = function(e){ if (e.key === 'Escape' && sidebar.classList.contains('active')) closeSidebar(); };
+      document.addEventListener('keydown', document.__esc);
+
+      sidebar.style.removeProperty('transform');
+      sidebar.style.removeProperty('display');
+      main?.style.removeProperty('margin-left');
+      main?.style.removeProperty('padding-top');
+
+      window.addEventListener('resize', function(){
+        if (window.innerWidth > 992) { sidebar.classList.remove('active'); main?.classList.remove('menu-open-offset'); sidebar.style.removeProperty('transform'); sidebar.style.removeProperty('display'); }
+      });
+    })();
+
+    window.addEventListener('load', function(){
+      const adminNameEl = document.getElementById('adminName');
+      if (adminNameEl) adminNameEl.innerText = localStorage.getItem('namaLengkap') || 'Admin';
+      const foto = localStorage.getItem('fotoProfil');
+      if (foto) document.getElementById('fotoSiswa').src = foto;
+      window.logout = function(){ localStorage.clear(); window.location.href = 'index.html'; };
+    });
+
+  })();
+  </script>
+
 </body>
 </html>
