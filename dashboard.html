@@ -8,22 +8,44 @@
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /* SIDEBAR & CONTENT WIDTH ADJUSTMENT (Desktop)[cite: 7] */
-    .sidebar-container { width: 350px !important; } 
-    .main-content { margin-left: 390px !important; width: calc(100% - 390px) !important; padding: 40px 28px; }
+    /* FIX LAYOUT INTACT: SIDEBAR & MAIN CONTENT[cite: 7] */
+    .sidebar-container { 
+      width: 350px !important; 
+      position: fixed; /* Kunci posisi di kiri[cite: 6] */
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+      background: #fff; /* Pastikan punya background biar nggak transparan */
+      border-right: 4px solid #000;
+    } 
 
-    /* MOBILE DISPLAY ADJUSTMENT - AGAR TIDAK TERLALU KE ATAS[cite: 7] */
-    @media (max-width: 1100px) { 
+    .main-content { 
+      margin-left: 350px !important; /* Pas sejajar lebar sidebar[cite: 7] */
+      width: calc(100% - 350px) !important; 
+      padding: 40px !important;
+      min-width: 992px; /* Cegah konten hancur pas layar terlalu sempit[cite: 7] */
+    }
+
+    /* RESPONSIVE: BREAKPOINT UNTUK MOBILE[cite: 7] */
+    @media (max-width: 992px) { 
+      .sidebar-container { 
+        position: fixed; 
+        transform: translateX(-100%); /* Sembunyikan di layar kecil */
+        transition: transform 0.3s ease;
+      }
+      .sidebar-container.active { transform: translateX(0); }
       .main-content { 
         margin-left: 0 !important; 
         width: 100% !important; 
-        padding-top: 100px !important; /* Menurunkan seluruh konten dari atas[cite: 7] */
+        min-width: 100% !important;
+        padding-top: 100px !important; 
       } 
-      h1 { margin-top: 20px !important; margin-bottom: 40px !important; }
+      h1 { margin-top: 20px !important; }
     }
 
     /* PAGE TRANSITION[cite: 7] */
-    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow-x: hidden; }
     @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
     /* SKELETON LOADING[cite: 7] */
@@ -64,10 +86,10 @@
       <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
     </div>
 
-    <!-- PROFILE BOX ID CARD - BOLD[cite: 7] -->
+    <!-- PROFILE BOX ID CARD[cite: 7] -->
     <div class="profile-section">
       <div class="profile-box" style="padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
-        <img id="fotoSiswa" src="" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
+        <img id="fotoSiswa" src="" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 3px solid #000; object-fit: cover; flex-shrink: 0;">
         <div style="flex: 1; word-break: break-word;">
           <div id="adminName" style="font-size: 20px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN NAME</div>
           <div style="font-size: 13px; margin-top: 8px; font-weight: 800; color: #000; opacity: 0.75; text-transform: uppercase;">Administrator</div>
@@ -80,11 +102,11 @@
   </div>
 
   <div class="main-content">
-    <h1 style="font-weight: 900; font-size: 55px; text-transform: uppercase;">DASHBOARD ADMIN</h1>
+    <h1 style="font-weight: 900; font-size: 55px; text-transform: uppercase; margin-bottom: 40px;">DASHBOARD ADMIN</h1>
 
-    <!-- GRID ADJUSTMENT[cite: 7] -->
+    <!-- GRID DENGAN RATIO TEPAT[cite: 7] -->
     <div class="row g-4 align-items-stretch">
-      <div class="col-12 col-lg-3 d-flex">
+      <div class="col-12 col-lg-4 d-flex">
         <div class="box-statistik w-100">
           <span class="stat-label">KEMARIN</span>
           <div id="countLalu" class="stat-number skeleton" style="color: #bbb; min-width: 40px;">0</div>
@@ -97,7 +119,7 @@
         </div>
       </div>
 
-      <div class="col-12 col-lg-9 d-flex">
+      <div class="col-12 col-lg-8 d-flex">
         <div class="box-grafik w-100">
           <span class="stat-label mb-3 d-block">STATISTIK PELANGGAR</span>
           <div class="chart-container">
@@ -184,7 +206,7 @@
       chartInstance = new Chart(ctx, {
         type: 'line', data: { labels: dailyData.map(d => d.label), datasets: [{ data: dailyData.map(d => d.count), borderColor: baseLineColor, borderWidth: 2.5, fill: false, tension: 0.4, pointRadius: 0 }] },
         options: {
-          animation: false, responsive: true, maintainAspectRatio: true, aspectRatio: window.innerWidth < 600 ? 1.4 : 3.5,
+          animation: false, responsive: true, maintainAspectRatio: true, aspectRatio: window.innerWidth < 600 ? 1.4 : 3,
           events: ['mousemove', 'mouseout', 'touchstart', 'touchmove'], interaction: { mode: 'index', intersect: false }, hover: { animationDuration: 0 },
           plugins: { legend: { display: false }, tooltip: { enabled: false } },
           scales: { 
@@ -196,7 +218,8 @@
           id: 'sweepReveal',
           beforeDatasetsDraw(chart) {
             if (!chart._sweepStartTime) chart._sweepStartTime = performance.now();
-            let elapsed = performance.now() - chart._sweepStartTime; let progress = Math.min(elapsed / 1200, 1);
+            let elapsed = performance.now() - chart._sweepStartTime; 
+            let progress = Math.min(elapsed / 3000, 1); 
             let ease = -(Math.cos(Math.PI * progress) - 1) / 2;
             const { ctx, chartArea } = chart; ctx.save(); ctx.beginPath(); ctx.rect(chartArea.left, chartArea.top - 50, chartArea.width * ease, chartArea.height + 100); ctx.clip();
             if (progress < 1) requestAnimationFrame(() => chart.draw());
@@ -264,10 +287,23 @@
 
     window.addEventListener('resize', () => { init(); }); setInterval(init, 30000);
     (function initMenuToggle(){
-      const sidebar = document.querySelector('.sidebar-container'); const toggle = document.querySelector('.mobile-nav-toggle'); const main = document.querySelector('.main-content');
-      if (!sidebar || !toggle) return; toggle.addEventListener('click', () => { sidebar.classList.toggle('active'); main.classList.toggle('menu-open-offset'); });
+      const sidebar = document.querySelector('.sidebar-container'); const toggle = document.querySelector('.mobile-nav-toggle'); 
+      if (!sidebar || !toggle) return; 
+      toggle.addEventListener('click', (e) => { 
+        e.stopPropagation();
+        sidebar.classList.toggle('active'); 
+      });
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 1200 && sidebar.classList.contains('active')) {
+          if (!sidebar.contains(e.target)) sidebar.classList.remove('active');
+        }
+      });
     })();
-    window.addEventListener('load', () => { document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; const foto = localStorage.getItem('fotoProfil'); if (foto) document.getElementById('fotoSiswa').src = foto; init(); });
+    window.addEventListener('load', () => { 
+      document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; 
+      const foto = localStorage.getItem('fotoProfil'); if (foto) document.getElementById('fotoSiswa').src = foto; 
+      init(); 
+    });
     window.logout = function(){ localStorage.clear(); window.location.href = 'index.html'; };
   })();
   </script>
