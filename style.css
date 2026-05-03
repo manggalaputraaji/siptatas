@@ -19,7 +19,7 @@ body {
 /* ---------- Sidebar ---------- */
 .sidebar-container {
   width: 250px;
-  height: 100vh;
+  height: auto;
   position: fixed;
   left: 20px;
   top: 0;
@@ -198,7 +198,8 @@ input.form-control, textarea.form-control, .form-select, .custom-input, #searchI
     top: 0;
     left: 0;
     width: 260px;
-    height: 100vh;
+    height: 100vh; /* UBAH DARI auto JADI 100vh BIAR FULL SAMPAI BAWAH */
+    overflow-y: auto; /* TAMBAHIN INI BIAR SIDEBAR BISA DI-SCROLL KALAU LAYAR HP KEKECILAN */
     transform: translateX(-110%);
     transition: transform .28s cubic-bezier(.2,.9,.2,1);
     z-index: 1500;
@@ -288,4 +289,8 @@ input.form-control, textarea.form-control, .form-select, .custom-input, #searchI
 
 .box-bawah {
   margin-top: 28px;        /* separate the lower table box from the stats row */
+}
+
+body.no-scroll { 
+  overflow: hidden !important; 
 }

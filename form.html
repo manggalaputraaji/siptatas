@@ -39,6 +39,10 @@
     }
 
     input.form-control::placeholder { color: #aaa; font-weight: 600; }
+
+    body.no-scroll { 
+  overflow: hidden !important; 
+}
   </style>
 </head>
 <body style="background-color: #fff; overflow-x: hidden;">
@@ -195,6 +199,7 @@
         toggle.addEventListener('click', () => {
           sidebar.classList.toggle('active');
           main?.classList.toggle('menu-open-offset');
+          document.body.classList.toggle('no-scroll');
         });
       })();
 
