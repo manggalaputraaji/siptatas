@@ -6,8 +6,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  
   <!-- Tambahan CDN SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <style>
     /* SIDEBAR & CONTENT WIDTH ADJUSTMENT */
     .sidebar-container { width: 350px !important; position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000; background: #fff; border-right: 4px solid #000; }
@@ -43,12 +45,16 @@
     input.form-control::placeholder { color: #aaa; font-weight: 600; }
 
     body.no-scroll { 
-      overflow: hidden !important; 
-    }
-    
+  overflow: hidden !important; 
+}
+
     /* Memastikan font SweetAlert cocok dengan style LEXACORE */
     .swal2-popup { font-family: 'Inter', sans-serif !important; border: 4px solid #000 !important; border-radius: 20px !important; }
     .swal2-confirm { font-weight: 800 !important; border-radius: 10px !important; background-color: #000 !important; color: #fff !important; }
+    
+    /* TAMBAHAN WARNA BORDER DINAMIS */
+    .swal-border-success { border-color: #198754 !important; } /* Hijau Success */
+    .swal-border-error { border-color: #ff2a2a !important; } /* Merah Error */
     
     /* ANIMASI NOTIF MELUNCUR DARI ATAS */
     @keyframes slideDownAlert {
@@ -197,7 +203,6 @@
               body: JSON.stringify(data)
             });
             
-            // --- ALERT SUCCESS (SWEETALERT2) ---
             Swal.fire({
               position: "top",
               icon: "success",
@@ -205,16 +210,14 @@
               text: "Data pelanggaran telah disimpan.",
               showConfirmButton: false,
               timer: 1500,
-              backdrop: "rgba(0,0,0,0.7)", /* Latar belakang agak dark */
-              showClass: {
-                popup: 'swal-slide-down' /* Efek turun dari atas */
-              }
+              backdrop: "rgba(0,0,0,0.7)",
+              showClass: { popup: 'swal-slide-down' },
+              customClass: { popup: 'swal-border-success' }
             });
-            
+
             e.target.reset();
           } catch (err) {
             
-            // --- ALERT ERROR (SWEETALERT2) ---
             Swal.fire({
               position: "top",
               icon: "error",
@@ -222,12 +225,11 @@
               text: "Gagal terhubung ke Database. Periksa koneksimu.",
               showConfirmButton: true,
               confirmButtonText: "Tutup",
-              backdrop: "rgba(0,0,0,0.7)", /* Latar belakang agak dark */
-              showClass: {
-                popup: 'swal-slide-down' /* Efek turun dari atas */
-              }
+              backdrop: "rgba(0,0,0,0.7)",
+              showClass: { popup: 'swal-slide-down' },
+              customClass: { popup: 'swal-border-error' }
             });
-            
+
           } finally {
             btn.innerText = originalText; 
             btn.disabled = false;
