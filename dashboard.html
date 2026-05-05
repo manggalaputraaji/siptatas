@@ -11,32 +11,31 @@
     /* FIX LAYOUT INTACT: SIDEBAR & MAIN CONTENT */
     .sidebar-container { 
       width: 350px !important; 
-      position: fixed; /* Kunci posisi di kiri */
+      position: fixed;
       left: 0;
       top: 0;
       height: 100vh;
       z-index: 1000;
-      background: #fff; /* Pastikan punya background biar nggak transparan */
+      background: #fff;
       border-right: 4px solid #000;
     } 
 
     .main-content { 
-      margin-left: 350px !important; /* Pas sejajar lebar sidebar */
+      margin-left: 390px !important; 
       width: calc(100% - 350px) !important; 
-      padding: 40px !important;
-      min-width: 992px; /* Cegah konten hancur pas layar terlalu sempit */
+      padding-bottom: 40px !important; /* Biar paling bawah layar nggak mepet */
     }
 
     /* RESPONSIVE: BREAKPOINT UNTUK MOBILE */
     @media (max-width: 992px) { 
       .sidebar-container { 
         position: fixed; 
-        transform: translateX(-100%); /* Sembunyikan di layar kecil */
+        transform: translateX(-100%);
         transition: transform 0.3s ease;
-        height: 100% !important; /* FIX GANTUNG: Paksa tinggi full menimpa height: auto */
-        bottom: 0 !important; /* FIX GANTUNG: Kunci memanjang sampai mentok bawah */
-        background-color: #fff !important; /* FIX GANTUNG: Tarik background putihnya sampai bawah */
-        overflow-y: auto !important; /* FIX GANTUNG: Biar bisa di-scroll kalau layarnya sempit */
+        height: 100% !important;
+        bottom: 0 !important;
+        background-color: #fff !important;
+        overflow-y: auto !important;
       }
       .sidebar-container.active { transform: translateX(0); }
       .main-content { 
@@ -60,7 +59,7 @@
     .box-statistik, .box-grafik, .box-bawah { 
       border: 4px solid #000 !important; 
       border-radius: 28px !important; 
-      padding: 28px !important;
+      padding: 18px !important;
       background: #fff;
     }
     
@@ -68,7 +67,7 @@
     .stat-number { font-size: 68px; font-weight: 900; line-height: 1; margin: 14px 0; }
 
     .box-grafik { display: flex; flex-direction: column; min-height: auto !important; }
-    .chart-container { position: relative; width: 100%; height: 300px; }
+    .chart-container { position: relative; width: 100%; height: 150px; flex: 1; }
     .table-responsive { border: 4px solid #000 !important; border-radius: 20px !important; }
 
     @media (max-width: 767.98px) { 
@@ -77,9 +76,7 @@
       .stat-number { font-size: 54px !important; }
     }
 
-    body.no-scroll { 
-  overflow: hidden !important; 
-}
+    body.no-scroll { overflow: hidden !important; }
   </style>
 </head>
 <body>
@@ -94,7 +91,7 @@
       <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
     </div>
 
-    <!-- PROFILE BOX ID CARD[cite: 7] -->
+    <!-- PROFILE BOX ID CARD -->
     <div class="profile-section">
       <div class="profile-box" style="padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
         <img id="fotoSiswa" src="" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 3px solid #000; object-fit: cover; flex-shrink: 0;">
@@ -110,15 +107,14 @@
   </div>
 
   <div class="main-content">
-    <h1 style="font-weight: 900; font-size: 55px; text-transform: uppercase; margin-bottom: 40px;">DASHBOARD ADMIN</h1>
+    <h1 style="font-weight: 900; font-size: 60px; text-transform: uppercase; margin-bottom: 40px;">DASHBOARD ADMIN</h1>
 
-    <!-- GRID DENGAN RATIO TEPAT[cite: 7] -->
     <div class="row g-4 align-items-stretch">
       <div class="col-12 col-lg-4 d-flex">
         <div class="box-statistik w-100">
           <span class="stat-label">KEMARIN</span>
           <div id="countLalu" class="stat-number skeleton" style="color: #bbb; min-width: 40px;">0</div>
-          <hr style="border: 2px solid #000; opacity: 1; margin: 25px 0;">
+          <hr style="border: 2px solid #000; opacity: 1; margin: 10px 0;">
           <span class="stat-label">HARI INI</span>
           <div class="d-flex align-items-center">
             <div id="countSekarang" class="stat-number skeleton" style="min-width: 40px;">0</div>
@@ -137,7 +133,8 @@
       </div>
     </div>
 
-    <div class="box-bawah mt-4">
+    <!-- Margin bottom di sini biar ga mepet ke dasar layar -->
+    <div class="box-bawah mt-4 mb-4">
       <span class="stat-label mb-4 d-block">PELANGGARAN TERAKHIR</span>
       <div class="table-responsive">
         <table class="table text-center align-middle">
@@ -159,7 +156,6 @@
   </div>
 
   <script>
-  /* SCRIPT LOGIC UTUH 100%[cite: 7] */
   (function(){
     if (window.__lexacore_dashboard_init) return;
     window.__lexacore_dashboard_init = true;
@@ -177,9 +173,41 @@
     }
 
     function calculateDailyData(rows) {
-      const now = new Date(); const days = [];
-      for (let i = 6; i >= 0; i--) { const d = new Date(now); d.setDate(d.getDate() - i); d.setHours(0,0,0,0); const dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab']; days.push({ date: d, label: dayNames[d.getDay()], count: 0 }); }
-      rows.forEach(r => { const tgl = r.c[4]?.f || r.c[4]?.v; if (!tgl) return; const date = parseDate(tgl); if (!date || isNaN(date.getTime())) return; days.forEach(day => { const start = new Date(day.date); start.setHours(0,0,0,0); const end = new Date(day.date); end.setHours(23,59,59,999); if (date >= start && date <= end) day.count++; }); });
+      const now = new Date(); 
+      const days = [];
+      
+      // Cari index hari ini (0 = Minggu, 1 = Senin, dst)
+      const dayOfWeek = now.getDay(); 
+      
+      // Hitung tanggal mundur ke hari Minggu di minggu ini
+      const sunday = new Date(now);
+      sunday.setDate(now.getDate() - dayOfWeek);
+      sunday.setHours(0,0,0,0);
+
+      const dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+      
+      // Buat array paten dari Minggu (0) sampai Sabtu (6)
+      for (let i = 0; i <= 6; i++) { 
+        const d = new Date(sunday); 
+        d.setDate(sunday.getDate() + i); 
+        days.push({ date: d, label: dayNames[i], count: 0 }); 
+      }
+      
+      rows.forEach(r => { 
+        const tgl = r.c[4]?.f || r.c[4]?.v; 
+        if (!tgl) return; 
+        const date = parseDate(tgl); 
+        if (!date || isNaN(date.getTime())) return; 
+        
+        days.forEach(day => { 
+          const start = new Date(day.date); 
+          start.setHours(0,0,0,0); 
+          const end = new Date(day.date); 
+          end.setHours(23,59,59,999); 
+          if (date >= start && date <= end) day.count++; 
+        }); 
+      });
+      
       return days;
     }
 
@@ -214,7 +242,7 @@
       chartInstance = new Chart(ctx, {
         type: 'line', data: { labels: dailyData.map(d => d.label), datasets: [{ data: dailyData.map(d => d.count), borderColor: baseLineColor, borderWidth: 2.5, fill: false, tension: 0.4, pointRadius: 0 }] },
         options: {
-          animation: false, responsive: true, maintainAspectRatio: true, aspectRatio: window.innerWidth < 600 ? 1.4 : 3,
+          animation: false, responsive: true, maintainAspectRatio: false, aspectRatio: window.innerWidth < 600 ? 1.4 : 3,
           events: ['mousemove', 'mouseout', 'touchstart', 'touchmove'], interaction: { mode: 'index', intersect: false }, hover: { animationDuration: 0 },
           plugins: { legend: { display: false }, tooltip: { enabled: false } },
           scales: { 
@@ -287,9 +315,22 @@
         const trendEl = document.getElementById('trend'); const diff = stats.countSekarang - stats.countLalu;
         if (diff > 0) { trendEl.innerHTML = '▲'; trendEl.style.color = 'red'; } else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.style.color = 'green'; } else { trendEl.innerHTML = '═'; trendEl.style.color = 'gray'; }
         const allV = rows.map(r => ({ nama: r.c[0]?.v || '-', kelas: r.c[1]?.v || '-', hal: r.c[2]?.v || '-', poin: r.c[3]?.v || '-', tgl: r.c[4]?.f || r.c[4]?.v || '-', date: parseDate(r.c[4]?.f || r.c[4]?.v) })).filter(r => r.date).sort((a,b) => b.date - a.date);
-        let html = ''; if (allV.length === 0) html = '<tr><td colspan="5" class="text-muted">Tidak ada data</td></tr>';
-        else allV.forEach(r => { html += `<tr><td class="fw-bold">${r.nama}</td><td>${r.kelas}</td><td class="text-uppercase small">${r.hal}</td><td><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td><td class="text-muted small">${r.tgl}</td></tr>`; });
-        document.getElementById('tableContent').innerHTML = html; renderChart(dailyData);
+        
+        // --- BAGIAN INI SUDAH DIPERBAIKI SYNTAX-NYA ---
+        let html = ''; 
+        if (allV.length === 0) {
+            html = '<tr><td colspan="5" class="text-muted">Tidak ada data</td></tr>';
+        } else {
+            // Membatasi tabel maksimal 2 baris saja
+            const dataTerbaru = allV.slice(0, 2);
+            dataTerbaru.forEach(r => { 
+                html += `<tr><td class="fw-bold">${r.nama}</td><td>${r.kelas}</td><td class="text-uppercase small">${r.hal}</td><td><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td><td class="text-muted small">${r.tgl}</td></tr>`; 
+            });
+        }
+        document.getElementById('tableContent').innerHTML = html; 
+        renderChart(dailyData);
+        // ----------------------------------------------
+        
       } catch (e) { console.error('Error:', e); }
     }
 

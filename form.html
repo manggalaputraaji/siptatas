@@ -6,9 +6,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <!-- Tambahan CDN SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     /* SIDEBAR & CONTENT WIDTH ADJUSTMENT */
-    .sidebar-container { width: 350px !important; }
+    .sidebar-container { width: 350px !important; position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000; background: #fff; border-right: 4px solid #000; }
     .main-content { margin-left: 390px !important; width: calc(100% - 390px) !important; }
     @media (max-width: 992px) { .main-content { margin-left: 0 !important; width: 100% !important; } }
     
@@ -41,8 +43,21 @@
     input.form-control::placeholder { color: #aaa; font-weight: 600; }
 
     body.no-scroll { 
-  overflow: hidden !important; 
-}
+      overflow: hidden !important; 
+    }
+    
+    /* Memastikan font SweetAlert cocok dengan style LEXACORE */
+    .swal2-popup { font-family: 'Inter', sans-serif !important; border: 4px solid #000 !important; border-radius: 20px !important; }
+    .swal2-confirm { font-weight: 800 !important; border-radius: 10px !important; background-color: #000 !important; color: #fff !important; }
+    
+    /* ANIMASI NOTIF MELUNCUR DARI ATAS */
+    @keyframes slideDownAlert {
+      0% { transform: translateY(-100%); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    .swal-slide-down {
+      animation: slideDownAlert 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+    }
   </style>
 </head>
 <body style="background-color: #fff; overflow-x: hidden;">
@@ -74,7 +89,6 @@
 
   <div class="main-content">
     <h1 style="font-weight: 900; font-size: 60px; margin-bottom: 10px; text-transform: uppercase;">INPUT DATA PELANGGAR</h1>
-    <p class="text-muted fw-bold mb-5Subtitle">MASUKKAN DETAIL PELANGGARAN SISWA SECARA LENGKAP</p>
 
     <div class="row g-5 flex-lg-nowrap">
       
@@ -146,7 +160,7 @@
   </div>
 
   <script>
-    /* Logic Script Utuh Tanpa Pangkasan[cite: 3, 5] */
+    /* Logic Script Utuh Tanpa Pangkasan */
     (function(){
       if (window.__lexacore_form_init) return;
       window.__lexacore_form_init = true;
@@ -182,10 +196,38 @@
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(data)
             });
-            alert('BERHASIL!');
+            
+            // --- ALERT SUCCESS (SWEETALERT2) ---
+            Swal.fire({
+              position: "top",
+              icon: "success",
+              title: "BERHASIL!",
+              text: "Data pelanggaran telah disimpan.",
+              showConfirmButton: false,
+              timer: 1500,
+              backdrop: "rgba(0,0,0,0.7)", /* Latar belakang agak dark */
+              showClass: {
+                popup: 'swal-slide-down' /* Efek turun dari atas */
+              }
+            });
+            
             e.target.reset();
           } catch (err) {
-            alert('ERROR: Gagal terhubung ke Database!');
+            
+            // --- ALERT ERROR (SWEETALERT2) ---
+            Swal.fire({
+              position: "top",
+              icon: "error",
+              title: "GAGAL!",
+              text: "Gagal terhubung ke Database. Periksa koneksimu.",
+              showConfirmButton: true,
+              confirmButtonText: "Tutup",
+              backdrop: "rgba(0,0,0,0.7)", /* Latar belakang agak dark */
+              showClass: {
+                popup: 'swal-slide-down' /* Efek turun dari atas */
+              }
+            });
+            
           } finally {
             btn.innerText = originalText; 
             btn.disabled = false;

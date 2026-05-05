@@ -6,21 +6,56 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    .sidebar-container { width: 350px !important; }
-    .main-content { margin-left: 390px !important; width: calc(100% - 390px) !important; }
-    @media (max-width: 992px) { .main-content { margin-left: 0 !important; width: 100% !important; } }
+    /* SIDEBAR & MAIN CONTENT */
+    .sidebar-container { width: 350px !important; position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000; background: #fff; border-right: 4px solid #000; }
+    .main-content { margin-left: 390px !important; width: calc(100% - 390px) !important; padding-bottom: 40px; }
+    @media (max-width: 992px) { 
+      .sidebar-container { transform: translateX(-100%); transition: transform 0.3s ease; }
+      .sidebar-container.active { transform: translateX(0); }
+      .main-content { margin-left: 0 !important; width: 100% !important; padding-top: 100px !important; } 
+    }
     
-    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow-x: hidden; }
     @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
     
-    .box-bawah { border: 4px solid #000 !important; border-radius: 28px !important; }
-    .table-responsive { border: 4px solid #000 !important; border-radius: 20px !important; }
-    input.form-control { border: 4px solid #000 !important; border-radius: 15px !important; }
+    /* NEO-BRUTALISM BOXES */
+    .box-tebal { border: 4px solid #000 !important; border-radius: 28px !important; padding: 25px !important; background: #fff; box-shadow: 0 6px 0 rgba(0,0,0,0.1); }
+    .table-container { border: 4px solid #000 !important; border-radius: 20px !important; background: #fff; padding: 0; overflow: hidden; }
+    input.form-control { border: 4px solid #000 !important; border-radius: 15px !important; font-weight: 800; padding: 15px; }
 
-    body.no-scroll { 
-  overflow: hidden !important; 
-}
+    /* TABLE SCROLL & SORTING */
+    .table-scroll-wrapper { max-height: 300px; overflow-y: auto; } 
+    .table th { cursor: pointer; user-select: none; transition: background 0.2s; }
+    .table th:hover { background-color: #515151; }
+    .sort-icon { font-size: 14px; opacity: 0.5; margin-left: 5px; }
+    .table th.active .sort-icon { opacity: 1; }
+
+    /* PAGINATION (SUDAH DIUPDATE) */
+    .pagination-container { display: flex; justify-content: center; gap: 10px; padding: 10px; background: #fafafa; border-top: 4px solid #000; flex-wrap: wrap; align-items: center; }
+    .page-btn { 
+      border: 2px solid #000;
+      background: #fff; 
+      font-weight: 600;
+      font-size: 14px;
+      padding: 5px 5px;
+      border-radius: 8px; 
+      cursor: pointer; 
+      transition: all 0.2s ease; 
+    }
+    .page-btn:hover:not(:disabled):not(.active) { transform: translateY(-3px); box-shadow: 0 4px 0 #000; background: #e9e9e9; }
+    .page-btn.active { background: #000; color: #fff; cursor: default; }
+    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* FUNNEL DROPDOWN */
+    .filter-dropdown { position: absolute; top: 60px; right: 25px; background: #fff; border: 4px solid #000; border-radius: 15px; z-index: 100; display: none; box-shadow: 0 6px 0 rgba(0,0,0,0.15); overflow: hidden; }
+    .filter-dropdown.show { display: block; }
+    .filter-option { padding: 12px 20px; font-weight: 800; cursor: pointer; border-bottom: 2px solid ww#eee; }
+    .filter-option:last-child { border-bottom: none; }
+    .filter-option:hover { background: #d2d2d2; }
+
+    body.no-scroll { overflow: hidden !important; }
   </style>
 </head>
 <body>
@@ -37,7 +72,7 @@
       <div class="profile-box" style="padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.2);">
         <img id="fotoSiswa" src="" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
         <div style="flex: 1; word-break: break-word;">
-          <div id="adminName" style="font-size: 24px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN NAME</div>
+          <div id="adminName" style="font-size: 20px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN NAME</div>
           <div style="font-size: 13px; margin-top: 8px; font-weight: 800; color: #000; opacity: 0.8; text-transform: uppercase;">Administrator</div>
         </div>
       </div>
@@ -48,15 +83,75 @@
   </div>
 
   <div class="main-content">
-    <h1 style="font-weight: 900; font-size: 60px; margin-bottom: 10px; text-transform: uppercase;">DATABASE PELANGGAR</h1>
-    <p class="text-muted fw-bold mb-5">SELURUH DATA REKAPITULASI SISWA</p>
-    <div class="mb-4"><input type="text" id="searchInput" class="form-control" placeholder="CARI NAMA SISWA..." style="padding: 15px; font-weight: 800;"></div>
-    <div class="box-bawah" style="min-height: 500px;">
-      <div class="table-responsive">
-        <table class="table text-center align-middle">
-          <thead><tr><th>NAMA</th><th>KELAS</th><th>PELANGGARAN</th><th class="col-poin">POIN</th><th>TANGGAL</th></tr></thead>
-          <tbody id="databaseContent"><tr><td colspan="5">Tarik data...</td></tr></tbody>
+    <h1 style="font-weight: 900; font-size: 54px; margin-bottom: 20px; text-transform: uppercase;">DATABASE PELANGGAR</h1>
+    
+    <!-- GRID ATAS: DONUT CHART & TOTAL PELANGGARAN -->
+    <div class="row g-4 mb-4 align-items-stretch">
+      <!-- KIRI: Donut & YoY -->
+      <div class="col-12 col-xl-6 d-flex">
+        <div class="box-tebal w-100 d-flex flex-wrap align-items-center">
+          <div style="width: 60%; position: relative; height: 220px;">
+            <canvas id="donutChart"></canvas>
+          </div>
+          <div style="width: 40%; text-align: center;">
+            <h5 class="fw-bolder">TAHUN LALU</h5>
+            <h1 id="yoyLalu" style="font-weight: 900; font-size: 48px;">0</h1>
+            <hr style="border-top: 4px solid #000; opacity: 1; margin: 15px 0;">
+            <h5 class="fw-bolder">TAHUN INI</h5>
+            <h1 style="font-weight: 900; font-size: 48px;"><span id="yoyIni">0</span> <span id="yoyIcon" style="font-size: 30px;"></span></h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- KANAN: Total Dinamis & Funnel -->
+      <div class="col-12 col-xl-6 d-flex">
+        <div class="box-tebal w-100 position-relative d-flex flex-column justify-content-center">
+          <div class="d-flex justify-content-between align-items-start">
+            <h4 class="fw-bolder" style="font-size: 35px;">TOTAL SEMUA PELANGGARAN</h4>
+            <svg id="filterBtn" style="cursor:pointer; width:30px; height:30px;" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+          </div>
+          <p id="totalLabel" style="font-size: 22px; margin-top: -5px;">pertahun</p>
+          <div style="display: flex; align-items: baseline; gap: 15px;">
+            <h1 style="font-weight: 900; font-size: 70px; margin: 0; line-height: 1;"><span id="totalAngka">0</span> <span style="font-size: 40px;">SISWA</span></h1>
+            <span id="totalTrend" style="font-size: 40px; color: green;">▼</span>
+          </div>
+
+          <!-- Dropdown Filter -->
+          <div id="filterDropdown" class="filter-dropdown">
+            <div class="filter-option" data-view="perminggu">Per Minggu</div>
+            <div class="filter-option" data-view="perbulan">Per Bulan</div>
+            <div class="filter-option" data-view="pertahun">Per Tahun</div>
+            <div class="filter-option" data-view="keseluruhan">Keseluruhan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-4"><input type="text" id="searchInput" class="form-control" placeholder="CARI NAMA SISWA..."></div>
+    
+    <!-- BOX BAWAH: TABEL -->
+    <div class="table-container">
+      <div class="table-scroll-wrapper">
+        <table class="table text-center align-middle mb-0" style="border-collapse: collapse;">
+          <thead style="position: sticky; top: 0; z-index: 10;">
+            <tr style="background-color: #000; color: #fff;">
+              <th onclick="sortTable('nama')">NAMA <span class="sort-icon" id="icon-nama">↕</span></th>
+              <th>KELAS</th>
+              <th>PELANGGARAN</th>
+              <th onclick="sortTable('poin')">POIN <span class="sort-icon" id="icon-poin">↕</span></th>
+              <th onclick="sortTable('tgl')">TANGGAL <span class="sort-icon" id="icon-tgl">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="databaseContent">
+            <tr><td colspan="5" style="padding: 30px;">Menarik data dari Sheets...</td></tr>
+          </tbody>
         </table>
+      </div>
+      <!-- PAGINASI SELALU STANDBY -->
+      <div id="pagination" class="pagination-container">
+        <!-- Tombol halaman digenerate JS -->
       </div>
     </div>
   </div>
@@ -64,38 +159,299 @@
   <script>
     const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
     const url = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json`;
+    
     let allData = [];
+    let currentData = [];
+    let donutChart = null;
+
+    // STATE TABEL
+    let currentPage = 1;
+    const itemsPerPage = 25;
+    let sortCol = '';
+    let sortAsc = true;
+
+    // STATE FILTER KANAN
+    let currentTotalView = 'pertahun';
+
+    function parseDate(dStr) {
+      if(!dStr)return null; if(dStr instanceof Date)return dStr;
+      let d=Date.parse(String(dStr).replace(/,/g,'')); if(!isNaN(d))return new Date(d);
+      const p=String(dStr).split(/[\/\s:]+/); if(p.length>=3){let day=parseInt(p[0]),month=parseInt(p[1]),year=parseInt(p[2]); if(year<1000)year+=2000; if(month > 12)[day,month]=[month,day]; return new Date(year,month-1,day);}
+      return new Date(dStr);
+    }
+
     async function fetchDatabase() {
       try {
         const res = await fetch(url); const text = await res.text(); const json = JSON.parse(text.substr(47).slice(0, -2));
-        allData = json.table.rows; renderTable(allData);
-      } catch (e) { console.error("Error:", e); }
+        const rawRows = json.table.rows || [];
+        
+        allData = rawRows.map(r => {
+          const dateObj = parseDate(r.c[4]?.f || r.c[4]?.v);
+          return {
+            nama: r.c[0]?.v || '-',
+            kelas: r.c[1]?.v || '-',
+            hal: r.c[2]?.v || '-',
+            poin: r.c[3]?.v || '-',
+            tglStr: r.c[4]?.f || r.c[4]?.v || '-',
+            date: dateObj,
+            timestamp: dateObj ? dateObj.getTime() : 0
+          };
+        }).filter(r => r.timestamp !== 0);
+
+        allData.sort((a,b) => b.timestamp - a.timestamp);
+        currentData = [...allData];
+
+        processDonutAndYoY(allData);
+        updateTotalCard(allData);
+        renderTable();
+        renderPagination();
+
+      } catch (e) { console.error("Error:", e); document.getElementById('databaseContent').innerHTML = `<tr><td colspan="5">Gagal memuat data</td></tr>`; }
     }
-    function renderTable(rows) {
-      let html = ''; rows.forEach(r => {
-        const nama = r.c[0]?.v || '-'; const kelas = r.c[1]?.v || '-'; const hal = r.c[2]?.v || '-'; const poin = r.c[3]?.v || '-'; const tgl = r.c[4]?.f || r.c[4]?.v || '-';
-        html += `<tr><td class="fw-bold text-uppercase">${nama}</td><td>${kelas}</td><td class="text-start small">${hal}</td><td class="col-poin"><span class="badge ${getPoinColor(poin)} p-2 px-3">${poin}</span></td><td class="text-muted small">${tgl}</td></tr>`;
+
+    // --- LOGIKA GRID ATAS (DONUT & YOY) ---
+    function processDonutAndYoY(data) {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      const lastYear = currentYear - 1;
+
+      let countLalu = 0;
+      let countIni = 0;
+      const monthCounts = new Array(12).fill(0);
+
+      data.forEach(d => {
+        const y = d.date.getFullYear();
+        if(y === lastYear) countLalu++;
+        if(y === currentYear) {
+          countIni++;
+          monthCounts[d.date.getMonth()]++;
+        }
       });
+
+      document.getElementById('yoyLalu').innerText = countLalu;
+      document.getElementById('yoyIni').innerText = countIni;
+      const yoyIcon = document.getElementById('yoyIcon');
+      
+      if (countIni > countLalu) { yoyIcon.innerHTML = '▲'; yoyIcon.style.color = 'red'; }
+      else if (countIni < countLalu) { yoyIcon.innerHTML = '▼'; yoyIcon.style.color = 'green'; }
+      else { yoyIcon.innerHTML = '═'; yoyIcon.style.color = 'gray'; }
+
+      const ctx = document.getElementById('donutChart').getContext('2d');
+      if(donutChart) donutChart.destroy();
+      
+      const chartColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#E7E9ED', '#8A2BE2', '#00FF7F', '#DC143C', '#00CED1', '#FFD700'];
+      
+      donutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'],
+          datasets: [{ data: monthCounts, backgroundColor: chartColors, borderWidth: 0 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '55%',
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    // --- LOGIKA FILTER TOTAL DINAMIS ---
+    function updateTotalCard(data) {
+      const now = new Date();
+      let count = 0;
+      let prevCount = 0; // Tambahan untuk menghitung data periode sebelumnya
+
+      const currentYear = now.getFullYear();
+      const currentMonth = now.getMonth();
+
+      data.forEach(d => {
+        const itemYear = d.date.getFullYear();
+        const itemMonth = d.date.getMonth();
+
+        if (currentTotalView === 'keseluruhan') { 
+          count++; 
+        }
+        else if (currentTotalView === 'pertahun') { 
+          if(itemYear === currentYear) count++; 
+          else if(itemYear === currentYear - 1) prevCount++; // Hitung tahun lalu
+        }
+        else if (currentTotalView === 'perbulan') { 
+          // Hitung bulan ini
+          if(itemYear === currentYear && itemMonth === currentMonth) count++; 
+          
+          // Hitung bulan lalu
+          let prevMonthYear = currentYear;
+          let prevMonth = currentMonth - 1;
+          if (prevMonth < 0) { prevMonth = 11; prevMonthYear--; } // Kalau Januari, mundur ke Desember tahun lalu
+          if (itemYear === prevMonthYear && itemMonth === prevMonth) prevCount++;
+        }
+        else if (currentTotalView === 'perminggu') {
+          const diffTime = now - d.date; // Hitung selisih waktu
+          const diffDays = diffTime / (1000 * 60 * 60 * 24); 
+          if(diffDays >= 0 && diffDays <= 7) count++; // 7 hari terakhir
+          else if(diffDays > 7 && diffDays <= 14) prevCount++; // 7 hari sebelumnya
+        }
+      });
+
+      // Update angka dan label teks
+      document.getElementById('totalAngka').innerText = count;
+      document.getElementById('totalLabel').innerText = currentTotalView;
+
+      // Update Ikon Tren
+      const trendEl = document.getElementById('totalTrend');
+      
+      if (currentTotalView === 'keseluruhan') {
+        trendEl.style.display = 'none'; // Sembunyikan ikon kalau view 'keseluruhan'
+      } else {
+        trendEl.style.display = 'inline'; // Munculkan kembali ikonnya
+        
+        // Logika perbandingan
+        if (count > prevCount) {
+          trendEl.innerHTML = '▲';
+          trendEl.style.color = 'red';
+        } else if (count < prevCount) {
+          trendEl.innerHTML = '▼';
+          trendEl.style.color = 'green';
+        } else {
+          trendEl.innerHTML = '═';
+          trendEl.style.color = 'gray'; // Akan muncul abu-abu untuk kasus 2 vs 2
+        }
+      }
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', (e) => {
+      e.stopPropagation(); document.getElementById('filterDropdown').classList.toggle('show');
+    });
+    document.addEventListener('click', () => { document.getElementById('filterDropdown').classList.remove('show'); });
+    document.querySelectorAll('.filter-option').forEach(opt => {
+      opt.addEventListener('click', (e) => {
+        currentTotalView = e.target.getAttribute('data-view');
+        updateTotalCard(allData);
+      });
+    });
+
+    // --- LOGIKA SORTING TABEL ---
+    function getPoinWeight(poin) {
+      const p = poin.toLowerCase();
+      if(p === 'berat') return 3; if(p === 'sedang') return 2; if(p === 'ringan') return 1; return 0;
+    }
+
+    window.sortTable = function(col) {
+      if(sortCol === col) { sortAsc = !sortAsc; } 
+      else { sortCol = col; sortAsc = true; }
+
+      document.querySelectorAll('.sort-icon').forEach(icon => icon.innerText = '↕');
+      document.querySelectorAll('.table th').forEach(th => th.classList.remove('active'));
+      
+      const activeIcon = document.getElementById(`icon-${col}`);
+      activeIcon.parentElement.classList.add('active');
+      activeIcon.innerText = sortAsc ? '⬆' : '⬇';
+
+      currentData.sort((a, b) => {
+        let valA, valB;
+        if(col === 'nama') { valA = a.nama.toLowerCase(); valB = b.nama.toLowerCase(); }
+        else if(col === 'poin') { valA = getPoinWeight(a.poin); valB = getPoinWeight(b.poin); }
+        else if(col === 'tgl') { valA = a.timestamp; valB = b.timestamp; }
+
+        if (valA < valB) return sortAsc ? -1 : 1;
+        if (valA > valB) return sortAsc ? 1 : -1;
+        return 0;
+      });
+
+      currentPage = 1; 
+      renderTable();
+      renderPagination();
+    };
+
+    // --- LOGIKA RENDER TABEL & PAGINASI ---
+    function getPoinColor(p) { if (p === 'Ringan') return 'bg-success'; if (p === 'Sedang') return 'bg-warning text-dark'; if (p === 'Berat') return 'bg-danger'; return 'bg-secondary'; }
+    
+    function renderTable() {
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      const paginatedData = currentData.slice(start, end);
+
+      let html = ''; 
+      if(paginatedData.length === 0) { html = '<tr><td colspan="5" class="py-4 fw-bold">Data tidak ditemukan</td></tr>'; }
+      else {
+        paginatedData.forEach(r => {
+          html += `<tr>
+            <td class="fw-bold text-uppercase">${r.nama}</td>
+            <td>${r.kelas}</td>
+            <td class="text-start small">${r.hal}</td>
+            <td class="col-poin"><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td>
+            <td class="text-muted small fw-bold">${r.tglStr}</td>
+          </tr>`;
+        });
+      }
       document.getElementById('databaseContent').innerHTML = html;
     }
-    function getPoinColor(p) { if (p === 'Ringan') return 'bg-success'; if (p === 'Sedang') return 'bg-warning text-dark'; if (p === 'Berat') return 'bg-danger'; return 'bg-secondary'; }
+
+    function renderPagination() {
+      // Pastikan minimal ada 1 halaman yang muncul walaupun datanya 0
+      const totalPages = Math.max(1, Math.ceil(currentData.length / itemsPerPage));
+      const pagContainer = document.getElementById('pagination');
+      pagContainer.innerHTML = '';
+
+      // Fungsi pembantu buat bikin tombol biar kodenya rapi
+      const createBtn = (text, isDisabled, onClick, isActive = false) => {
+        const btn = document.createElement('button');
+        btn.className = `page-btn ${isActive ? 'active' : ''}`;
+        btn.innerHTML = text;
+        btn.disabled = isDisabled;
+        if (!isDisabled && !isActive) btn.onclick = onClick;
+        return btn;
+      };
+
+      // Tombol First (<<) dan Prev (<)
+      pagContainer.appendChild(createBtn('&laquo;&laquo;', currentPage === 1, () => { currentPage = 1; updateTableAndView(); }));
+      pagContainer.appendChild(createBtn('&laquo;', currentPage === 1, () => { currentPage--; updateTableAndView(); }));
+
+      // Tombol Deretan Halaman (Range: 1-25, 26-50, dst)
+      for(let i = 1; i <= totalPages; i++) {
+        const startNum = ((i - 1) * itemsPerPage) + 1;
+        const endNum = i * itemsPerPage; // Selalu dirender pakem 25, 50, 75
+        
+        const label = `${startNum}-${endNum}`;
+        pagContainer.appendChild(createBtn(label, false, () => { currentPage = i; updateTableAndView(); }, i === currentPage));
+      }
+
+      // Tombol Next (>) dan Last (>>)
+      pagContainer.appendChild(createBtn('&raquo;', currentPage === totalPages, () => { currentPage++; updateTableAndView(); }));
+      pagContainer.appendChild(createBtn('&raquo;&raquo;', currentPage === totalPages, () => { currentPage = totalPages; updateTableAndView(); }));
+    }
+
+    function updateTableAndView() {
+      renderTable();
+      renderPagination();
+    }
+
+    // FITUR SEARCH
     document.getElementById('searchInput').addEventListener('input', function(e) {
       const keyword = e.target.value.toLowerCase();
-      const filtered = allData.filter(r => { const nama = r.c[0]?.v ? r.c[0].v.toLowerCase() : ''; return nama.includes(keyword); });
-      renderTable(filtered);
+      currentData = allData.filter(r => r.nama.toLowerCase().includes(keyword));
+      currentPage = 1; // Reset ke hal 1 saat searching
+      
+      sortCol = ''; 
+      document.querySelectorAll('.sort-icon').forEach(icon => icon.innerText = '↕');
+      document.querySelectorAll('.table th').forEach(th => th.classList.remove('active'));
+
+      renderTable();
+      renderPagination();
     });
-    window.onload = () => { document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; document.getElementById('fotoSiswa').src = localStorage.getItem('fotoProfil') || ''; fetchDatabase(); };
-    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+    window.onload = () => { 
+      document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; 
+      document.getElementById('fotoSiswa').src = localStorage.getItem('fotoProfil') || ''; 
+      fetchDatabase(); 
+    };
     
-    /* --- INI YANG DIUPDATE --- */
+    function logout() { localStorage.clear(); window.location.href = 'index.html'; }
+
+    // Toggle Sidebar Mobile
     (function(){
       const toggle = document.querySelector('.mobile-nav-toggle'); const sidebar = document.querySelector('.sidebar-container');
       if (!toggle || !sidebar) return; 
-      toggle.addEventListener('click', function(e){ 
-        e.stopPropagation(); 
-        sidebar.classList.toggle('active'); 
-        document.body.classList.toggle('no-scroll'); /* Kunci layar pas sidebar kebuka */
-      });
+      toggle.addEventListener('click', function(e){ e.stopPropagation(); sidebar.classList.toggle('active'); document.body.classList.toggle('no-scroll'); });
     })();
   </script>
 </body>

@@ -124,7 +124,7 @@ body {
 .box-statistik, .box-grafik, .box-bawah {
   border: 3px solid #000;
   border-radius: 28px;
-  padding: 28px;
+  padding: 26px;
   background: #fff;
 }
 .box-statistik { flex: 1; }
@@ -255,7 +255,7 @@ input.form-control, textarea.form-control, .form-select, .custom-input, #searchI
 /* --- APPEND: minimal fixes --- */
 /* Minimal spacing + table responsiveness fixes (append only) */
 .stats-row { gap: 28px; align-items: stretch; margin-bottom: 28px; }
-.box-statistik, .box-grafik, .box-bawah { padding: 26px 28px; }
+.box-statistik, .box-grafik, .box-bawah { padding: 24px 26px; }
 .main-content { padding: 40px 28px; }
 
 /* Table responsiveness: allow horizontal scroll on small screens and wrap long text */
