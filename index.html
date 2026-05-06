@@ -67,7 +67,7 @@
     </style>
 </head>
 <body>
-    <img src="logo.png" style="width: 200px; margin-bottom: 30px;">
+    <img src="logo.png" style="width: 200px; margin-bottom: 30px;" alt="Logo">
     <div class="login-card">
         <form id="loginForm">
             <div class="mb-3">
@@ -108,8 +108,10 @@
                 });
 
                 if (foundAcc) {
+                    // PERBAIKAN: SEKARANG SEMUANYA DISIMPAN LENGKAP KE MEMORI BROWSER
+                    localStorage.setItem('siswaLogin', userVal); // Wajib disimpan biar profile.html gak bingung
                     localStorage.setItem('namaLengkap', foundAcc.c[0] ? foundAcc.c[0].v : userVal);
-                    localStorage.setItem('fotoProfil', (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : 'https://via.placeholder.com/45x60');
+                    localStorage.setItem('fotoProfil', (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : 'https://via.placeholder.com/85x110');
                     
                     // Langsung masuk ke dashboard tanpa alert
                     window.location.href = 'dashboard.html';
