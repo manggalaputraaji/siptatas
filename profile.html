@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>LEXACORE | Pengaturan Akun</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css"> 
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    /* FIX LAYOUT INTACT: SIDEBAR & MAIN CONTENT */
+    .sidebar-container { 
+      width: 350px !important; 
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+      background: #fff;
+      border-right: 4px solid #000;
+    } 
+
+    .main-content { 
+      margin-left: 390px !important; 
+      width: calc(100% - 350px) !important; 
+      padding-bottom: 40px !important; 
+    }
+
+    /* RESPONSIVE: BREAKPOINT UNTUK MOBILE */
+    @media (max-width: 992px) { 
+      .sidebar-container { 
+        position: fixed; 
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        height: 100% !important;
+        bottom: 0 !important;
+        background-color: #fff !important;
+        overflow-y: auto !important;
+      }
+      .sidebar-container.active { transform: translateX(0); }
+      .main-content { 
+        margin-left: 0 !important; 
+        width: 100% !important; 
+        min-width: 100% !important;
+        padding-top: 100px !important; 
+      } 
+      h1 { margin-top: 20px !important; }
+    }
+
+    /* PAGE TRANSITION */
+    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow-x: hidden; }
+    @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
+
+    /* BOX PENGATURAN - DIPANJANGIN FULL (max-width: 100%) */
+    .box-profile { 
+        border: 4px solid #000; 
+        border-radius: 28px; 
+        padding: 40px; 
+        background: #fff; 
+        width: 100%;
+        max-width: 100%; /* SEKARANG BOXNYA FULL MENGIKUTI LAYAR */
+        box-shadow: 10px 10px 0 #000;
+    }
+
+    .custom-input { 
+        border: 4px solid #000 !important; 
+        border-radius: 14px !important; 
+        font-weight: 700 !important; 
+        padding: 15px !important; 
+        font-size: 18px !important;
+    }
+    
+    /* Area Foto Profil */
+    .upload-container { 
+        position: relative; 
+        width: 150px; 
+        height: 180px; 
+        margin: 0 auto 30px; 
+        cursor: pointer; 
+        transition: transform 0.2s;
+    }
+    .upload-container:hover { transform: scale(1.05); }
+    .preview-img { 
+        width: 100%; 
+        height: 100%; 
+        border: 4px solid #000; 
+        border-radius: 18px; 
+        object-fit: cover; 
+        background: #f0f0f0; 
+    }
+    .upload-overlay { 
+        position: absolute; 
+        bottom: 0; 
+        background: rgba(0,0,0,0.7); 
+        width: 100%; 
+        color: #fff; 
+        font-size: 12px; 
+        padding: 8px 0; 
+        border-radius: 0 0 14px 14px; 
+        font-weight: bold; 
+    }
+
+    #loadingStatus { font-size: 16px; font-weight: 900; color: #007bff; display: none; margin-bottom: 20px; text-align: center; }
+
+    /* SweetAlert Style */
+    .swal2-popup { border: 4px solid #000 !important; border-radius: 20px !important;}
+    @keyframes slideDownAlert { 0% { transform: translateY(-100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+    .swal-slide-down { animation: slideDownAlert 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important; }
+    .swal-border-success { border-color: #28a745 !important; }
+    
+    body.no-scroll { overflow: hidden !important; }
+  </style>
+</head>
+<body>
+
+  <!-- TOMBOL HAMBURGER MOBILE -->
+  <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
+
+  <div class="sidebar-container">
+    <div class="nav-menu">
+      <img src="logo.png" class="sidebar-logo" alt="Logo">
+      <a href="dashboard.html" class="nav-link-custom" style="border-width: 4px !important;">HOME DASHBOARD</a>
+      <a href="form.html" class="nav-link-custom" style="border-width: 4px !important;">INPUT PELANGGARAN</a>
+      <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
+    </div>
+
+    <!-- PROFILE BOX ID CARD -->
+    <div class="profile-section">
+      <div class="profile-box" style="position: relative; padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.2);">
+          <img id="sidebarFotoSiswa" src="https://via.placeholder.com/85x110" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
+          <div style="flex: 1; word-break: break-word;">
+              <div id="sidebarAdminName" style="font-size: 20px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN</div>
+              <div style="font-size: 13px; margin-top: 8px; font-weight: 800; color: #000; opacity: 0.8; text-transform: uppercase;">Administrator</div>
+          </div>
+      </div>
+      <button onclick="logout()" style="width: 100%; margin-top: 15px; background: #ff2a2a; color: #fff; border: 4px solid #000; border-radius: 14px; padding: 15px; font-size: 20px; font-weight: 900; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; transition: transform 0.1s; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
+          LOGOUT
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h1 style="font-weight: 900; font-size: 60px; text-transform: uppercase; margin-bottom: 40px;">PENGATURAN AKUN</h1>
+    
+    <div class="box-profile">
+      <form id="profileForm">
+        
+        <!-- AREA UPLOAD FOTO -->
+        <div class="upload-container" onclick="document.getElementById('fileInput').click()">
+          <img id="previewFoto" src="" class="preview-img">
+          <div class="upload-overlay text-center">GANTI FOTO</div>
+          <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+        <div id="loadingStatus">MENGUNGGAH KE CLOUD...</div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <label class="fw-bold mb-2">NAMA LENGKAP</label>
+                <input type="text" id="inputNama" class="form-control custom-input" placeholder="Nama Anda" required>
+            </div>
+            <div class="col-md-6 mb-4">
+                <label class="fw-bold mb-2">USERNAME</label>
+                <input type="text" id="inputUser" class="form-control custom-input" placeholder="Username login" required>
+            </div>
+        </div>
+
+        <div class="mb-5">
+            <label class="fw-bold mb-2">PASSWORD BARU</label>
+            <input type="password" id="inputPass" class="form-control custom-input" placeholder="Kosongkan jika tidak ingin mengganti password">
+        </div>
+
+        <div class="d-flex gap-3">
+            <button type="submit" id="btnSimpan" class="btn btn-dark flex-grow-1 custom-input p-3 fw-bold fs-5">SIMPAN PERUBAHAN</button>
+            <button type="button" onclick="window.location.href='dashboard.html'" class="btn btn-outline-dark px-5 border-4 rounded-3 fw-bold">BATAL</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // API KEY MILIK USER
+    const IMGBB_API_KEY = "5188af2b234ee6ea8fe8aa52d76c08f0"; 
+    let finalImageUrl = localStorage.getItem('fotoProfil') || "";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // DATA UNTUK FORM TENGAH
+      const currentNama = localStorage.getItem('namaLengkap') || 'Admin';
+      const currentUser = localStorage.getItem('siswaLogin') || '';
+      
+      document.getElementById('inputNama').value = currentNama;
+      document.getElementById('inputUser').value = currentUser;
+      document.getElementById('previewFoto').src = finalImageUrl || 'https://via.placeholder.com/150x180?text=No+Photo';
+
+      // DATA UNTUK SIDEBAR KIRI (Biar foto dan nama di sidebar juga muncul)
+      document.getElementById('sidebarAdminName').innerText = currentNama; 
+      if (finalImageUrl) document.getElementById('sidebarFotoSiswa').src = finalImageUrl;
+
+      // PROSES UPLOAD IMGBB
+      document.getElementById('fileInput').addEventListener('change', async function() {
+        const file = this.files[0];
+        if (!file) return;
+
+        const loading = document.getElementById('loadingStatus');
+        const btn = document.getElementById('btnSimpan');
+        
+        loading.style.display = "block";
+        btn.disabled = true;
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+            method: "POST",
+            body: formData
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            finalImageUrl = result.data.url;
+            document.getElementById('previewFoto').src = finalImageUrl;
+            loading.innerText = "FOTO SIAP DISIMPAN!";
+            loading.style.color = "#28a745";
+          }
+        } catch (err) {
+          alert("Gagal mengunggah gambar.");
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      // SIMPAN DATA KE LOCALSTORAGE
+      document.getElementById('profileForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        localStorage.setItem('namaLengkap', document.getElementById('inputNama').value);
+        localStorage.setItem('fotoProfil', finalImageUrl); 
+        localStorage.setItem('siswaLogin', document.getElementById('inputUser').value);
+        
+        const newPass = document.getElementById('inputPass').value;
+        if(newPass) localStorage.setItem('userPass', newPass);
+
+        Swal.fire({
+          position: "top",
+          icon: "success",
+          title: "PROFIL BERHASIL DIUPDATE!",
+          showConfirmButton: false,
+          timer: 1500,
+          backdrop: "rgba(0,0,0,0.6)",
+          showClass: { popup: 'swal-slide-down' },
+          customClass: { popup: 'swal-border-success' }
+        }).then(() => {
+          window.location.href = 'dashboard.html';
+        });
+      });
+    });
+
+    // SCRIPT MENU MOBILE (Hamburger Menu)
+    (function initMenuToggle(){
+      const sidebar = document.querySelector('.sidebar-container'); 
+      const toggle = document.querySelector('.mobile-nav-toggle'); 
+      if (!sidebar || !toggle) return; 
+      
+      toggle.addEventListener('click', (e) => { 
+        e.stopPropagation();
+        sidebar.classList.toggle('active'); 
+        document.body.classList.toggle('no-scroll');
+      });
+      
+      document.addEventListener('click', (e) => {
+        if (window.innerWidth <= 992 && sidebar.classList.contains('active')) {
+          if (!sidebar.contains(e.target)) {
+            sidebar.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+          }
+        }
+      });
+    })();
+
+    // FUNGSI LOGOUT
+    window.logout = function(){ 
+        localStorage.clear(); 
+        window.location.href = 'index.html'; 
+    };
+  </script>
+</body>
+</html>
