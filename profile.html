@@ -10,7 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
-    /* FIX LAYOUT INTACT: SIDEBAR & MAIN CONTENT */
     .sidebar-container { 
       width: 350px !important; 
       position: fixed;
@@ -28,7 +27,6 @@
       padding-bottom: 40px !important; 
     }
 
-    /* RESPONSIVE: BREAKPOINT UNTUK MOBILE */
     @media (max-width: 992px) { 
       .sidebar-container { 
         position: fixed; 
@@ -49,18 +47,16 @@
       h1 { margin-top: 20px !important; }
     }
 
-    /* PAGE TRANSITION */
     body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow-x: hidden; }
     @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
 
-    /* BOX PENGATURAN - DIPANJANGIN FULL (max-width: 100%) */
     .box-profile { 
         border: 4px solid #000; 
         border-radius: 28px; 
         padding: 40px; 
         background: #fff; 
         width: 100%;
-        max-width: 100%; /* SEKARANG BOXNYA FULL MENGIKUTI LAYAR */
+        max-width: 100%;
         box-shadow: 10px 10px 0 #000;
     }
 
@@ -72,7 +68,6 @@
         font-size: 18px !important;
     }
     
-    /* Area Foto Profil */
     .upload-container { 
         position: relative; 
         width: 150px; 
@@ -104,7 +99,6 @@
 
     #loadingStatus { font-size: 16px; font-weight: 900; color: #007bff; display: none; margin-bottom: 20px; text-align: center; }
 
-    /* SweetAlert Style */
     .swal2-popup { border: 4px solid #000 !important; border-radius: 20px !important;}
     @keyframes slideDownAlert { 0% { transform: translateY(-100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
     .swal-slide-down { animation: slideDownAlert 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important; }
@@ -115,7 +109,6 @@
 </head>
 <body>
 
-  <!-- TOMBOL HAMBURGER MOBILE -->
   <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
 
   <div class="sidebar-container">
@@ -126,7 +119,6 @@
       <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
     </div>
 
-    <!-- PROFILE BOX ID CARD -->
     <div class="profile-section">
       <div class="profile-box" style="position: relative; padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.2);">
           <img id="sidebarFotoSiswa" src="https://via.placeholder.com/85x110" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
@@ -147,7 +139,6 @@
     <div class="box-profile">
       <form id="profileForm">
         
-        <!-- AREA UPLOAD FOTO -->
         <div class="upload-container" onclick="document.getElementById('fileInput').click()">
           <img id="previewFoto" src="" class="preview-img">
           <div class="upload-overlay text-center">GANTI FOTO</div>
@@ -162,7 +153,8 @@
             </div>
             <div class="col-md-6 mb-4">
                 <label class="fw-bold mb-2">USERNAME</label>
-                <input type="text" id="inputUser" class="form-control custom-input" placeholder="Username login" required>
+                <!-- Input ini bisa diubah -->
+                <input type="text" id="inputUser" class="form-control custom-input" required>
             </div>
         </div>
 
@@ -172,7 +164,7 @@
         </div>
 
         <div class="d-flex gap-3">
-            <button type="submit" id="btnSimpan" class="btn btn-dark flex-grow-1 custom-input p-3 fw-bold fs-5">SIMPAN PERUBAHAN</button>
+            <button type="submit" id="btnSimpan" class="btn btn-dark flex-grow-1 custom-input p-3 fw-bold fs-5">SIMPAN PERMANEN</button>
             <button type="button" onclick="window.location.href='dashboard.html'" class="btn btn-outline-dark px-5 border-4 rounded-3 fw-bold">BATAL</button>
         </div>
       </form>
@@ -180,24 +172,23 @@
   </div>
 
   <script>
-    // API KEY MILIK USER
+    const SCRIPT_URL_PROFILE = "https://script.google.com/macros/s/AKfycbx1oGeWBTXQAi-SF8NVlXfxwAU9WWj2l-ELfVWMldm3jAJI8YFM8UrGhX4lTkmiN_Ti/exec"; 
     const IMGBB_API_KEY = "5188af2b234ee6ea8fe8aa52d76c08f0"; 
+    
     let finalImageUrl = localStorage.getItem('fotoProfil') || "";
+    // Simpan username lama saat halaman pertama kali dimuat
+    let originalUsername = localStorage.getItem('siswaLogin') || '';
 
     document.addEventListener('DOMContentLoaded', () => {
-      // DATA UNTUK FORM TENGAH
       const currentNama = localStorage.getItem('namaLengkap') || 'Admin';
-      const currentUser = localStorage.getItem('siswaLogin') || '';
       
       document.getElementById('inputNama').value = currentNama;
-      document.getElementById('inputUser').value = currentUser;
+      document.getElementById('inputUser').value = originalUsername; // Masukkan ke input form
       document.getElementById('previewFoto').src = finalImageUrl || 'https://via.placeholder.com/150x180?text=No+Photo';
 
-      // DATA UNTUK SIDEBAR KIRI (Biar foto dan nama di sidebar juga muncul)
       document.getElementById('sidebarAdminName').innerText = currentNama; 
       if (finalImageUrl) document.getElementById('sidebarFotoSiswa').src = finalImageUrl;
 
-      // PROSES UPLOAD IMGBB
       document.getElementById('fileInput').addEventListener('change', async function() {
         const file = this.files[0];
         if (!file) return;
@@ -232,33 +223,67 @@
         }
       });
 
-      // SIMPAN DATA KE LOCALSTORAGE
-      document.getElementById('profileForm').addEventListener('submit', (e) => {
+      document.getElementById('profileForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        localStorage.setItem('namaLengkap', document.getElementById('inputNama').value);
-        localStorage.setItem('fotoProfil', finalImageUrl); 
-        localStorage.setItem('siswaLogin', document.getElementById('inputUser').value);
-        
-        const newPass = document.getElementById('inputPass').value;
-        if(newPass) localStorage.setItem('userPass', newPass);
+        const btn = document.getElementById('btnSimpan');
+        btn.disabled = true;
+        btn.innerText = "MENYIMPAN KE DATABASE...";
 
-        Swal.fire({
-          position: "top",
-          icon: "success",
-          title: "PROFIL BERHASIL DIUPDATE!",
-          showConfirmButton: false,
-          timer: 1500,
-          backdrop: "rgba(0,0,0,0.6)",
-          showClass: { popup: 'swal-slide-down' },
-          customClass: { popup: 'swal-border-success' }
-        }).then(() => {
-          window.location.href = 'dashboard.html';
-        });
+        const newUsername = document.getElementById('inputUser').value;
+
+        const payload = {
+          type: "UPDATE_PROFILE",
+          oldUsername: originalUsername, // Kirim username lama buat nyari baris di Sheet
+          newUsername: newUsername,      // Kirim username baru buat ditimpa
+          nama: document.getElementById('inputNama').value,
+          password: document.getElementById('inputPass').value,
+          foto: finalImageUrl
+        };
+
+        try {
+          await fetch(SCRIPT_URL_PROFILE, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(payload)
+          });
+
+          // Update local storage dengan data yang baru
+          localStorage.setItem('namaLengkap', payload.nama);
+          localStorage.setItem('siswaLogin', payload.newUsername); 
+          localStorage.setItem('fotoProfil', payload.foto); 
+          if(payload.password) localStorage.setItem('userPass', payload.password);
+
+          Swal.fire({
+            position: "top",
+            icon: "success",
+            title: "BERHASIL!",
+            text: "Profil tersimpan permanen di Database.",
+            showConfirmButton: false,
+            timer: 2000,
+            backdrop: "rgba(0,0,0,0.6)",
+            showClass: { popup: 'swal-slide-down' },
+            customClass: { popup: 'swal-border-success' }
+          }).then(() => {
+            window.location.href = 'dashboard.html';
+          });
+
+        } catch (error) {
+          Swal.fire({
+            position: "top",
+            icon: "error",
+            title: "GAGAL!",
+            text: "Gagal menyimpan ke Google Sheet.",
+            showConfirmButton: true,
+            backdrop: "rgba(0,0,0,0.6)"
+          });
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "SIMPAN PERMANEN";
+        }
       });
     });
 
-    // SCRIPT MENU MOBILE (Hamburger Menu)
     (function initMenuToggle(){
       const sidebar = document.querySelector('.sidebar-container'); 
       const toggle = document.querySelector('.mobile-nav-toggle'); 
@@ -280,7 +305,6 @@
       });
     })();
 
-    // FUNGSI LOGOUT
     window.logout = function(){ 
         localStorage.clear(); 
         window.location.href = 'index.html'; 
