@@ -4,158 +4,219 @@
   <meta charset="utf-8" />
   <title>LEXACORE | Dashboard Admin</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-    /* FIX LAYOUT INTACT: SIDEBAR & MAIN CONTENT */
-    .sidebar-container { 
-      width: 350px !important; 
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      z-index: 1000;
-      background: #fff;
-      border-right: 4px solid #000;
-    } 
-
-    .main-content { 
-      margin-left: 390px !important; 
-      width: calc(100% - 350px) !important; 
-      padding-bottom: 40px !important; /* Biar paling bawah layar nggak mepet */
-    }
-
-    /* RESPONSIVE: BREAKPOINT UNTUK MOBILE */
-    @media (max-width: 992px) { 
-      .sidebar-container { 
-        position: fixed; 
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        height: 100% !important;
-        bottom: 0 !important;
-        background-color: #fff !important;
-        overflow-y: auto !important;
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "hsl(var(--border))",
+            input: "hsl(var(--input))",
+            ring: "hsl(var(--ring))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+            secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+            destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+            muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+            accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+            popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+            card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+          },
+          borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)" },
+        }
       }
+    }
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    .sidebar-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 40; display: none;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .sidebar-container {
+      transition: transform 0.3s ease;
+      z-index: 50;
+    }
+    @media (max-width: 1024px) {
+      .sidebar-container { transform: translateX(-100%); }
       .sidebar-container.active { transform: translateX(0); }
-      .main-content { 
-        margin-left: 0 !important; 
-        width: 100% !important; 
-        min-width: 100% !important;
-        padding-top: 100px !important; 
-      } 
-      h1 { margin-top: 20px !important; }
     }
-
-    /* PAGE TRANSITION */
-    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow-x: hidden; }
-    @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-
-    /* SKELETON LOADING */
-    .skeleton { background: linear-gradient(90deg, #e5e5e5 25%, #f4f4f4 50%, #e5e5e5 75%); background-size: 200% 100%; animation: skeletonLoading 1.5s infinite linear; border-radius: 6px; color: transparent !important; border-color: transparent !important; user-select: none; display: inline-block; }
-    @keyframes skeletonLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-    /* BOLD CONTAINERS */
-    .box-statistik, .box-grafik, .box-bawah { 
-      border: 4px solid #000 !important; 
-      border-radius: 28px !important; 
-      padding: 18px !important;
-      background: #fff;
-    }
-    
-    .stat-label { font-weight: 800; font-size: 16px; text-transform: uppercase; }
-    .stat-number { font-size: 68px; font-weight: 900; line-height: 1; margin: 14px 0; }
-
-    .box-grafik { display: flex; flex-direction: column; min-height: auto !important; }
-    .chart-container { position: relative; width: 100%; height: 150px; flex: 1; }
-    .table-responsive { border: 4px solid #000 !important; border-radius: 20px !important; }
-
-    @media (max-width: 767.98px) { 
-      .chart-container { height: auto; min-height: 250px; } 
-      h1 { font-size: 38px !important; } 
-      .stat-number { font-size: 54px !important; }
-    }
-
-    body.no-scroll { overflow: hidden !important; }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex w-full">
 
-  <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
 
-  <div class="sidebar-container">
-    <div class="nav-menu">
-      <img src="logo.png" class="sidebar-logo" alt="Logo">
-      <a href="dashboard.html" class="nav-link-custom active" style="border-width: 4px !important;">HOME DASHBOARD</a>
-      <a href="form.html" class="nav-link-custom" style="border-width: 4px !important;">INPUT PELANGGARAN</a>
-      <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
-    </div>
-
-    <div class="profile-section">
-    <div class="profile-box" style="position: relative; padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.2);">
-        <a href="profile.html" style="position: absolute; top: 10px; right: 10px; background: #fff; border: 3px solid #000; border-radius: 50%; width: 28px; height: 28px; display: flex; justify-content: center; align-items: center; text-decoration: none; color: #000; z-index: 10;">
-            <span style="font-size: 14px;">✎</span>
-        </a>
-        <img id="fotoSiswa" src="https://via.placeholder.com/85x110" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
-        <div style="flex: 1; word-break: break-word;">
-            <div id="adminName" style="font-size: 20px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN</div>
-            <div style="font-size: 13px; margin-top: 8px; font-weight: 800; color: #000; opacity: 0.8; text-transform: uppercase;">Administrator</div>
-        </div>
-    </div>
-      <button onclick="logout()" style="width: 100%; margin-top: 15px; background: #ff2a2a; color: #fff; border: 4px solid #000; border-radius: 14px; padding: 15px; font-size: 20px; font-weight: 900; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; transition: transform 0.1s; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
-        LOGOUT
+  <header class="lg:hidden fixed top-0 left-0 right-0 h-14 bg-background border-b z-30 flex items-center px-4 justify-between">
+    <div class="flex items-center gap-2">
+      <button id="mobileNavToggle" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 -ml-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
       </button>
+      <span class="font-semibold text-sm tracking-tight">LEXACORE</span>
     </div>
-  </div>
+    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover">
+  </header>
 
-  <div class="main-content">
-    <h1 style="font-weight: 900; font-size: 60px; text-transform: uppercase; margin-bottom: 40px;">DASHBOARD ADMIN</h1>
 
-    <div class="row g-4 align-items-stretch">
-      <div class="col-12 col-lg-4 d-flex">
-        <div class="box-statistik w-100">
-          <span class="stat-label">KEMARIN</span>
-          <div id="countLalu" class="stat-number skeleton" style="color: #bbb; min-width: 40px;">0</div>
-          <hr style="border: 2px solid #000; opacity: 1; margin: 10px 0;">
-          <span class="stat-label">HARI INI</span>
-          <div class="d-flex align-items-center">
-            <div id="countSekarang" class="stat-number skeleton" style="min-width: 40px;">0</div>
-            <span id="trend" class="ms-3 fs-2 fw-bold skeleton" style="color: red; min-width: 30px;">▲</span>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar-container fixed lg:sticky top-0 left-0 h-[100dvh] w-[16rem] flex flex-col" style="background-color:hsl(var(--sidebar-background));color:hsl(var(--sidebar-foreground));border-right:1px solid hsl(var(--sidebar-border));">
+    <div class="flex flex-col gap-2 p-4 pb-2">
+      <a href="dashboard.html" class="flex flex-col items-start gap-1 px-1 py-1">
+        <div class="h-14 flex items-center">
+          <img src="logo.png" class="h-14 w-auto flex-shrink-0 sidebar-logo" alt="Logo">
+          <span class="sidebar-logo-text hidden font-bold text-3xl tracking-tighter uppercase">Lexacore</span>
+        </div>
+        <span class="text-[10px] font-medium" style="color:hsl(var(--sidebar-foreground)/0.6)">v1.0.0</span>
+      </a>
+    </div>
+    <div class="flex-1 overflow-y-auto px-3 py-2">
+      <div class="pb-4">
+        <div class="px-3 py-1.5">
+          <span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Platform</span>
+        </div>
+        <ul class="space-y-0.5 mt-1">
+          <li>
+            <a href="dashboard.html" class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="background-color:hsl(var(--sidebar-accent));color:hsl(var(--sidebar-accent-foreground))">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+              Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="form.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              Input Pelanggaran
+            </a>
+          </li>
+          <li>
+            <a href="database.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>
+              Database
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="pb-4">
+        <div class="px-3 py-1.5">
+          <span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Pengaturan</span>
+        </div>
+        <ul class="space-y-0.5 mt-1">
+          <li>
+            <a href="profile.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+              Pengaturan Akun
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="pb-4">
+        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Tampilan</span></div>
+        <div class="mt-1">
+          <button class="dark-toggle" onclick="toggleDarkMode()">
+            <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <span id="themeLabel">Mode Terang</span>
+          </button>
+          <div class="theme-swatch-row mt-1.5">
+            <div class="theme-swatch active" data-color="zinc" title="Zinc" onclick="setAccent('zinc')"></div>
+            <div class="theme-swatch" data-color="blue" title="Blue" onclick="setAccent('blue')"></div>
+            <div class="theme-swatch" data-color="green" title="Green" onclick="setAccent('green')"></div>
+            <div class="theme-swatch" data-color="rose" title="Rose" onclick="setAccent('rose')"></div>
+            <div class="theme-swatch" data-color="orange" title="Orange" onclick="setAccent('orange')"></div>
+            <div class="theme-swatch" data-color="violet" title="Violet" onclick="setAccent('violet')"></div>
           </div>
         </div>
       </div>
+    </div>
+    </div>
 
-      <div class="col-12 col-lg-8 d-flex">
-        <div class="box-grafik w-100">
-          <span class="stat-label mb-3 d-block">STATISTIK PELANGGAR</span>
-          <div class="chart-container">
+    <div class="p-3" style="border-top:1px solid hsl(var(--sidebar-border));">
+      <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer" onclick="window.location.href='profile.html'">
+        <img id="fotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
+        <div class="flex-1 overflow-hidden">
+          <p id="adminName" class="text-sm font-medium leading-none truncate">Admin</p>
+          <p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p>
+        </div>
+        <button onclick="event.stopPropagation();logout()" class="inline-flex items-center justify-center rounded-md h-7 w-7 transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 flex-shrink-0" title="Keluar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+  <main class="flex-1 w-full lg:max-w-[calc(100%-16rem)] p-4 lg:p-8 pt-20 lg:pt-8 min-h-screen">
+    <div class="mx-auto max-w-6xl space-y-6">
+      
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Dashboard Admin</h1>
+        <p class="text-muted-foreground">Ringkasan Pelanggaran Dan Statistik.</p>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col col-span-1">
+          <div class="p-6 flex flex-col gap-4">
+            <div>
+              <p class="text-sm font-medium text-muted-foreground uppercase tracking-wider">Kemarin</p>
+              <div id="countLalu" class="text-3xl font-bold skeleton text-transparent inline-block rounded w-16 h-9 mt-1">0</div>
+            </div>
+            <div class="h-px bg-border w-full"></div>
+            <div>
+              <p class="text-sm font-medium text-muted-foreground uppercase tracking-wider">Hari Ini</p>
+              <div class="flex items-baseline gap-2 mt-1">
+                <div id="countSekarang" class="text-5xl font-bold skeleton text-transparent inline-block rounded w-20 h-12">0</div>
+                <span id="trend" class="text-xl font-bold skeleton text-transparent inline-block rounded w-6 h-6"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-xl border bg-card text-card-foreground shadow-sm md:col-span-1 lg:col-span-2 flex flex-col">
+          <div class="flex flex-col space-y-1.5 p-6 pb-2">
+            <h3 class="font-semibold leading-none tracking-tight">Statistik Pelanggar Mingguan</h3>
+            <p class="text-sm text-muted-foreground">Menampilkan Pelanggaran 7 Hari Terakhir.</p>
+          </div>
+          <div class="p-6 pt-0 flex-1 min-h-[250px] relative">
             <canvas id="chartPelanggaran"></canvas>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Margin bottom di sini biar ga mepet ke dasar layar -->
-    <div class="box-bawah mt-4 mb-4">
-      <span class="stat-label mb-4 d-block">PELANGGARAN TERAKHIR</span>
-      <div class="table-responsive">
-        <table class="table text-center align-middle">
-          <thead>
-            <tr>
-              <th>NAMA</th>
-              <th>KELAS</th>
-              <th>PELANGGARAN</th>
-              <th>POIN</th>
-              <th>TANGGAL</th>
-            </tr>
-          </thead>
-          <tbody id="tableContent">
-            <tr><td><div class="skeleton skeleton-text">X</div></td><td><div class="skeleton skeleton-text">X</div></td><td><div class="skeleton skeleton-text" style="width: 90%;">X</div></td><td><div class="skeleton skeleton-badge">X</div></td><td><div class="skeleton skeleton-text" style="width: 60%;">X</div></td></tr>
-          </tbody>
-        </table>
+      <div class="rounded-xl border bg-card text-card-foreground shadow-sm">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight">Pelanggaran Terakhir</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <div class="relative w-full overflow-auto rounded-md border">
+            <table class="w-full caption-bottom text-sm">
+              <thead class="[&_tr]:border-b">
+                <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Nama</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Kelas</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Pelanggaran</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Poin</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Tanggal</th>
+                </tr>
+              </thead>
+              <tbody id="tableContent" class="[&_tr:last-child]:border-0">
+                <tr class="border-b transition-colors hover:bg-muted/50">
+                  <td class="p-4 align-middle"><div class="skeleton h-4 w-32"></div></td>
+                  <td class="p-4 align-middle"><div class="skeleton h-4 w-20"></div></td>
+                  <td class="p-4 align-middle"><div class="skeleton h-4 w-48"></div></td>
+                  <td class="p-4 align-middle"><div class="skeleton h-5 w-16 rounded-full"></div></td>
+                  <td class="p-4 align-middle"><div class="skeleton h-4 w-24"></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
+
     </div>
-  </div>
+  </main>
 
   <script>
   (function(){
@@ -164,8 +225,6 @@
 
     const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
     const url = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json`;
-
-    let lerp = { x1: null, x2: null, hx: null, tX1: null, tX2: null, tHx: null, active: false, index: 0 };
 
     function parseDate(dStr) {
       if(!dStr)return null; if(dStr instanceof Date)return dStr;
@@ -177,39 +236,27 @@
     function calculateDailyData(rows) {
       const now = new Date(); 
       const days = [];
-      
-      // Cari index hari ini (0 = Minggu, 1 = Senin, dst)
       const dayOfWeek = now.getDay(); 
-      
-      // Hitung tanggal mundur ke hari Minggu di minggu ini
       const sunday = new Date(now);
       sunday.setDate(now.getDate() - dayOfWeek);
       sunday.setHours(0,0,0,0);
-
       const dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-      
-      // Buat array paten dari Minggu (0) sampai Sabtu (6)
       for (let i = 0; i <= 6; i++) { 
         const d = new Date(sunday); 
         d.setDate(sunday.getDate() + i); 
         days.push({ date: d, label: dayNames[i], count: 0 }); 
       }
-      
       rows.forEach(r => { 
         const tgl = r.c[4]?.f || r.c[4]?.v; 
         if (!tgl) return; 
         const date = parseDate(tgl); 
         if (!date || isNaN(date.getTime())) return; 
-        
         days.forEach(day => { 
-          const start = new Date(day.date); 
-          start.setHours(0,0,0,0); 
-          const end = new Date(day.date); 
-          end.setHours(23,59,59,999); 
+          const start = new Date(day.date); start.setHours(0,0,0,0); 
+          const end = new Date(day.date); end.setHours(23,59,59,999); 
           if (date >= start && date <= end) day.count++; 
         }); 
       });
-      
       return days;
     }
 
@@ -220,91 +267,110 @@
       return { countSekarang, countLalu };
     }
 
-    function getPoinColor(p) { if (p === 'Ringan') return 'bg-success'; if (p === 'Sedang') return 'bg-warning text-dark'; if (p === 'Berat') return 'bg-danger'; return 'bg-secondary'; }
+    function getPoinClasses(p) { 
+      if (p === 'Ringan') return 'border-transparent bg-green-50 text-green-700'; 
+      if (p === 'Sedang') return 'border-transparent bg-amber-50 text-amber-700'; 
+      if (p === 'Berat') return 'border-transparent bg-red-50 text-red-700'; 
+      return 'border-transparent bg-blue-50 text-blue-700'; 
+    }
     
     let chartInstance = null;
-
-    function getCurveY(meta, targetX) {
-      if (!meta || !meta.data || meta.data.length === 0) return 0; const data = meta.data;
-      if (targetX <= data[0].x) return data[0].y; if (targetX >= data[data.length - 1].x) return data[data.length - 1].y;
-      for (let i = 0; i < data.length - 1; i++) {
-        let p0 = data[i]; let p1 = data[i+1];
-        if (targetX >= p0.x && targetX <= p1.x) {
-          let t = (targetX - p0.x) / (p1.x - p0.x); 
-          if (p0.cp2x === undefined || p1.cp1x === undefined) return p0.y + t * (p1.y - p0.y);
-          return Math.pow(1-t, 3) * p0.y + 3 * Math.pow(1-t, 2) * t * p0.cp2y + 3 * (1-t) * Math.pow(t, 2) * p1.cp1y + Math.pow(t, 3) * p1.y;
-        }
-      }
-      return data[data.length - 1].y;
-    }
+    let globalDailyData = [];
 
     function renderChart(dailyData) {
       const canvas = document.getElementById('chartPelanggaran'); const ctx = canvas.getContext('2d'); if (chartInstance) chartInstance.destroy();
-      const baseLineColor = '#b84d61'; const highlightColor = '#800020'; const fillOpacityColor = 'rgba(128, 0, 32, 0.15)'; 
+      const rs = getComputedStyle(document.documentElement);
+      const mode = document.documentElement.getAttribute('data-mode');
+      
+      const primaryHSL = rs.getPropertyValue('--primary').trim();
+      const lineColor = primaryHSL ? `hsl(${primaryHSL})` : 'hsl(221, 83%, 53%)';
+      const tickColor = `hsl(${rs.getPropertyValue('--muted-foreground').trim()})`;
+      const borderHSL = rs.getPropertyValue('--border').trim();
+      const gridColor = borderHSL ? `hsl(${borderHSL})` : 'hsl(240, 5.9%, 90%)';
+      
+      // Custom Shadcn-style tooltip
+      const getOrCreateTooltip = (chart) => {
+        let el = chart.canvas.parentNode.querySelector('.shadcn-tooltip');
+        if (!el) {
+          el = document.createElement('div');
+          el.className = 'shadcn-tooltip';
+          el.style.cssText = 'position:absolute;pointer-events:none;transition:all 0.15s ease;opacity:0;z-index:50;';
+          chart.canvas.parentNode.appendChild(el);
+        }
+        return el;
+      };
+      
+      const externalTooltipHandler = (context) => {
+        const { chart, tooltip } = context;
+        const el = getOrCreateTooltip(chart);
+        if (tooltip.opacity === 0) { el.style.opacity = 0; return; }
+        
+        const cardBg = `hsl(${rs.getPropertyValue('--card').trim()})`;
+        const cardFg = `hsl(${rs.getPropertyValue('--card-foreground').trim()})`;
+        const mutedFg = `hsl(${rs.getPropertyValue('--muted-foreground').trim()})`;
+        const borderC = `hsl(${rs.getPropertyValue('--border').trim()})`;
+        
+        const title = tooltip.title[0] || '';
+        const value = tooltip.body?.[0]?.lines?.[0] || '0';
+        
+        el.innerHTML = `
+          <div style="background:${cardBg};color:${cardFg};border:1px solid ${borderC};border-radius:0.5rem;padding:0.5rem 0.75rem;box-shadow:0 4px 6px -1px rgb(0 0 0/0.1),0 2px 4px -2px rgb(0 0 0/0.1);min-width:8rem;font-family:Inter,sans-serif;">
+            <div style="font-size:0.75rem;color:${mutedFg};margin-bottom:0.375rem;">${title}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem;">
+              <div style="display:flex;align-items:center;gap:0.5rem;">
+                <span style="display:inline-block;width:0.625rem;height:0.625rem;border-radius:0.125rem;background:${lineColor};flex-shrink:0;"></span>
+                <span style="font-size:0.8125rem;color:${mutedFg};">Pelanggaran</span>
+              </div>
+              <span style="font-size:0.8125rem;font-weight:600;">${value}</span>
+            </div>
+          </div>`;
+        
+        const { offsetLeft, offsetTop } = chart.canvas;
+        el.style.opacity = 1;
+        el.style.left = tooltip.caretX + offsetLeft + 'px';
+        el.style.top = tooltip.caretY + offsetTop - 10 + 'px';
+        el.style.transform = 'translate(-50%, -100%)';
+      };
+      
       chartInstance = new Chart(ctx, {
-        type: 'line', data: { labels: dailyData.map(d => d.label), datasets: [{ data: dailyData.map(d => d.count), borderColor: baseLineColor, borderWidth: 2.5, fill: false, tension: 0.4, pointRadius: 0 }] },
-        options: {
-          animation: false, responsive: true, maintainAspectRatio: false, aspectRatio: window.innerWidth < 600 ? 1.4 : 3,
-          events: ['mousemove', 'mouseout', 'touchstart', 'touchmove'], interaction: { mode: 'index', intersect: false }, hover: { animationDuration: 0 },
-          plugins: { legend: { display: false }, tooltip: { enabled: false } },
-          scales: { 
-            y: { beginAtZero: true, border: { display: false }, ticks: { display: true, color: '#888', font: { weight: '600' }, padding: 10, precision: 0 }, grid: { display: true, color: '#e5e7eb', drawTicks: false } }, 
-            x: { border: { display: false }, grid: { display: false }, ticks: { font: { weight: '600' }, color: '#888' } } 
-          }
+        type: 'line', 
+        data: { 
+            labels: dailyData.map(d => d.label), 
+            datasets: [{ 
+                label: 'Pelanggaran',
+                data: dailyData.map(d => d.count), 
+                borderColor: lineColor, 
+                borderWidth: 2, 
+                fill: false, 
+                tension: 0.4, 
+                pointRadius: 0,
+                pointHoverRadius: 5,
+                pointHoverBackgroundColor: lineColor,
+                pointHoverBorderColor: lineColor,
+                pointHoverBorderWidth: 2,
+            }] 
         },
-        plugins: [{
-          id: 'sweepReveal',
-          beforeDatasetsDraw(chart) {
-            if (!chart._sweepStartTime) chart._sweepStartTime = performance.now();
-            let elapsed = performance.now() - chart._sweepStartTime; 
-            let progress = Math.min(elapsed / 3000, 1); 
-            let ease = -(Math.cos(Math.PI * progress) - 1) / 2;
-            const { ctx, chartArea } = chart; ctx.save(); ctx.beginPath(); ctx.rect(chartArea.left, chartArea.top - 50, chartArea.width * ease, chartArea.height + 100); ctx.clip();
-            if (progress < 1) requestAnimationFrame(() => chart.draw());
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { 
+            legend: { display: false }, 
+            tooltip: { 
+              enabled: false,
+              external: externalTooltipHandler,
+            } 
           },
-          afterDatasetsDraw(chart) { chart.ctx.restore(); }
-        }, {
-          id: 'fluidInteraction',
-          afterEvent(chart, args) {
-            if (args.event.type === 'mouseout') { lerp.active = false; } else {
-              const active = chart.getElementsAtEventForMode(args.event, 'index', { intersect: false }, true);
-              if (active.length > 0) {
-                const idx = active[0].index; const meta = chart.getDatasetMeta(0); const i1 = Math.max(0, idx - 1); const i2 = Math.min(meta.data.length - 1, idx + 1);
-                lerp.tX1 = meta.data[i1].x; lerp.tX2 = meta.data[i2].x; lerp.tHx = meta.data[idx].x; lerp.index = idx; lerp.active = true;
-                if (lerp.x1 === null) { lerp.x1 = lerp.tX1; lerp.x2 = lerp.tX2; lerp.hx = lerp.tHx; }
-              }
-            }
-          },
-          afterDraw(chart) {
-            if (!lerp.active || lerp.x1 === null) return;
-            const speed = 0.12; lerp.x1 += (lerp.tX1 - lerp.x1) * speed; lerp.x2 += (lerp.tX2 - lerp.x2) * speed; lerp.hx += (lerp.tHx - lerp.hx) * speed;
-            const meta = chart.getDatasetMeta(0); if (!meta.data || meta.data.length === 0) return;
-            const y1 = getCurveY(meta, lerp.x1); const y2 = getCurveY(meta, lerp.x2); const hy = getCurveY(meta, lerp.hx);
-            const { ctx, chartArea: { top, bottom } } = chart;
-            ctx.save(); ctx.beginPath(); ctx.rect(lerp.x1, top - 50, lerp.x2 - lerp.x1, chart.height + 100); ctx.clip();
-            ctx.beginPath(); ctx.moveTo(meta.data[0].x, meta.data[0].y);
-            for(let i = 1; i < meta.data.length; i++) {
-              const pt = meta.data[i]; const prev = meta.data[i-1]; if (prev.cp2x !== undefined && pt.cp1x !== undefined) ctx.bezierCurveTo(prev.cp2x, prev.cp2y, pt.cp1x, pt.cp1y, pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-            }
-            ctx.lineTo(meta.data[meta.data.length - 1].x, bottom); ctx.lineTo(meta.data[0].x, bottom); ctx.closePath();
-            ctx.fillStyle = fillOpacityColor; ctx.fill();
-            ctx.beginPath(); ctx.moveTo(meta.data[0].x, meta.data[0].y);
-            for(let i = 1; i < meta.data.length; i++) {
-              const pt = meta.data[i]; const prev = meta.data[i-1]; if (prev.cp2x !== undefined && pt.cp1x !== undefined) ctx.bezierCurveTo(prev.cp2x, prev.cp2y, pt.cp1x, pt.cp1y, pt.x, pt.y); else ctx.lineTo(pt.x, pt.y);
-            }
-            ctx.lineWidth = 5; ctx.strokeStyle = highlightColor; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.stroke(); ctx.restore();
-            const drawDot = (x, y, color) => { ctx.beginPath(); ctx.arc(x, y, 5.5, 0, Math.PI * 2); ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.lineWidth = 3; ctx.strokeStyle = color; ctx.stroke(); };
-            drawDot(lerp.x1, y1, highlightColor); drawDot(lerp.x2, y2, highlightColor);
-            const namaHariPenuh = { 'Min': 'Minggu', 'Sen': 'Senin', 'Sel': 'Selasa', 'Rab': 'Rabu', 'Kam': 'Kamis', 'Jum': 'Jumat', 'Sab': 'Sabtu' };
-            const text = `${namaHariPenuh[chart.data.labels[lerp.index]] || chart.data.labels[lerp.index]} ${chart.data.datasets[0].data[lerp.index]} Kasus`;
-            ctx.font = 'bold 12px Inter'; const textWidth = ctx.measureText(text).width; const capW = textWidth + 24; const capH = 28;
-            let capY = hy - 40; if (capY < top) capY = top + 5;
-            let capX = Math.max(chart.chartArea.left + capW/2, Math.min(chart.chartArea.right - capW/2, lerp.hx));
-            ctx.beginPath(); ctx.fillStyle = highlightColor; ctx.roundRect(capX - capW/2, capY, capW, capH, 14); ctx.fill();
-            ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, capX, capY + capH/2);
-            if (Math.abs(lerp.tX1 - lerp.x1) > 0.5 || Math.abs(lerp.tX2 - lerp.x2) > 0.5 || Math.abs(lerp.tHx - lerp.hx) > 0.5) requestAnimationFrame(() => chart.draw());
+          scales: { 
+            y: { 
+              display: false,
+            }, 
+            x: { 
+              border: { display: false }, 
+              grid: { display: false }, 
+              ticks: { color: tickColor, font: { family: 'Inter', size: 12 } } 
+            } 
           }
-        }]
+        }
       });
     }
 
@@ -312,52 +378,127 @@
       try {
         const res = await fetch(url); const text = await res.text(); const json = JSON.parse(text.substr(47).slice(0, -2)); const rows = json.table.rows || [];
         const stats = calculateStats(rows); const dailyData = calculateDailyData(rows);
-        document.getElementById('countSekarang').classList.remove('skeleton'); document.getElementById('countLalu').classList.remove('skeleton'); document.getElementById('trend').classList.remove('skeleton');
-        document.getElementById('countSekarang').innerText = stats.countSekarang; document.getElementById('countLalu').innerText = stats.countLalu;
-        const trendEl = document.getElementById('trend'); const diff = stats.countSekarang - stats.countLalu;
-        if (diff > 0) { trendEl.innerHTML = '▲'; trendEl.style.color = 'red'; } else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.style.color = 'green'; } else { trendEl.innerHTML = '═'; trendEl.style.color = 'gray'; }
+        
+        const cSekarang = document.getElementById('countSekarang');
+        const cLalu = document.getElementById('countLalu');
+        const trendEl = document.getElementById('trend');
+        
+        cSekarang.classList.remove('skeleton', 'text-transparent', 'w-20', 'h-12'); 
+        cLalu.classList.remove('skeleton', 'text-transparent', 'w-16', 'h-9'); 
+        trendEl.classList.remove('skeleton', 'text-transparent', 'w-6', 'h-6');
+        
+        cSekarang.innerText = stats.countSekarang; 
+        cLalu.innerText = stats.countLalu;
+        
+        const diff = stats.countSekarang - stats.countLalu;
+        if (diff > 0) { trendEl.innerHTML = '▲'; trendEl.className = 'text-destructive text-xl font-bold ml-2'; } 
+        else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.className = 'text-emerald-500 text-xl font-bold ml-2'; } 
+        else { trendEl.innerHTML = '—'; trendEl.className = 'text-muted-foreground text-xl font-bold ml-2'; }
+        
         const allV = rows.map(r => ({ nama: r.c[0]?.v || '-', kelas: r.c[1]?.v || '-', hal: r.c[2]?.v || '-', poin: r.c[3]?.v || '-', tgl: r.c[4]?.f || r.c[4]?.v || '-', date: parseDate(r.c[4]?.f || r.c[4]?.v) })).filter(r => r.date).sort((a,b) => b.date - a.date);
         
-        // --- BAGIAN INI SUDAH DIPERBAIKI SYNTAX-NYA ---
         let html = ''; 
         if (allV.length === 0) {
-            html = '<tr><td colspan="5" class="text-muted">Tidak ada data</td></tr>';
+            html = '<tr class="border-b transition-colors hover:bg-muted/50"><td colspan="5" class="p-4 align-middle text-center text-muted-foreground">Tidak ada data</td></tr>';
         } else {
-            // Membatasi tabel maksimal 2 baris saja
-            const dataTerbaru = allV.slice(0, 2);
+            const dataTerbaru = allV.slice(0, 3);
             dataTerbaru.forEach(r => { 
-                html += `<tr><td class="fw-bold">${r.nama}</td><td>${r.kelas}</td><td class="text-uppercase small">${r.hal}</td><td><span class="badge ${getPoinColor(r.poin)} p-2 px-3">${r.poin}</span></td><td class="text-muted small">${r.tgl}</td></tr>`; 
+                html += `<tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                    <td class="p-4 align-middle font-medium">${r.nama}</td>
+                    <td class="p-4 align-middle">${r.kelas}</td>
+                    <td class="p-4 align-middle text-sm text-muted-foreground">${r.hal}</td>
+                    <td class="p-4 align-middle"><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getPoinClasses(r.poin)}">${r.poin}</div></td>
+                    <td class="p-4 align-middle text-muted-foreground text-sm">${r.tgl}</td>
+                </tr>`; 
             });
         }
         document.getElementById('tableContent').innerHTML = html; 
-        renderChart(dailyData);
-        // ----------------------------------------------
+        globalDailyData = dailyData;
+        renderChart(globalDailyData);
         
       } catch (e) { console.error('Error:', e); }
     }
 
-    window.addEventListener('resize', () => { init(); }); setInterval(init, 30000);
+    window.addEventListener('resize', () => { 
+        if(chartInstance && window.innerWidth >= 1024) {
+            chartInstance.resize();
+        }
+    }); 
+    setInterval(init, 30000);
+
     (function initMenuToggle(){
-      const sidebar = document.querySelector('.sidebar-container'); const toggle = document.querySelector('.mobile-nav-toggle'); 
+      const sidebar = document.querySelector('.sidebar-container'); 
+      const toggle = document.getElementById('mobileNavToggle'); 
+      const overlay = document.getElementById('sidebarOverlay');
       if (!sidebar || !toggle) return; 
+      
+      function closeMenu() {
+        sidebar.classList.remove('active'); 
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
       toggle.addEventListener('click', (e) => { 
         e.stopPropagation();
         sidebar.classList.toggle('active'); 
-        document.body.classList.toggle('no-scroll');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
       });
-      document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 1200 && sidebar.classList.contains('active')) {
-          if (!sidebar.contains(e.target)) sidebar.classList.remove('active');
-        }
-      });
+      
+      overlay.addEventListener('click', closeMenu);
     })();
+
     window.addEventListener('load', () => { 
-      document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; 
-      const foto = localStorage.getItem('fotoProfil'); if (foto) document.getElementById('fotoSiswa').src = foto; 
+      const name = localStorage.getItem('namaLengkap') || 'Admin';
+      document.getElementById('adminName').innerText = name; 
+      
+      const foto = localStorage.getItem('fotoProfil'); 
+      if (foto) {
+        document.getElementById('fotoSiswa').src = foto; 
+        const mobileFoto = document.getElementById('mobileFotoSiswa');
+        if(mobileFoto) mobileFoto.src = foto;
+      }
       init(); 
     });
+    
     window.logout = function(){ localStorage.clear(); window.location.href = 'index.html'; };
   })();
+
+  function applyTheme() {
+    const mode = localStorage.getItem('themeMode') || 'light';
+    const accent = localStorage.getItem('themeAccent') || 'zinc';
+    document.documentElement.setAttribute('data-mode', mode);
+    document.documentElement.setAttribute('data-accent', accent === 'zinc' ? '' : accent);
+    if (accent === 'zinc') document.documentElement.removeAttribute('data-accent');
+    // Update UI
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon && label) {
+      if (mode === 'dark') {
+        icon.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>';
+        label.textContent = 'Mode Gelap';
+      } else {
+        icon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>';
+        label.textContent = 'Mode Terang';
+      }
+    }
+    document.querySelectorAll('.theme-swatch').forEach(s => {
+      s.classList.toggle('active', s.dataset.color === accent);
+    });
+    if (typeof chartInstance !== 'undefined' && chartInstance && typeof globalDailyData !== 'undefined') {
+      setTimeout(() => renderChart(globalDailyData), 10);
+    }
+  }
+  function toggleDarkMode() {
+    const current = localStorage.getItem('themeMode') || 'light';
+    localStorage.setItem('themeMode', current === 'dark' ? 'light' : 'dark');
+    window.location.reload();
+  }
+  function setAccent(color) {
+    localStorage.setItem('themeAccent', color);
+    window.location.reload();
+  }
+  applyTheme();
   </script>
 </body>
 </html>

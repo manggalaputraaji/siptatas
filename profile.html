@@ -4,190 +4,246 @@
   <meta charset="utf-8" />
   <title>LEXACORE | Pengaturan Akun</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   
-  <link rel="stylesheet" href="style.css"> 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  
-  <style>
-    .sidebar-container { 
-      width: 350px !important; 
-      position: fixed;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      z-index: 1000;
-      background: #fff;
-      border-right: 4px solid #000;
-    } 
-
-    .main-content { 
-      margin-left: 390px !important; 
-      width: calc(100% - 350px) !important; 
-      padding-bottom: 40px !important; 
-    }
-
-    @media (max-width: 992px) { 
-      .sidebar-container { 
-        position: fixed; 
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        height: 100% !important;
-        bottom: 0 !important;
-        background-color: #fff !important;
-        overflow-y: auto !important;
+  <!-- Tailwind CSS & Configuration -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            border: "hsl(var(--border))",
+            input: "hsl(var(--input))",
+            ring: "hsl(var(--ring))",
+            background: "hsl(var(--background))",
+            foreground: "hsl(var(--foreground))",
+            primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+            secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+            destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+            muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+            accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+            popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+            card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+          },
+          borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)" },
+        }
       }
+    }
+  </script>
+
+  <!-- SweetAlert2 -->
+
+  <style>
+    /* Mobile Sidebar overlay */
+    .sidebar-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 40; display: none;
+      backdrop-filter: blur(2px);
+    }
+    .sidebar-overlay.active { display: block; }
+
+    .sidebar-container {
+      transition: transform 0.3s ease;
+      z-index: 50;
+    }
+    @media (max-width: 1024px) {
+      .sidebar-container { transform: translateX(-100%); }
       .sidebar-container.active { transform: translateX(0); }
-      .main-content { 
-        margin-left: 0 !important; 
-        width: 100% !important; 
-        min-width: 100% !important;
-        padding-top: 100px !important; 
-      } 
-      h1 { margin-top: 20px !important; }
-    }
-
-    body { opacity: 0; animation: pageFadeIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; overflow-x: hidden; }
-    @keyframes pageFadeIn { 0% { opacity: 0; transform: translateY(15px); } 100% { opacity: 1; transform: translateY(0); } }
-
-    .box-profile { 
-        border: 4px solid #000; 
-        border-radius: 28px; 
-        padding: 40px; 
-        background: #fff; 
-        width: 100%;
-        max-width: 100%;
-        box-shadow: 10px 10px 0 #000;
-    }
-
-    .custom-input { 
-        border: 4px solid #000 !important; 
-        border-radius: 14px !important; 
-        font-weight: 700 !important; 
-        padding: 15px !important; 
-        font-size: 18px !important;
     }
     
-    .upload-container { 
-        position: relative; 
-        width: 150px; 
-        height: 180px; 
-        margin: 0 auto 30px; 
-        cursor: pointer; 
-        transition: transform 0.2s;
+    /* Upload Image Preview Container */
+    .upload-container {
+        position: relative;
+        overflow: hidden;
+        cursor: pointer;
     }
-    .upload-container:hover { transform: scale(1.05); }
-    .preview-img { 
-        width: 100%; 
-        height: 100%; 
-        border: 4px solid #000; 
-        border-radius: 18px; 
-        object-fit: cover; 
-        background: #f0f0f0; 
+    .upload-overlay {
+        position: absolute;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 500;
     }
-    .upload-overlay { 
-        position: absolute; 
-        bottom: 0; 
-        background: rgba(0,0,0,0.7); 
-        width: 100%; 
-        color: #fff; 
-        font-size: 12px; 
-        padding: 8px 0; 
-        border-radius: 0 0 14px 14px; 
-        font-weight: bold; 
+    .upload-container:hover .upload-overlay {
+        opacity: 1;
     }
-
-    #loadingStatus { font-size: 16px; font-weight: 900; color: #007bff; display: none; margin-bottom: 20px; text-align: center; }
-
-    .swal2-popup { border: 4px solid #000 !important; border-radius: 20px !important;}
-    @keyframes slideDownAlert { 0% { transform: translateY(-100%); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-    .swal-slide-down { animation: slideDownAlert 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important; }
-    .swal-border-success { border-color: #28a745 !important; }
-    
-    body.no-scroll { overflow: hidden !important; }
   </style>
 </head>
-<body>
+<body class="min-h-screen flex w-full">
 
-  <button class="mobile-nav-toggle" aria-label="Toggle menu"><span></span></button>
-
-  <div class="sidebar-container">
-    <div class="nav-menu">
-      <img src="logo.png" class="sidebar-logo" alt="Logo">
-      <a href="dashboard.html" class="nav-link-custom" style="border-width: 4px !important;">HOME DASHBOARD</a>
-      <a href="form.html" class="nav-link-custom" style="border-width: 4px !important;">INPUT PELANGGARAN</a>
-      <a href="database.html" class="nav-link-custom" style="border-width: 4px !important;">DATABASE PELANGGAR</a>
-    </div>
-
-    <div class="profile-section">
-      <div class="profile-box" style="position: relative; padding: 22px; border-radius: 22px; align-items: center; gap: 20px; background-color: #a0bbe1; border: 4px solid #000; display: flex; box-shadow: 0 5px 0 rgba(0,0,0,0.2);">
-          <img id="sidebarFotoSiswa" src="https://via.placeholder.com/85x110" class="profile-pic-sm" alt="PFP" style="width: 85px; height: 110px; border-radius: 14px; background-color: #a0bbe1; border: 4px solid #000; object-fit: cover; flex-shrink: 0;">
-          <div style="flex: 1; word-break: break-word;">
-              <div id="sidebarAdminName" style="font-size: 20px; font-weight: 900; line-height: 1.1; text-transform: uppercase; color: #000; letter-spacing: -0.5px;">ADMIN</div>
-              <div style="font-size: 13px; margin-top: 8px; font-weight: 800; color: #000; opacity: 0.8; text-transform: uppercase;">Administrator</div>
-          </div>
-      </div>
-      <button onclick="logout()" style="width: 100%; margin-top: 15px; background: #ff2a2a; color: #fff; border: 4px solid #000; border-radius: 14px; padding: 15px; font-size: 20px; font-weight: 900; letter-spacing: 1px; cursor: pointer; text-transform: uppercase; transition: transform 0.1s; box-shadow: 0 5px 0 rgba(0,0,0,0.15);">
-          LOGOUT
+  <!-- Mobile Toggle Header -->
+  <header class="lg:hidden fixed top-0 left-0 right-0 h-14 bg-background border-b z-30 flex items-center px-4 justify-between">
+    <div class="flex items-center gap-2">
+      <button id="mobileNavToggle" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 -ml-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
       </button>
+      <span class="font-semibold text-sm tracking-tight">LEXACORE</span>
     </div>
-  </div>
-
-  <div class="main-content">
-    <h1 style="font-weight: 900; font-size: 60px; text-transform: uppercase; margin-bottom: 40px;">PENGATURAN AKUN</h1>
-    
-    <div class="box-profile">
-      <form id="profileForm">
-        
-        <div class="upload-container" onclick="document.getElementById('fileInput').click()">
-          <img id="previewFoto" src="" class="preview-img">
-          <div class="upload-overlay text-center">GANTI FOTO</div>
-          <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover">
+  </header>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <aside class="sidebar-container fixed lg:sticky top-0 left-0 h-[100dvh] w-[16rem] flex flex-col" style="background-color:hsl(var(--sidebar-background));color:hsl(var(--sidebar-foreground));border-right:1px solid hsl(var(--sidebar-border));">
+    <div class="flex flex-col gap-2 p-4 pb-2">
+      <a href="dashboard.html" class="flex flex-col items-start gap-1 px-1 py-1">
+        <div class="h-14 flex items-center">
+          <img src="logo.png" class="h-14 w-auto flex-shrink-0 sidebar-logo" alt="Logo">
+          <span class="sidebar-logo-text hidden font-bold text-3xl tracking-tighter uppercase">Lexacore</span>
         </div>
-        <div id="loadingStatus">MENGUNGGAH KE CLOUD...</div>
-
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <label class="fw-bold mb-2">NAMA LENGKAP</label>
-                <input type="text" id="inputNama" class="form-control custom-input" placeholder="Nama Anda" required>
-            </div>
-            <div class="col-md-6 mb-4">
-                <label class="fw-bold mb-2">USERNAME</label>
-                <!-- Input ini bisa diubah -->
-                <input type="text" id="inputUser" class="form-control custom-input" required>
-            </div>
-        </div>
-
-        <div class="mb-5">
-            <label class="fw-bold mb-2">PASSWORD BARU</label>
-            <input type="password" id="inputPass" class="form-control custom-input" placeholder="Kosongkan jika tidak ingin mengganti password">
-        </div>
-
-        <div class="d-flex gap-3">
-            <button type="submit" id="btnSimpan" class="btn btn-dark flex-grow-1 custom-input p-3 fw-bold fs-5">SIMPAN PERMANEN</button>
-            <button type="button" onclick="window.location.href='dashboard.html'" class="btn btn-outline-dark px-5 border-4 rounded-3 fw-bold">BATAL</button>
-        </div>
-      </form>
+        <span class="text-[10px] font-medium" style="color:hsl(var(--sidebar-foreground)/0.6)">v1.0.0</span>
+      </a>
     </div>
-  </div>
+    <div class="flex-1 overflow-y-auto px-3 py-2">
+      <div class="pb-4">
+        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Platform</span></div>
+        <ul class="space-y-0.5 mt-1">
+          <li><a href="dashboard.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> Dashboard</a></li>
+          <li><a href="form.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Input Pelanggaran</a></li>
+          <li><a href="database.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg> Database</a></li>
+        </ul>
+      </div>
+      <div class="pb-4">
+        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Pengaturan</span></div>
+        <ul class="space-y-0.5 mt-1">
+          <li><a href="profile.html" class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="background-color:hsl(var(--sidebar-accent));color:hsl(var(--sidebar-accent-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Pengaturan Akun</a></li>
+        </ul>
+      </div>
+      <!-- SidebarGroup: Appearance -->
+      <div class="pb-4">
+        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Tampilan</span></div>
+        <div class="mt-1">
+          <button class="dark-toggle" onclick="toggleDarkMode()">
+            <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <span id="themeLabel">Mode Terang</span>
+          </button>
+          <div class="theme-swatch-row mt-1.5">
+            <div class="theme-swatch active" data-color="zinc" title="Zinc" onclick="setAccent('zinc')"></div>
+            <div class="theme-swatch" data-color="blue" title="Blue" onclick="setAccent('blue')"></div>
+            <div class="theme-swatch" data-color="green" title="Green" onclick="setAccent('green')"></div>
+            <div class="theme-swatch" data-color="rose" title="Rose" onclick="setAccent('rose')"></div>
+            <div class="theme-swatch" data-color="orange" title="Orange" onclick="setAccent('orange')"></div>
+            <div class="theme-swatch" data-color="violet" title="Violet" onclick="setAccent('violet')"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="p-3" style="border-top:1px solid hsl(var(--sidebar-border));">
+      <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer" onclick="window.location.href='profile.html'">
+        <img id="sidebarFotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
+        <div class="flex-1 overflow-hidden"><p id="sidebarAdminName" class="text-sm font-medium leading-none truncate">Admin</p><p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p></div>
+        <button onclick="event.stopPropagation();logout()" class="inline-flex items-center justify-center rounded-md h-7 w-7 transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 flex-shrink-0" title="Logout"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
+      </div>
+    </div>
+  </aside>
+
+
+
+  <main class="flex-1 w-full lg:max-w-[calc(100%-16rem)] p-4 lg:p-8 pt-20 lg:pt-8 min-h-screen">
+    <div class="mx-auto max-w-4xl space-y-6">
+      
+      <div>
+        <h1 class="text-3xl font-bold tracking-tight">Pengaturan Akun</h1>
+        <p class="text-muted-foreground">Kelola Informasi Profil Dan Kredensial Akun Anda.</p>
+      </div>
+
+      <div class="rounded-xl border bg-card text-card-foreground shadow-sm">
+        <div class="flex flex-col space-y-1.5 p-6">
+          <h3 class="font-semibold leading-none tracking-tight">Profil Pengguna</h3>
+          <p class="text-sm text-muted-foreground">Perbarui Foto Profil Dan Detail Akun Anda.</p>
+        </div>
+        <div class="p-6 pt-0">
+          <form id="profileForm" class="space-y-8">
+            
+            <div class="flex flex-col sm:flex-row items-center gap-6">
+              <div class="upload-container h-32 w-32 rounded-full border-4 border-muted overflow-hidden flex-shrink-0" onclick="document.getElementById('fileInput').click()">
+                <img id="previewFoto" src="" class="h-full w-full object-cover">
+                <div class="upload-overlay rounded-full flex flex-col items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
+                  <span>Ganti</span>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" class="hidden">
+              </div>
+              <div class="flex-1 space-y-1 text-center sm:text-left">
+                <h4 class="text-sm font-medium leading-none">Foto Profil</h4>
+                <p class="text-sm text-muted-foreground">Klik Gambar Untuk Mengganti Foto Profil Anda. Disarankan Rasio 1:1.</p>
+                <p id="loadingStatus" class="text-sm font-medium text-primary hidden mt-2">Mengunggah ke cloud...</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-2">
+                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Nama Lengkap</label>
+                <input type="text" id="inputNama" class="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" placeholder="Nama Anda" required>
+              </div>
+              <div class="space-y-2">
+                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Nama Pengguna</label>
+                <input type="text" id="inputUser" class="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" required>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Kata Sandi Baru</label>
+              <input type="password" id="inputPass" class="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" placeholder="Kosongkan Jika Tidak Ingin Mengganti Kata Sandi">
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t">
+              <button type="submit" id="btnSimpan" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-8">
+                Simpan Perubahan
+              </button>
+              <button type="button" onclick="window.location.href='dashboard.html'" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-8">
+                Batal
+              </button>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+      
+    </div>
+  </main>
 
   <script>
+    function showAlert(title, description, type = 'default') {
+      let container = document.querySelector('.alert-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.className = 'alert-container';
+        document.body.appendChild(container);
+      }
+      const alert = document.createElement('div');
+      alert.className = `alert ${type}`;
+      const icon = type === 'destructive' ? '<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>' : '<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+      alert.innerHTML = `${icon}<div class="alert-title">${title}</div><div class="alert-description">${description}</div>`;
+      container.appendChild(alert);
+      setTimeout(() => {
+        alert.classList.add('alert-fade-out');
+        setTimeout(() => alert.remove(), 200);
+      }, 3000);
+    }
+
     const SCRIPT_URL_PROFILE = "https://script.google.com/macros/s/AKfycbx1oGeWBTXQAi-SF8NVlXfxwAU9WWj2l-ELfVWMldm3jAJI8YFM8UrGhX4lTkmiN_Ti/exec"; 
     const IMGBB_API_KEY = "5188af2b234ee6ea8fe8aa52d76c08f0"; 
     
     let finalImageUrl = localStorage.getItem('fotoProfil') || "";
-    // Simpan username lama saat halaman pertama kali dimuat
     let originalUsername = localStorage.getItem('siswaLogin') || '';
 
     document.addEventListener('DOMContentLoaded', () => {
       const currentNama = localStorage.getItem('namaLengkap') || 'Admin';
       
       document.getElementById('inputNama').value = currentNama;
-      document.getElementById('inputUser').value = originalUsername; // Masukkan ke input form
-      document.getElementById('previewFoto').src = finalImageUrl || 'https://via.placeholder.com/150x180?text=No+Photo';
+      document.getElementById('inputUser').value = originalUsername;
+      document.getElementById('previewFoto').src = finalImageUrl || 'https://via.placeholder.com/150x150?text=No+Photo';
 
       document.getElementById('sidebarAdminName').innerText = currentNama; 
       if (finalImageUrl) document.getElementById('sidebarFotoSiswa').src = finalImageUrl;
+      if (finalImageUrl) document.getElementById('mobileFotoSiswa').src = finalImageUrl;
 
       document.getElementById('fileInput').addEventListener('change', async function() {
         const file = this.files[0];
@@ -196,7 +252,9 @@
         const loading = document.getElementById('loadingStatus');
         const btn = document.getElementById('btnSimpan');
         
-        loading.style.display = "block";
+        loading.classList.remove('hidden');
+        loading.className = "text-sm font-medium text-primary mt-2";
+        loading.innerText = "Mengunggah ke cloud...";
         btn.disabled = true;
 
         const formData = new FormData();
@@ -213,11 +271,12 @@
           if (result.success) {
             finalImageUrl = result.data.url;
             document.getElementById('previewFoto').src = finalImageUrl;
-            loading.innerText = "FOTO SIAP DISIMPAN!";
-            loading.style.color = "#28a745";
+            loading.innerText = "Foto siap disimpan!";
+            loading.className = "text-sm font-medium text-emerald-500 mt-2";
           }
         } catch (err) {
-          alert("Gagal mengunggah gambar.");
+          showAlert("Gagal Mengunggah", "Gagal mengunggah gambar. Silakan coba lagi.", "destructive");
+          loading.classList.add('hidden');
         } finally {
           btn.disabled = false;
         }
@@ -228,14 +287,14 @@
         
         const btn = document.getElementById('btnSimpan');
         btn.disabled = true;
-        btn.innerText = "MENYIMPAN KE DATABASE...";
+        btn.innerText = "Menyimpan ke database...";
 
         const newUsername = document.getElementById('inputUser').value;
 
         const payload = {
           type: "UPDATE_PROFILE",
-          oldUsername: originalUsername, // Kirim username lama buat nyari baris di Sheet
-          newUsername: newUsername,      // Kirim username baru buat ditimpa
+          oldUsername: originalUsername,
+          newUsername: newUsername,
           nama: document.getElementById('inputNama').value,
           password: document.getElementById('inputPass').value,
           foto: finalImageUrl
@@ -248,67 +307,67 @@
             body: JSON.stringify(payload)
           });
 
-          // Update local storage dengan data yang baru
           localStorage.setItem('namaLengkap', payload.nama);
           localStorage.setItem('siswaLogin', payload.newUsername); 
           localStorage.setItem('fotoProfil', payload.foto); 
           if(payload.password) localStorage.setItem('userPass', payload.password);
 
-          Swal.fire({
-            position: "top",
-            icon: "success",
-            title: "BERHASIL!",
-            text: "Profil tersimpan permanen di Database.",
-            showConfirmButton: false,
-            timer: 2000,
-            backdrop: "rgba(0,0,0,0.6)",
-            showClass: { popup: 'swal-slide-down' },
-            customClass: { popup: 'swal-border-success' }
-          }).then(() => {
-            window.location.href = 'dashboard.html';
-          });
+          showAlert("Berhasil!", "Profil tersimpan permanen di Database.", "success");
+          setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
 
         } catch (error) {
-          Swal.fire({
-            position: "top",
-            icon: "error",
-            title: "GAGAL!",
-            text: "Gagal menyimpan ke Google Sheet.",
-            showConfirmButton: true,
-            backdrop: "rgba(0,0,0,0.6)"
-          });
+          showAlert("Gagal!", "Gagal menyimpan ke Google Sheet.", "destructive");
         } finally {
           btn.disabled = false;
-          btn.innerText = "SIMPAN PERMANEN";
+          btn.innerText = "Simpan Perubahan";
         }
       });
     });
 
     (function initMenuToggle(){
       const sidebar = document.querySelector('.sidebar-container'); 
-      const toggle = document.querySelector('.mobile-nav-toggle'); 
+      const toggle = document.getElementById('mobileNavToggle'); 
+      const overlay = document.getElementById('sidebarOverlay');
       if (!sidebar || !toggle) return; 
       
+      function closeMenu() {
+        sidebar.classList.remove('active'); 
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
       toggle.addEventListener('click', (e) => { 
         e.stopPropagation();
         sidebar.classList.toggle('active'); 
-        document.body.classList.toggle('no-scroll');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
       });
       
-      document.addEventListener('click', (e) => {
-        if (window.innerWidth <= 992 && sidebar.classList.contains('active')) {
-          if (!sidebar.contains(e.target)) {
-            sidebar.classList.remove('active');
-            document.body.classList.remove('no-scroll');
-          }
-        }
-      });
+      overlay.addEventListener('click', closeMenu);
     })();
 
     window.logout = function(){ 
         localStorage.clear(); 
         window.location.href = 'index.html'; 
     };
+
+  function applyTheme() {
+    const mode = localStorage.getItem('themeMode') || 'light';
+    const accent = localStorage.getItem('themeAccent') || 'zinc';
+    document.documentElement.setAttribute('data-mode', mode);
+    if (accent !== 'zinc') document.documentElement.setAttribute('data-accent', accent);
+    else document.documentElement.removeAttribute('data-accent');
+    const icon = document.getElementById('themeIcon');
+    const label = document.getElementById('themeLabel');
+    if (icon && label) {
+      if (mode === 'dark') { icon.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; label.textContent = 'Mode Gelap'; }
+      else { icon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'; label.textContent = 'Mode Terang'; }
+    }
+    document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === accent));
+  }
+  function toggleDarkMode() { const c = localStorage.getItem('themeMode') || 'light'; localStorage.setItem('themeMode', c === 'dark' ? 'light' : 'dark'); applyTheme(); }
+  function setAccent(color) { localStorage.setItem('themeAccent', color); applyTheme(); }
+  applyTheme();
   </script>
 </body>
 </html>
