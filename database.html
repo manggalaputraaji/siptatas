@@ -62,6 +62,29 @@
     /* Dropdown */
     .filter-dropdown { display: none; }
     .filter-dropdown.show { display: block; }
+
+    /* Status Select */
+    .status-select {
+      appearance: none; -webkit-appearance: none;
+      border: none; background-color: transparent;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 0.3rem 1.6rem 0.3rem 0.6rem;
+      border-radius: 9999px; cursor: pointer; outline: none;
+      transition: all 0.2s ease;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.4rem center;
+      background-size: 0.7rem;
+      white-space: nowrap;
+    }
+    .status-select:focus { box-shadow: 0 0 0 2px hsl(var(--ring)); }
+    .status-select:disabled { opacity: 0.5; cursor: wait; }
+    .status-belum { background-color: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+    .status-sedang { background-color: hsl(217 91% 93%); color: hsl(221 83% 53%); }
+    .status-selesai { background-color: hsl(143 85% 93%); color: hsl(142 71% 29%); }
+    [data-mode="dark"] .status-sedang { background-color: hsl(221 83% 20%); color: hsl(217 91% 76%); }
+    [data-mode="dark"] .status-selesai { background-color: hsl(142 50% 16%); color: hsl(143 70% 70%); }
+    .status-countdown { font-size: 0.625rem; color: hsl(var(--muted-foreground)); margin-top: 2px; line-height: 1.2; }
   </style>
 </head>
 <body class="min-h-screen flex w-full">
@@ -209,11 +232,12 @@
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground w-1/3">PELANGGARAN</th>
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('poin')">POIN <span class="sort-icon" id="icon-poin">↕</span></th>
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('tgl')">TANGGAL <span class="sort-icon" id="icon-tgl">↕</span></th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">STATUS</th>
               </tr>
             </thead>
             <tbody id="databaseContent" class="[&_tr:last-child]:border-0">
               <!-- Loading state -->
-              <tr><td colspan="5" class="p-8 text-center text-muted-foreground">Menarik Data Dari Sheets...</td></tr>
+              <tr><td colspan="6" class="p-8 text-center text-muted-foreground">Menarik Data Dari Sheets...</td></tr>
             </tbody>
           </table>
         </div>
@@ -228,6 +252,7 @@
   <script>
     const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
     const url = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json`;
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUBAwPygq9QGCoYAEjk1uADBbv6P1wZ6RbvFrxQLi_zmkIeNprRtuNyKYRhicGQWmv/exec';
     
     let allData = [];
     let currentData = [];
@@ -271,7 +296,7 @@
         const res = await fetch(url); const text = await res.text(); const json = JSON.parse(text.substr(47).slice(0, -2));
         const rawRows = json.table.rows || [];
         
-        allData = rawRows.map(r => {
+        allData = rawRows.map((r, idx) => {
           const dateObj = parseDate(r.c[4]?.f || r.c[4]?.v);
           return {
             nama: r.c[0]?.v || '-',
@@ -280,7 +305,10 @@
             poin: r.c[3]?.v || '-',
             tglStr: r.c[4]?.f || r.c[4]?.v || '-',
             date: dateObj,
-            timestamp: dateObj ? dateObj.getTime() : 0
+            timestamp: dateObj ? dateObj.getTime() : 0,
+            status: r.c[5]?.v || 'Belum Ditangani',
+            statusDate: r.c[6]?.v || '',
+            rowIndex: idx + 2
           };
         }).filter(r => r.timestamp !== 0);
 
@@ -292,7 +320,7 @@
         renderTable();
         renderPagination();
 
-      } catch (e) { console.error("Error:", e); document.getElementById('databaseContent').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-muted-foreground">Gagal memuat data</td></tr>`; }
+      } catch (e) { console.error("Error:", e); document.getElementById('databaseContent').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted-foreground">Gagal memuat data</td></tr>`; }
     }
 
     // --- LOGIKA GRID ATAS (DONUT INTERAKTIF SVG - SHADCN STYLE) ---
@@ -553,6 +581,48 @@
       if (p === 'Berat') return 'border-transparent bg-red-50 text-red-700'; 
       return 'border-transparent bg-blue-50 text-blue-700'; 
     }
+
+    function getStatusClass(s) {
+      if (s === 'Sedang Ditangani') return 'status-sedang';
+      if (s === 'Sudah Ditangani') return 'status-selesai';
+      return 'status-belum';
+    }
+
+    function countWorkingDaysElapsed(statusDateStr) {
+      if (!statusDateStr) return 0;
+      const sd = parseDate(statusDateStr);
+      if (!sd) return 0;
+      let count = 0;
+      const cur = new Date(sd); cur.setHours(0,0,0,0);
+      const end = new Date(); end.setHours(0,0,0,0);
+      while (cur < end) {
+        cur.setDate(cur.getDate() + 1);
+        const day = cur.getDay();
+        if (day !== 0 && day !== 6) count++;
+      }
+      return count;
+    }
+
+    function buildStatusCell(r) {
+      let countdown = '';
+      if (r.status === 'Sudah Ditangani' && r.statusDate) {
+        const elapsed = countWorkingDaysElapsed(r.statusDate);
+        const remaining = Math.max(0, 5 - elapsed);
+        countdown = remaining > 0
+          ? `<div class="status-countdown">Diarsipkan dalam ${remaining} hari kerja</div>`
+          : `<div class="status-countdown">Menunggu arsip otomatis...</div>`;
+      }
+      return `<td class="p-3 px-4 align-middle">
+        <div>
+          <select class="status-select ${getStatusClass(r.status)}" onchange="updateStatus(${r.rowIndex}, this.value, this)" data-row="${r.rowIndex}">
+            <option value="Belum Ditangani" ${r.status === 'Belum Ditangani' ? 'selected' : ''}>Belum Ditangani</option>
+            <option value="Sedang Ditangani" ${r.status === 'Sedang Ditangani' ? 'selected' : ''}>Sedang Ditangani</option>
+            <option value="Sudah Ditangani" ${r.status === 'Sudah Ditangani' ? 'selected' : ''}>Sudah Ditangani</option>
+          </select>
+          ${countdown}
+        </div>
+      </td>`;
+    }
     
     function renderTable() {
       const start = (currentPage - 1) * itemsPerPage;
@@ -560,7 +630,7 @@
       const paginatedData = currentData.slice(start, end);
 
       let html = ''; 
-      if(paginatedData.length === 0) { html = '<tr class="border-b"><td colspan="5" class="py-6 text-center text-muted-foreground font-medium">Data tidak ditemukan</td></tr>'; }
+      if(paginatedData.length === 0) { html = '<tr class="border-b"><td colspan="6" class="py-6 text-center text-muted-foreground font-medium">Data tidak ditemukan</td></tr>'; }
       else {
         paginatedData.forEach(r => {
           html += `<tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
@@ -569,11 +639,50 @@
             <td class="p-3 px-4 align-middle text-sm text-muted-foreground truncate max-w-xs" title="${r.hal}">${r.hal}</td>
             <td class="p-3 px-4 align-middle"><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getPoinClasses(r.poin)}">${r.poin}</div></td>
             <td class="p-3 px-4 align-middle text-muted-foreground text-sm">${r.tglStr}</td>
+            ${buildStatusCell(r)}
           </tr>`;
         });
       }
       document.getElementById('databaseContent').innerHTML = html;
     }
+
+    window.updateStatus = async function(rowIndex, newStatus, selectEl) {
+      selectEl.disabled = true;
+      const prevClass = selectEl.className;
+      selectEl.className = 'status-select ' + getStatusClass(newStatus);
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'UPDATE_STATUS', rowIndex: rowIndex, status: newStatus })
+        });
+
+        const item = allData.find(d => d.rowIndex === rowIndex);
+        if (item) {
+          item.status = newStatus;
+          item.statusDate = newStatus === 'Sudah Ditangani' ? new Date().toLocaleString('id-ID') : '';
+        }
+        // Also update in currentData
+        const cur = currentData.find(d => d.rowIndex === rowIndex);
+        if (cur) {
+          cur.status = newStatus;
+          cur.statusDate = newStatus === 'Sudah Ditangani' ? new Date().toLocaleString('id-ID') : '';
+        }
+
+        showAlert('Berhasil!', `Status diubah ke "${newStatus}"`, 'success');
+        renderTable();
+      } catch(err) {
+        showAlert('Gagal!', 'Gagal mengubah status. Periksa koneksi.', 'destructive');
+        selectEl.className = prevClass;
+        // revert select value
+        const item = allData.find(d => d.rowIndex === rowIndex);
+        if (item) selectEl.value = item.status;
+      } finally {
+        selectEl.disabled = false;
+      }
+    };
 
     function renderPagination() {
       const totalPages = Math.max(1, Math.ceil(currentData.length / itemsPerPage));

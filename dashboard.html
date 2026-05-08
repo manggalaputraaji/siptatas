@@ -51,6 +51,18 @@
       .sidebar-container { transform: translateX(-100%); }
       .sidebar-container.active { transform: translateX(0); }
     }
+
+    .status-badge {
+      display: inline-flex; align-items: center;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 0.25rem 0.625rem; border-radius: 9999px;
+      white-space: nowrap;
+    }
+    .status-badge.belum { background-color: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+    .status-badge.sedang { background-color: hsl(217 91% 93%); color: hsl(221 83% 53%); }
+    .status-badge.selesai { background-color: hsl(143 85% 93%); color: hsl(142 71% 29%); }
+    [data-mode="dark"] .status-badge.sedang { background-color: hsl(221 83% 20%); color: hsl(217 91% 76%); }
+    [data-mode="dark"] .status-badge.selesai { background-color: hsl(142 50% 16%); color: hsl(143 70% 70%); }
   </style>
 </head>
 <body class="min-h-screen flex w-full">
@@ -199,6 +211,7 @@
                   <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Pelanggaran</th>
                   <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Poin</th>
                   <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Tanggal</th>
+                  <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">Status</th>
                 </tr>
               </thead>
               <tbody id="tableContent" class="[&_tr:last-child]:border-0">
@@ -208,6 +221,7 @@
                   <td class="p-4 align-middle"><div class="skeleton h-4 w-48"></div></td>
                   <td class="p-4 align-middle"><div class="skeleton h-5 w-16 rounded-full"></div></td>
                   <td class="p-4 align-middle"><div class="skeleton h-4 w-24"></div></td>
+                  <td class="p-4 align-middle"><div class="skeleton h-5 w-24 rounded-full"></div></td>
                 </tr>
               </tbody>
             </table>
@@ -394,11 +408,17 @@
         else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.className = 'text-emerald-500 text-xl font-bold ml-2'; } 
         else { trendEl.innerHTML = '—'; trendEl.className = 'text-muted-foreground text-xl font-bold ml-2'; }
         
-        const allV = rows.map(r => ({ nama: r.c[0]?.v || '-', kelas: r.c[1]?.v || '-', hal: r.c[2]?.v || '-', poin: r.c[3]?.v || '-', tgl: r.c[4]?.f || r.c[4]?.v || '-', date: parseDate(r.c[4]?.f || r.c[4]?.v) })).filter(r => r.date).sort((a,b) => b.date - a.date);
+        function getStatusBadgeClass(s) {
+          if (s === 'Sedang Ditangani') return 'sedang';
+          if (s === 'Sudah Ditangani') return 'selesai';
+          return 'belum';
+        }
+
+        const allV = rows.map(r => ({ nama: r.c[0]?.v || '-', kelas: r.c[1]?.v || '-', hal: r.c[2]?.v || '-', poin: r.c[3]?.v || '-', tgl: r.c[4]?.f || r.c[4]?.v || '-', status: r.c[5]?.v || 'Belum Ditangani', date: parseDate(r.c[4]?.f || r.c[4]?.v) })).filter(r => r.date).sort((a,b) => b.date - a.date);
         
         let html = ''; 
         if (allV.length === 0) {
-            html = '<tr class="border-b transition-colors hover:bg-muted/50"><td colspan="5" class="p-4 align-middle text-center text-muted-foreground">Tidak ada data</td></tr>';
+            html = '<tr class="border-b transition-colors hover:bg-muted/50"><td colspan="6" class="p-4 align-middle text-center text-muted-foreground">Tidak ada data</td></tr>';
         } else {
             const dataTerbaru = allV.slice(0, 3);
             dataTerbaru.forEach(r => { 
@@ -408,6 +428,7 @@
                     <td class="p-4 align-middle text-sm text-muted-foreground">${r.hal}</td>
                     <td class="p-4 align-middle"><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${getPoinClasses(r.poin)}">${r.poin}</div></td>
                     <td class="p-4 align-middle text-muted-foreground text-sm">${r.tgl}</td>
+                    <td class="p-4 align-middle"><span class="status-badge ${getStatusBadgeClass(r.status)}">${r.status}</span></td>
                 </tr>`; 
             });
         }
