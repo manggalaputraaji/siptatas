@@ -308,7 +308,7 @@
             timestamp: dateObj ? dateObj.getTime() : 0,
             status: r.c[5]?.v || 'Belum Ditangani',
             statusDate: r.c[6]?.v || '',
-            rowIndex: idx + 2
+            rowIndex: idx + 1
           };
         }).filter(r => r.timestamp !== 0);
 
@@ -651,12 +651,14 @@
       const prevClass = selectEl.className;
       selectEl.className = 'status-select ' + getStatusClass(newStatus);
 
+      const payload = { type: 'UPDATE_STATUS', rowIndex: rowIndex, status: newStatus };
+      console.log('Mengirim update status:', payload);
+
       try {
         await fetch(SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ type: 'UPDATE_STATUS', rowIndex: rowIndex, status: newStatus })
+          body: JSON.stringify(payload)
         });
 
         const item = allData.find(d => d.rowIndex === rowIndex);
