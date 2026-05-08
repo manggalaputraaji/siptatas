@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="style.css">
   
-  <!-- Tailwind CSS & Configuration -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -35,7 +34,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Mobile Sidebar overlay */
     .sidebar-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background-color: rgba(0, 0, 0, 0.4);
@@ -53,17 +51,14 @@
       .sidebar-container.active { transform: translateX(0); }
     }
     
-    /* Sorting */
     .table th { cursor: pointer; user-select: none; }
     .table th:hover { background-color: hsl(var(--muted)); }
     .sort-icon { font-size: 0.8rem; opacity: 0.5; margin-left: 4px; display: inline-block; transition: opacity 0.2s; }
     .table th.active .sort-icon { opacity: 1; }
     
-    /* Dropdown */
     .filter-dropdown { display: none; }
     .filter-dropdown.show { display: block; }
 
-    /* Status Select */
     .status-select {
       appearance: none; -webkit-appearance: none;
       border: none; background-color: transparent;
@@ -85,6 +80,29 @@
     [data-mode="dark"] .status-sedang { background-color: hsl(221 83% 20%); color: hsl(217 91% 76%); }
     [data-mode="dark"] .status-selesai { background-color: hsl(142 50% 16%); color: hsl(143 70% 70%); }
     .status-countdown { font-size: 0.625rem; color: hsl(var(--muted-foreground)); margin-top: 2px; line-height: 1.2; }
+
+    @keyframes donutSliceIn {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes donutRingIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 0.3; transform: scale(1); }
+    }
+    @keyframes donutTextIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes skeletonDonutPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.15; }
+    }
+    .donut-skeleton-ring { animation: skeletonDonutPulse 1.5s ease-in-out infinite; }
+    @keyframes cardNumberIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-number-in { animation: cardNumberIn 0.5s ease-out both; }
   </style>
 </head>
 <body class="min-h-screen flex w-full">
@@ -187,6 +205,7 @@
           </div>
           <div class="p-4 pt-2 flex flex-1 justify-center pb-4">
             <div id="donutChartContainer" class="mx-auto w-full max-w-[280px] h-[280px]">
+              <svg viewBox="0 0 280 280" width="100%" height="100%"><circle class="donut-skeleton-ring" cx="140" cy="140" r="97" fill="none" stroke="hsl(var(--muted))" stroke-width="30"/></svg>
             </div>
           </div>
         </div>
@@ -236,14 +255,12 @@
               </tr>
             </thead>
             <tbody id="databaseContent" class="[&_tr:last-child]:border-0">
-              <!-- Loading state -->
               <tr><td colspan="6" class="p-8 text-center text-muted-foreground">Menarik Data Dari Sheets...</td></tr>
             </tbody>
           </table>
         </div>
         
         <div id="pagination" class="flex items-center justify-end px-4 py-3 border-t bg-card gap-1">
-          <!-- Tombol halaman digenerate JS -->
         </div>
       </div>
     </div>
@@ -323,7 +340,6 @@
       } catch (e) { console.error("Error:", e); document.getElementById('databaseContent').innerHTML = `<tr><td colspan="6" class="p-8 text-center text-muted-foreground">Gagal memuat data</td></tr>`; }
     }
 
-    // --- LOGIKA GRID ATAS (DONUT INTERAKTIF SVG - SHADCN STYLE) ---
     function processDonutAndYoY(data) {
       const now = new Date();
       globalMonthCounts = new Array(12).fill(0);
@@ -336,20 +352,19 @@
       renderInteractivePie();
     }
 
-    // Shadcn chart-1…5 palette, extended to 12 with the same HSL language
     const PIE_COLORS = [
-      'hsl(220,70%,50%)',   // chart-1 blue
-      'hsl(160,60%,45%)',   // chart-2 teal
-      'hsl(30,80%,55%)',    // chart-3 amber
-      'hsl(280,65%,60%)',   // chart-4 violet
-      'hsl(340,75%,55%)',   // chart-5 rose
-      'hsl(197,71%,52%)',   // sky
-      'hsl(47,88%,50%)',    // yellow
-      'hsl(142,58%,42%)',   // green
-      'hsl(271,55%,50%)',   // purple
-      'hsl(20,80%,52%)',    // orange
-      'hsl(186,72%,44%)',   // cyan
-      'hsl(325,65%,52%)',   // pink
+      'hsl(220,70%,50%)',
+      'hsl(160,60%,45%)',
+      'hsl(30,80%,55%)',
+      'hsl(280,65%,60%)',
+      'hsl(340,75%,55%)',
+      'hsl(197,71%,52%)',
+      'hsl(47,88%,50%)',
+      'hsl(142,58%,42%)',
+      'hsl(271,55%,50%)',
+      'hsl(20,80%,52%)',
+      'hsl(186,72%,44%)',
+      'hsl(325,65%,52%)',
     ];
     const MONTH_LABELS = ['Januari','Februari','Maret','April','Mei','Juni',
                           'Juli','Agustus','September','Oktober','November','Desember'];
@@ -378,7 +393,6 @@
         svg.appendChild(t); wrap.appendChild(svg); return;
       }
 
-      // Build arc segments
       const arcs = [];
       let angle = -Math.PI / 2;
       globalMonthCounts.forEach((cnt, i) => {
@@ -388,7 +402,6 @@
         angle += (cnt / total) * Math.PI * 2;
       });
 
-      // Annular sector path helper
       function sector(r1, r2, a1, a2) {
         const c=Math.cos, s=Math.sin, lg=a2-a1>Math.PI?1:0;
         return `M${CX+r2*c(a1)},${CY+r2*s(a1)}`+
@@ -397,14 +410,19 @@
                `A${r1},${r1} 0 ${lg},0 ${CX+r1*c(a1)},${CY+r1*s(a1)}Z`;
       }
 
-      // Non-active slices
+      let arcIdx = 0;
+      const sliceDelay = Math.min(180, 2500 / Math.max(1, arcs.filter(a => a).length));
       arcs.forEach(arc => {
         if (!arc || arc.i === pieActiveIndex) return;
         const p = document.createElementNS(NS,'path');
         p.setAttribute('d', sector(IR, OR, arc.a1, arc.a2));
         p.setAttribute('fill', arc.color);
         p.setAttribute('stroke','white'); p.setAttribute('stroke-width','2');
-        p.style.cursor = 'pointer'; p.style.transition = 'opacity .15s';
+        p.style.cursor = 'pointer';
+        p.style.transformOrigin = `${CX}px ${CY}px`;
+        p.style.opacity = '0';
+        p.style.animation = `donutSliceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
+        p.style.animationDelay = `${arcIdx * sliceDelay}ms`;
         p.onmouseenter = () => p.style.opacity = '.7';
         p.onmouseleave = () => p.style.opacity = '1';
         p.onclick = () => {
@@ -413,24 +431,33 @@
           renderInteractivePie();
         };
         svg.appendChild(p);
+        arcIdx++;
       });
 
-      // Active slice: outer ring + expanded slice
+      const activeDelay = arcIdx * sliceDelay;
       const a = arcs[pieActiveIndex];
       if (a) {
         const ring = document.createElementNS(NS,'path');
         ring.setAttribute('d', sector(OR+EX+RG, OR+EX+RG+RW, a.a1, a.a2));
-        ring.setAttribute('fill', a.color); ring.setAttribute('opacity','0.3');
+        ring.setAttribute('fill', a.color);
+        ring.style.transformOrigin = `${CX}px ${CY}px`;
+        ring.style.opacity = '0';
+        ring.style.animation = `donutRingIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
+        ring.style.animationDelay = `${activeDelay + 120}ms`;
         svg.appendChild(ring);
 
         const sp = document.createElementNS(NS,'path');
         sp.setAttribute('d', sector(IR, OR+EX, a.a1, a.a2));
         sp.setAttribute('fill', a.color);
         sp.setAttribute('stroke','white'); sp.setAttribute('stroke-width','2');
+        sp.style.transformOrigin = `${CX}px ${CY}px`;
+        sp.style.opacity = '0';
+        sp.style.animation = `donutSliceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both`;
+        sp.style.animationDelay = `${activeDelay}ms`;
         svg.appendChild(sp);
       }
 
-      // Center: count
+      const textDelay = activeDelay + 300;
       const tVal = document.createElementNS(NS,'text');
       tVal.setAttribute('x',CX); tVal.setAttribute('y',CY-6);
       tVal.setAttribute('text-anchor','middle'); tVal.setAttribute('dominant-baseline','middle');
@@ -439,15 +466,20 @@
       tVal.setAttribute('fill','hsl(var(--foreground))');
       tVal.id = 'donutCenterValue';
       tVal.textContent = globalMonthCounts[pieActiveIndex] || 0;
+      tVal.style.opacity = '0';
+      tVal.style.animation = `donutTextIn 0.5s ease-out both`;
+      tVal.style.animationDelay = `${textDelay}ms`;
       svg.appendChild(tVal);
 
-      // Center: label
       const tLbl = document.createElementNS(NS,'text');
       tLbl.setAttribute('x',CX); tLbl.setAttribute('y',CY+22);
       tLbl.setAttribute('text-anchor','middle');
       tLbl.setAttribute('font-size','13'); tLbl.setAttribute('font-family','Inter,sans-serif');
       tLbl.setAttribute('fill','hsl(var(--muted-foreground))');
       tLbl.textContent = 'Kasus';
+      tLbl.style.opacity = '0';
+      tLbl.style.animation = `donutTextIn 0.5s ease-out both`;
+      tLbl.style.animationDelay = `${textDelay + 100}ms`;
       svg.appendChild(tLbl);
 
       wrap.appendChild(svg);
@@ -463,7 +495,19 @@
 
 
 
-    // --- LOGIKA FILTER TOTAL DINAMIS ---
+    function animateCountUp(el, target, duration) {
+      const start = performance.now();
+      const from = 0;
+      function tick(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.innerText = Math.round(from + (target - from) * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
     function updateTotalCard(data) {
       const now = new Date();
       let count = 0;
@@ -499,8 +543,11 @@
       });
 
       const totalAngkaEl = document.getElementById('totalAngka');
+      const wasSkeleton = totalAngkaEl.classList.contains('skeleton');
       totalAngkaEl.classList.remove('skeleton', 'text-transparent', 'w-24', 'h-16');
-      totalAngkaEl.innerText = count;
+      totalAngkaEl.classList.add('animate-number-in');
+      if (wasSkeleton) { animateCountUp(totalAngkaEl, count, 1200); }
+      else { totalAngkaEl.innerText = count; }
       document.getElementById('totalLabel').innerText = currentTotalView;
 
       const trendEl = document.getElementById('totalTrend');
@@ -539,7 +586,6 @@
       });
     });
 
-    // --- LOGIKA SORTING TABEL ---
     function getPoinWeight(poin) {
       const p = poin.toLowerCase();
       if(p === 'berat') return 3; if(p === 'sedang') return 2; if(p === 'ringan') return 1; return 0;
@@ -582,7 +628,6 @@
       renderPagination();
     };
 
-    // --- LOGIKA RENDER TABEL & PAGINASI ---
     function getPoinClasses(p) { 
       if (p === 'Ringan') return 'border-transparent bg-green-50 text-green-700'; 
       if (p === 'Sedang') return 'border-transparent bg-amber-50 text-amber-700'; 
@@ -674,7 +719,6 @@
           item.status = newStatus;
           item.statusDate = newStatus === 'Sudah Ditangani' ? new Date().toLocaleString('id-ID') : '';
         }
-        // Also update in currentData
         const cur = currentData.find(d => d.rowIndex === rowIndex);
         if (cur) {
           cur.status = newStatus;
@@ -686,7 +730,6 @@
       } catch(err) {
         showAlert('Gagal!', 'Gagal mengubah status. Periksa koneksi.', 'destructive');
         selectEl.className = prevClass;
-        // revert select value
         const item = allData.find(d => d.rowIndex === rowIndex);
         if (item) selectEl.value = item.status;
       } finally {
@@ -712,7 +755,6 @@
       pagContainer.appendChild(createBtn('&lsaquo;', currentPage === 1, () => { currentPage--; updateTableAndView(); }));
 
       for(let i = 1; i <= totalPages; i++) {
-        // Show only nearby pages, first, and last
         if(i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
             pagContainer.appendChild(createBtn(i, false, () => { currentPage = i; updateTableAndView(); }, i === currentPage));
         } else if (i === currentPage - 2 || i === currentPage + 2) {

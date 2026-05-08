@@ -63,6 +63,22 @@
     .status-badge.selesai { background-color: hsl(143 85% 93%); color: hsl(142 71% 29%); }
     [data-mode="dark"] .status-badge.sedang { background-color: hsl(221 83% 20%); color: hsl(217 91% 76%); }
     [data-mode="dark"] .status-badge.selesai { background-color: hsl(142 50% 16%); color: hsl(143 70% 70%); }
+
+    @keyframes cardFadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes cardNumberIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes rowSlideIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .animate-card { animation: cardFadeInUp 0.5s ease-out both; }
+    .animate-number-in { animation: cardNumberIn 0.5s ease-out both; }
+    .animate-row { animation: rowSlideIn 0.4s ease-out both; }
   </style>
 </head>
 <body class="min-h-screen flex w-full">
@@ -171,7 +187,7 @@
       </div>
 
       <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col col-span-1">
+        <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col col-span-1 animate-card" style="animation-delay:0ms">
           <div class="p-6 flex flex-col gap-4">
             <div>
               <p class="text-sm font-medium text-muted-foreground uppercase tracking-wider">Kemarin</p>
@@ -187,7 +203,7 @@
             </div>
           </div>
         </div>
-        <div class="rounded-xl border bg-card text-card-foreground shadow-sm md:col-span-1 lg:col-span-2 flex flex-col">
+        <div class="rounded-xl border bg-card text-card-foreground shadow-sm md:col-span-1 lg:col-span-2 flex flex-col animate-card" style="animation-delay:120ms">
           <div class="flex flex-col space-y-1.5 p-6 pb-2">
             <h3 class="font-semibold leading-none tracking-tight">Statistik Pelanggar Mingguan</h3>
             <p class="text-sm text-muted-foreground">Menampilkan Pelanggaran 7 Hari Terakhir.</p>
@@ -197,7 +213,7 @@
           </div>
         </div>
       </div>
-      <div class="rounded-xl border bg-card text-card-foreground shadow-sm">
+      <div class="rounded-xl border bg-card text-card-foreground shadow-sm animate-card" style="animation-delay:240ms">
         <div class="flex flex-col space-y-1.5 p-6">
           <h3 class="font-semibold leading-none tracking-tight">Pelanggaran Terakhir</h3>
         </div>
@@ -290,6 +306,18 @@
     
     let chartInstance = null;
     let globalDailyData = [];
+    let isFirstLoad = true;
+
+    function animateCountUp(el, target, duration) {
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.innerText = Math.round(target * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
 
     function renderChart(dailyData) {
       const canvas = document.getElementById('chartPelanggaran'); const ctx = canvas.getContext('2d'); if (chartInstance) chartInstance.destroy();
@@ -345,6 +373,26 @@
         el.style.transform = 'translate(-50%, -100%)';
       };
       
+      const animDuration = isFirstLoad ? 2500 : 0;
+
+      const clipRevealPlugin = {
+        id: 'clipReveal',
+        beforeDraw(chart) {
+          if (!chart._clipReveal) return;
+          const { ctx, chartArea } = chart;
+          const progress = chart._clipReveal.progress;
+          const clipWidth = chartArea.left + (chartArea.right - chartArea.left) * progress;
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(chartArea.left, chartArea.top - 10, clipWidth - chartArea.left, chartArea.bottom - chartArea.top + 20);
+          ctx.clip();
+        },
+        afterDraw(chart) {
+          if (!chart._clipReveal) return;
+          chart.ctx.restore();
+        }
+      };
+
       chartInstance = new Chart(ctx, {
         type: 'line', 
         data: { 
@@ -366,6 +414,7 @@
         options: {
           responsive: true, maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
+          animation: false,
           plugins: { 
             legend: { display: false }, 
             tooltip: { 
@@ -383,8 +432,23 @@
               ticks: { color: tickColor, font: { family: 'Inter', size: 12 } } 
             } 
           }
-        }
+        },
+        plugins: [clipRevealPlugin]
       });
+
+      if (animDuration > 0) {
+        chartInstance._clipReveal = { progress: 0 };
+        const start = performance.now();
+        function animateClip(now) {
+          const elapsed = now - start;
+          const t = Math.min(elapsed / animDuration, 1);
+          chartInstance._clipReveal.progress = 1 - Math.pow(1 - t, 4);
+          chartInstance.draw();
+          if (t < 1) requestAnimationFrame(animateClip);
+          else { chartInstance._clipReveal = null; chartInstance.draw(); }
+        }
+        requestAnimationFrame(animateClip);
+      }
     }
 
     async function init() {
@@ -400,8 +464,15 @@
         cLalu.classList.remove('skeleton', 'text-transparent', 'w-16', 'h-9'); 
         trendEl.classList.remove('skeleton', 'text-transparent', 'w-6', 'h-6');
         
-        cSekarang.innerText = stats.countSekarang; 
-        cLalu.innerText = stats.countLalu;
+        if (isFirstLoad) {
+          cSekarang.classList.add('animate-number-in');
+          cLalu.classList.add('animate-number-in');
+          animateCountUp(cSekarang, stats.countSekarang, 1200);
+          animateCountUp(cLalu, stats.countLalu, 1200);
+        } else {
+          cSekarang.innerText = stats.countSekarang;
+          cLalu.innerText = stats.countLalu;
+        }
         
         const diff = stats.countSekarang - stats.countLalu;
         if (diff > 0) { trendEl.innerHTML = '▲'; trendEl.className = 'text-destructive text-xl font-bold ml-2'; } 
@@ -421,8 +492,10 @@
             html = '<tr class="border-b transition-colors hover:bg-muted/50"><td colspan="6" class="p-4 align-middle text-center text-muted-foreground">Tidak ada data</td></tr>';
         } else {
             const dataTerbaru = allV.slice(0, 3);
-            dataTerbaru.forEach(r => { 
-                html += `<tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+            dataTerbaru.forEach((r, idx) => { 
+                const rowDelay = isFirstLoad ? `style="animation-delay:${idx * 150}ms"` : '';
+                const rowClass = isFirstLoad ? ' animate-row' : '';
+                html += `<tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted${rowClass}" ${rowDelay}>
                     <td class="p-4 align-middle font-medium">${r.nama}</td>
                     <td class="p-4 align-middle">${r.kelas}</td>
                     <td class="p-4 align-middle text-sm text-muted-foreground">${r.hal}</td>
@@ -435,6 +508,7 @@
         document.getElementById('tableContent').innerHTML = html; 
         globalDailyData = dailyData;
         renderChart(globalDailyData);
+        isFirstLoad = false;
         
       } catch (e) { console.error('Error:', e); }
     }
@@ -490,7 +564,6 @@
     document.documentElement.setAttribute('data-mode', mode);
     document.documentElement.setAttribute('data-accent', accent === 'zinc' ? '' : accent);
     if (accent === 'zinc') document.documentElement.removeAttribute('data-accent');
-    // Update UI
     const icon = document.getElementById('themeIcon');
     const label = document.getElementById('themeLabel');
     if (icon && label) {
