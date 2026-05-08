@@ -288,7 +288,6 @@
       const borderHSL = rs.getPropertyValue('--border').trim();
       const gridColor = borderHSL ? `hsl(${borderHSL})` : 'hsl(240, 5.9%, 90%)';
       
-      // Custom Shadcn-style tooltip
       const getOrCreateTooltip = (chart) => {
         let el = chart.canvas.parentNode.querySelector('.shadcn-tooltip');
         if (!el) {
