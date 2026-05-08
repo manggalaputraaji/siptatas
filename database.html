@@ -74,7 +74,7 @@
       </button>
       <span class="font-semibold text-sm tracking-tight">LEXACORE</span>
     </div>
-    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover" onerror="this.src='https://via.placeholder.com/32?text=A'">
+    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover">
   </header>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <aside class="sidebar-container fixed lg:sticky top-0 left-0 h-[100dvh] w-[16rem] flex flex-col" style="background-color:hsl(var(--sidebar-background));color:hsl(var(--sidebar-foreground));border-right:1px solid hsl(var(--sidebar-border));">
@@ -122,7 +122,7 @@
     </div>
     <div class="p-3" style="border-top:1px solid hsl(var(--sidebar-border));">
       <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer" onclick="window.location.href='profile.html'">
-        <img id="fotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0 bg-muted" onerror="this.src='https://via.placeholder.com/40?text=A'">
+        <img id="fotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
         <div class="flex-1 overflow-hidden"><p id="adminName" class="text-sm font-medium leading-none truncate">Admin</p><p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p></div>
         <button onclick="event.stopPropagation();logout()" class="inline-flex items-center justify-center rounded-md h-7 w-7 transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 flex-shrink-0" title="Logout"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
       </div>
@@ -629,7 +629,7 @@
     window.onload = () => { 
       document.getElementById('adminName').innerText = localStorage.getItem('namaLengkap') || 'Admin'; 
       const foto = localStorage.getItem('fotoProfil');
-      if (foto && foto.trim() !== '') {
+      if (foto) {
         document.getElementById('fotoSiswa').src = foto; 
         const mobileFoto = document.getElementById('mobileFotoSiswa');
         if (mobileFoto) mobileFoto.src = foto;
