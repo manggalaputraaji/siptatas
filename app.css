@@ -1,0 +1,145 @@
+/* ============================================================
+   app.css — Consolidated page-specific styles
+   (Design tokens & theme variables remain in style.css)
+   ============================================================ */
+
+/* --- Sidebar & Mobile Navigation --- */
+.sidebar-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 40; display: none;
+  backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active { display: block; }
+
+.sidebar-container {
+  transition: transform 0.3s ease;
+  z-index: 50;
+}
+@media (max-width: 1024px) {
+  .sidebar-container { transform: translateX(-100%); }
+  .sidebar-container.active { transform: translateX(0); }
+}
+
+
+/* --- Shared Animations --- */
+@keyframes cardFadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes cardNumberIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-card { animation: cardFadeInUp 0.5s ease-out both; }
+.animate-number-in { animation: cardNumberIn 0.5s ease-out both; }
+
+
+/* --- Dashboard: Status Badge --- */
+.status-badge {
+  display: inline-flex; align-items: center;
+  font-size: 0.7rem; font-weight: 600;
+  padding: 0.25rem 0.625rem; border-radius: 9999px;
+  white-space: nowrap;
+}
+.status-badge.belum { background-color: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+.status-badge.sedang { background-color: hsl(217 91% 93%); color: hsl(221 83% 53%); }
+.status-badge.selesai { background-color: hsl(143 85% 93%); color: hsl(142 71% 29%); }
+[data-mode="dark"] .status-badge.sedang { background-color: hsl(221 83% 20%); color: hsl(217 91% 76%); }
+[data-mode="dark"] .status-badge.selesai { background-color: hsl(142 50% 16%); color: hsl(143 70% 70%); }
+
+/* --- Dashboard: Row Animation --- */
+@keyframes rowSlideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-row { animation: rowSlideIn 0.4s ease-out both; }
+
+
+/* --- Database: Table Sorting --- */
+.table th { cursor: pointer; user-select: none; }
+.table th:hover { background-color: hsl(var(--muted)); }
+.sort-icon { font-size: 0.8rem; opacity: 0.5; margin-left: 4px; display: inline-block; transition: opacity 0.2s; }
+.table th.active .sort-icon { opacity: 1; }
+
+/* --- Database: Filter Dropdown --- */
+.filter-dropdown { display: none; }
+.filter-dropdown.show { display: block; }
+
+/* --- Database: Status Select --- */
+.status-select {
+  appearance: none; -webkit-appearance: none;
+  border: none; background-color: transparent;
+  font-size: 0.7rem; font-weight: 600;
+  padding: 0.3rem 1.6rem 0.3rem 0.6rem;
+  border-radius: 9999px; cursor: pointer; outline: none;
+  transition: all 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.4rem center;
+  background-size: 0.7rem;
+  white-space: nowrap;
+}
+.status-select:focus { box-shadow: 0 0 0 2px hsl(var(--ring)); }
+.status-select:disabled { opacity: 0.5; cursor: wait; }
+.status-belum { background-color: hsl(var(--muted)); color: hsl(var(--muted-foreground)); }
+.status-sedang { background-color: hsl(217 91% 93%); color: hsl(221 83% 53%); }
+.status-selesai { background-color: hsl(143 85% 93%); color: hsl(142 71% 29%); }
+[data-mode="dark"] .status-sedang { background-color: hsl(221 83% 20%); color: hsl(217 91% 76%); }
+[data-mode="dark"] .status-selesai { background-color: hsl(142 50% 16%); color: hsl(143 70% 70%); }
+.status-countdown { font-size: 0.625rem; color: hsl(var(--muted-foreground)); margin-top: 2px; line-height: 1.2; }
+
+/* --- Database: Donut Chart Animations --- */
+@keyframes donutSliceIn {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes donutRingIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 0.3; transform: scale(1); }
+}
+@keyframes donutTextIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes skeletonDonutPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.15; }
+}
+.donut-skeleton-ring { animation: skeletonDonutPulse 1.5s ease-in-out infinite; }
+
+
+/* --- Profile: Upload Container --- */
+.upload-container {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: hsl(var(--muted));
+}
+.upload-container .photo-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: hsl(var(--muted-foreground));
+}
+.upload-container img.has-photo ~ .photo-placeholder {
+  display: none;
+}
+.upload-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.upload-container:hover .upload-overlay {
+  opacity: 1;
+}

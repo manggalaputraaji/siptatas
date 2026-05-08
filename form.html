@@ -5,7 +5,7 @@
   <title>LEXACORE | Input Pelanggaran</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="app.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -30,31 +30,6 @@
       }
     }
   </script>
-
-  <style>
-    .sidebar-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background-color: rgba(0, 0, 0, 0.4);
-      z-index: 40; display: none;
-      backdrop-filter: blur(2px);
-    }
-    .sidebar-overlay.active { display: block; }
-
-    .sidebar-container {
-      transition: transform 0.3s ease;
-      z-index: 50;
-    }
-    @media (max-width: 1024px) {
-      .sidebar-container { transform: translateX(-100%); }
-      .sidebar-container.active { transform: translateX(0); }
-    }
-
-    @keyframes cardFadeInUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-card { animation: cardFadeInUp 0.5s ease-out both; }
-  </style>
 </head>
 <body class="min-h-screen flex w-full">
 
@@ -224,126 +199,6 @@
     </div>
   </main>
 
-  <script>
-    (function(){
-      if (window.__lexacore_form_init) return;
-      window.__lexacore_form_init = true;
-
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUBAwPygq9QGCoYAEjk1uADBbv6P1wZ6RbvFrxQLi_zmkIeNprRtuNyKYRhicGQWmv/exec';
-
-      function showAlert(title, description, type = 'default') {
-        let container = document.querySelector('.alert-container');
-        if (!container) {
-          container = document.createElement('div');
-          container.className = 'alert-container';
-          document.body.appendChild(container);
-        }
-        const alert = document.createElement('div');
-        alert.className = `alert ${type}`;
-        const icon = type === 'destructive' ? '<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>' : '<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
-        alert.innerHTML = `${icon}<div class="alert-title">${title}</div><div class="alert-description">${description}</div>`;
-        container.appendChild(alert);
-        setTimeout(() => {
-          alert.classList.add('alert-fade-out');
-          setTimeout(() => alert.remove(), 200);
-        }, 3000);
-      }
-
-      (function initForm(){
-        const form = document.getElementById('violationForm');
-        if (!form) return;
-        form.addEventListener('submit', async function(e){
-          e.preventDefault();
-          const btn = e.target.querySelector('button[type="submit"]');
-          const originalText = btn.innerText;
-          
-          btn.innerText = "Mengirim..."; 
-          btn.disabled = true;
-
-          const formData = new FormData(e.target);
-          const data = {
-            type: "INPUT_PELANGGARAN",
-            nama: formData.get('nama'),
-            kelas: formData.get('kelas'),
-            pelanggaran: formData.get('hal'),
-            poin: formData.get('poin')
-          };
-
-          try {
-            await fetch(SCRIPT_URL, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
-            
-            showAlert("Berhasil!", "Data pelanggaran telah disimpan.", "success");
-            e.target.reset();
-          } catch (err) {
-            showAlert("Gagal!", "Gagal terhubung ke Database. Periksa koneksimu.", "destructive");
-          } finally {
-            btn.innerText = originalText; 
-            btn.disabled = false;
-          }
-        });
-      })();
-
-      (function initMenuToggle(){
-        const sidebar = document.querySelector('.sidebar-container'); 
-        const toggle = document.getElementById('mobileNavToggle'); 
-        const overlay = document.getElementById('sidebarOverlay');
-        if (!sidebar || !toggle) return; 
-        
-        function closeMenu() {
-          sidebar.classList.remove('active'); 
-          overlay.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-
-        toggle.addEventListener('click', (e) => { 
-          e.stopPropagation();
-          sidebar.classList.toggle('active'); 
-          overlay.classList.toggle('active');
-          document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
-        });
-        
-        overlay.addEventListener('click', closeMenu);
-      })();
-
-      window.addEventListener('load', function(){
-        const adminNameEl = document.getElementById('adminName');
-        if (adminNameEl) adminNameEl.innerText = localStorage.getItem('namaLengkap') || 'Admin';
-        
-        const fotoSiswaEl = document.getElementById('fotoSiswa');
-        const mobileFotoEl = document.getElementById('mobileFotoSiswa');
-        const foto = localStorage.getItem('fotoProfil');
-        if (foto && fotoSiswaEl) fotoSiswaEl.src = foto;
-        if (foto && mobileFotoEl) mobileFotoEl.src = foto;
-      });
-
-      window.logout = function(){ 
-        localStorage.clear(); 
-        window.location.href = 'index.html'; 
-      };
-    })();
-
-  function applyTheme() {
-    const mode = localStorage.getItem('themeMode') || 'light';
-    const accent = localStorage.getItem('themeAccent') || 'zinc';
-    document.documentElement.setAttribute('data-mode', mode);
-    if (accent !== 'zinc') document.documentElement.setAttribute('data-accent', accent);
-    else document.documentElement.removeAttribute('data-accent');
-    const icon = document.getElementById('themeIcon');
-    const label = document.getElementById('themeLabel');
-    if (icon && label) {
-      if (mode === 'dark') { icon.innerHTML = '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'; label.textContent = 'Mode Gelap'; }
-      else { icon.innerHTML = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>'; label.textContent = 'Mode Terang'; }
-    }
-    document.querySelectorAll('.theme-swatch').forEach(s => s.classList.toggle('active', s.dataset.color === accent));
-  }
-  function toggleDarkMode() { const c = localStorage.getItem('themeMode') || 'light'; localStorage.setItem('themeMode', c === 'dark' ? 'light' : 'dark'); applyTheme(); }
-  function setAccent(color) { localStorage.setItem('themeAccent', color); applyTheme(); }
-  applyTheme();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin | LEXACORE</title>
     <link rel="stylesheet" href="style.css">
-    
+    <link rel="stylesheet" href="app.css">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -17,40 +18,15 @@
               ring: "hsl(var(--ring))",
               background: "hsl(var(--background))",
               foreground: "hsl(var(--foreground))",
-              primary: {
-                DEFAULT: "hsl(var(--primary))",
-                foreground: "hsl(var(--primary-foreground))",
-              },
-              secondary: {
-                DEFAULT: "hsl(var(--secondary))",
-                foreground: "hsl(var(--secondary-foreground))",
-              },
-              destructive: {
-                DEFAULT: "hsl(var(--destructive))",
-                foreground: "hsl(var(--destructive-foreground))",
-              },
-              muted: {
-                DEFAULT: "hsl(var(--muted))",
-                foreground: "hsl(var(--muted-foreground))",
-              },
-              accent: {
-                DEFAULT: "hsl(var(--accent))",
-                foreground: "hsl(var(--accent-foreground))",
-              },
-              popover: {
-                DEFAULT: "hsl(var(--popover))",
-                foreground: "hsl(var(--popover-foreground))",
-              },
-              card: {
-                DEFAULT: "hsl(var(--card))",
-                foreground: "hsl(var(--card-foreground))",
-              },
+              primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+              secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+              destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+              muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+              accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+              popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+              card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
             },
-            borderRadius: {
-              lg: "var(--radius)",
-              md: "calc(var(--radius) - 2px)",
-              sm: "calc(var(--radius) - 4px)",
-            },
+            borderRadius: { lg: "var(--radius)", md: "calc(var(--radius) - 2px)", sm: "calc(var(--radius) - 4px)" },
           }
         }
       }
@@ -82,65 +58,6 @@
         </div>
     </div>
 
-    <script>
-        const SHEET_ID_ADMIN = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
-        const GVIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID_ADMIN}/gviz/tq?tqx=out:json`;
-
-        function showAlert(title, description, type = 'default') {
-            let container = document.querySelector('.alert-container');
-            if (!container) {
-                container = document.createElement('div');
-                container.className = 'alert-container';
-                document.body.appendChild(container);
-            }
-            const alert = document.createElement('div');
-            alert.className = `alert ${type}`;
-            const icon = type === 'destructive' ? '<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>' : '<svg class="alert-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
-            alert.innerHTML = `${icon}<div class="alert-title">${title}</div><div class="alert-description">${description}</div>`;
-            container.appendChild(alert);
-            setTimeout(() => {
-                alert.classList.add('alert-fade-out');
-                setTimeout(() => alert.remove(), 200);
-            }, 3000);
-        }
-
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const userVal = document.getElementById('user').value.trim();
-            const passVal = document.getElementById('pass').value.trim();
-            const btn = document.getElementById('btnLogin');
-
-            btn.disabled = true;
-            btn.innerText = "Memverifikasi...";
-
-            try {
-                const res = await fetch(GVIZ_URL);
-                const text = await res.text();
-                const json = JSON.parse(text.substr(47).slice(0, -2));
-                const rows = json.table.rows;
-
-                let foundAcc = rows.find(r => {
-                    const dbUser = r.c[1] ? (r.c[1].f || String(r.c[1].v)).trim() : '';
-                    const dbPass = r.c[2] ? (r.c[2].f || String(r.c[2].v)).trim() : '';
-                    return dbUser === userVal && dbPass === passVal;
-                });
-
-                if (foundAcc) {
-                    localStorage.setItem('siswaLogin', userVal);
-                    localStorage.setItem('namaLengkap', foundAcc.c[0] ? foundAcc.c[0].v : userVal);
-                    localStorage.setItem('fotoProfil', (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : '');
-                    window.location.href = 'dashboard.html';
-                } else {
-                    showAlert("Akses Ditolak", "Nama Pengguna atau Kata Sandi Salah!", "destructive");
-                    btn.disabled = false; 
-                    btn.innerText = "MASUK";
-                }
-            } catch (err) {
-                showAlert("Koneksi Gagal", "Gagal terhubung ke Database. Periksa koneksimu.", "destructive");
-                btn.disabled = false; 
-                btn.innerText = "MASUK";
-            }
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
