@@ -232,7 +232,7 @@
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground w-1/3">PELANGGARAN</th>
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('poin')">POIN <span class="sort-icon" id="icon-poin">↕</span></th>
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('tgl')">TANGGAL <span class="sort-icon" id="icon-tgl">↕</span></th>
-                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">STATUS</th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('status')">STATUS <span class="sort-icon" id="icon-status">↕</span></th>
               </tr>
             </thead>
             <tbody id="databaseContent" class="[&_tr:last-child]:border-0">
@@ -545,6 +545,13 @@
       if(p === 'berat') return 3; if(p === 'sedang') return 2; if(p === 'ringan') return 1; return 0;
     }
 
+    function getStatusWeight(status) {
+      if(status === 'Sudah Ditangani') return 3;
+      if(status === 'Sedang Ditangani') return 2;
+      if(status === 'Belum Ditangani') return 1;
+      return 0;
+    }
+
     window.sortTable = function(col) {
       if(sortCol === col) { sortAsc = !sortAsc; } 
       else { sortCol = col; sortAsc = true; }
@@ -563,6 +570,7 @@
         if(col === 'nama') { valA = a.nama.toLowerCase(); valB = b.nama.toLowerCase(); }
         else if(col === 'poin') { valA = getPoinWeight(a.poin); valB = getPoinWeight(b.poin); }
         else if(col === 'tgl') { valA = a.timestamp; valB = b.timestamp; }
+        else if(col === 'status') { valA = getStatusWeight(a.status); valB = getStatusWeight(b.status); }
 
         if (valA < valB) return sortAsc ? -1 : 1;
         if (valA > valB) return sortAsc ? 1 : -1;
