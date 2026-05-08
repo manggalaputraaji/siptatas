@@ -58,6 +58,18 @@
         position: relative;
         overflow: hidden;
         cursor: pointer;
+        background-color: hsl(var(--muted));
+    }
+    .upload-container .photo-placeholder {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--muted-foreground));
+    }
+    .upload-container img.has-photo ~ .photo-placeholder {
+        display: none;
     }
     .upload-overlay {
         position: absolute;
@@ -87,7 +99,7 @@
       </button>
       <span class="font-semibold text-sm tracking-tight">LEXACORE</span>
     </div>
-    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover">
+    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover" onerror="this.src='https://via.placeholder.com/32?text=A'">
   </header>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
   <aside class="sidebar-container fixed lg:sticky top-0 left-0 h-[100dvh] w-[16rem] flex flex-col" style="background-color:hsl(var(--sidebar-background));color:hsl(var(--sidebar-foreground));border-right:1px solid hsl(var(--sidebar-border));">
@@ -136,7 +148,7 @@
     </div>
     <div class="p-3" style="border-top:1px solid hsl(var(--sidebar-border));">
       <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer" onclick="window.location.href='profile.html'">
-        <img id="sidebarFotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
+        <img id="sidebarFotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0 bg-muted" onerror="this.src='https://via.placeholder.com/40?text=A'">
         <div class="flex-1 overflow-hidden"><p id="sidebarAdminName" class="text-sm font-medium leading-none truncate">Admin</p><p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p></div>
         <button onclick="event.stopPropagation();logout()" class="inline-flex items-center justify-center rounded-md h-7 w-7 transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 flex-shrink-0" title="Logout"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
       </div>
@@ -163,7 +175,10 @@
             
             <div class="flex flex-col sm:flex-row items-center gap-6">
               <div class="upload-container h-32 w-32 rounded-full border-4 border-muted overflow-hidden flex-shrink-0" onclick="document.getElementById('fileInput').click()">
-                <img id="previewFoto" src="" class="h-full w-full object-cover">
+                <img id="previewFoto" src="" class="h-full w-full object-cover" style="display:none;" onerror="this.style.display='none';this.classList.remove('has-photo');">
+                <div class="photo-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
                 <div class="upload-overlay rounded-full flex flex-col items-center">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mb-1"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
                   <span>Ganti</span>
@@ -229,21 +244,57 @@
     }
 
     const SCRIPT_URL_PROFILE = "https://script.google.com/macros/s/AKfycbx1oGeWBTXQAi-SF8NVlXfxwAU9WWj2l-ELfVWMldm3jAJI8YFM8UrGhX4lTkmiN_Ti/exec"; 
-    const IMGBB_API_KEY = "5188af2b234ee6ea8fe8aa52d76c08f0"; 
     
     let finalImageUrl = localStorage.getItem('fotoProfil') || "";
     let originalUsername = localStorage.getItem('siswaLogin') || '';
+
+    // Resize and compress image to base64 data URL
+    function compressImage(file, maxSize, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            if (w > h) { if (w > maxSize) { h = Math.round(h * maxSize / w); w = maxSize; } }
+            else { if (h > maxSize) { w = Math.round(w * maxSize / h); h = maxSize; } }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function showPreviewPhoto(url) {
+      const img = document.getElementById('previewFoto');
+      if (url && url.trim() !== '') {
+        img.src = url;
+        img.style.display = 'block';
+        img.classList.add('has-photo');
+      } else {
+        img.style.display = 'none';
+        img.classList.remove('has-photo');
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const currentNama = localStorage.getItem('namaLengkap') || 'Admin';
       
       document.getElementById('inputNama').value = currentNama;
       document.getElementById('inputUser').value = originalUsername;
-      document.getElementById('previewFoto').src = finalImageUrl || 'https://via.placeholder.com/150x150?text=No+Photo';
+      showPreviewPhoto(finalImageUrl);
 
       document.getElementById('sidebarAdminName').innerText = currentNama; 
-      if (finalImageUrl) document.getElementById('sidebarFotoSiswa').src = finalImageUrl;
-      if (finalImageUrl) document.getElementById('mobileFotoSiswa').src = finalImageUrl;
+      if (finalImageUrl && finalImageUrl.trim() !== '') document.getElementById('sidebarFotoSiswa').src = finalImageUrl;
+      if (finalImageUrl && finalImageUrl.trim() !== '') document.getElementById('mobileFotoSiswa').src = finalImageUrl;
 
       document.getElementById('fileInput').addEventListener('change', async function() {
         const file = this.files[0];
@@ -254,29 +305,20 @@
         
         loading.classList.remove('hidden');
         loading.className = "text-sm font-medium text-primary mt-2";
-        loading.innerText = "Mengunggah ke cloud...";
+        loading.innerText = "Memproses foto...";
         btn.disabled = true;
 
-        const formData = new FormData();
-        formData.append("image", file);
-
         try {
-          const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-            method: "POST",
-            body: formData
-          });
-
-          const result = await response.json();
-
-          if (result.success) {
-            finalImageUrl = result.data.url;
-            document.getElementById('previewFoto').src = finalImageUrl;
-            loading.innerText = "Foto siap disimpan!";
-            loading.className = "text-sm font-medium text-emerald-500 mt-2";
-          }
+          // Compress to max 200x200 JPEG at 70% quality → small base64 string
+          finalImageUrl = await compressImage(file, 200, 0.7);
+          showPreviewPhoto(finalImageUrl);
+          loading.innerText = "Foto siap disimpan!";
+          loading.className = "text-sm font-medium text-emerald-500 mt-2";
         } catch (err) {
-          showAlert("Gagal Mengunggah", "Gagal mengunggah gambar. Silakan coba lagi.", "destructive");
-          loading.classList.add('hidden');
+          console.error('Image processing error:', err);
+          showAlert("Gagal", "Gagal memproses gambar. Coba gambar lain.", "destructive");
+          loading.innerText = "Gagal memproses foto.";
+          loading.className = "text-sm font-medium text-destructive mt-2";
         } finally {
           btn.disabled = false;
         }

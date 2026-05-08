@@ -128,7 +128,7 @@
                 if (foundAcc) {
                     localStorage.setItem('siswaLogin', userVal);
                     localStorage.setItem('namaLengkap', foundAcc.c[0] ? foundAcc.c[0].v : userVal);
-                    localStorage.setItem('fotoProfil', (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : 'https://via.placeholder.com/85x110');
+                    localStorage.setItem('fotoProfil', (foundAcc.c[3] && foundAcc.c[3].v) ? foundAcc.c[3].v : '');
                     window.location.href = 'dashboard.html';
                 } else {
                     showAlert("Akses Ditolak", "Nama Pengguna atau Kata Sandi Salah!", "destructive");

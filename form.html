@@ -60,7 +60,7 @@
       </button>
       <span class="font-semibold text-sm tracking-tight">LEXACORE</span>
     </div>
-    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover">
+    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover" onerror="this.src='https://via.placeholder.com/32?text=A'">
   </header>
 
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -117,7 +117,7 @@
     </div>
     <div class="p-3" style="border-top:1px solid hsl(var(--sidebar-border));">
       <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer" onclick="window.location.href='profile.html'">
-        <img id="fotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
+        <img id="fotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0 bg-muted" onerror="this.src='https://via.placeholder.com/40?text=A'">
         <div class="flex-1 overflow-hidden">
           <p id="adminName" class="text-sm font-medium leading-none truncate">Admin</p>
           <p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p>
@@ -311,8 +311,8 @@
         const fotoSiswaEl = document.getElementById('fotoSiswa');
         const mobileFotoEl = document.getElementById('mobileFotoSiswa');
         const foto = localStorage.getItem('fotoProfil');
-        if (foto && fotoSiswaEl) fotoSiswaEl.src = foto;
-        if (foto && mobileFotoEl) mobileFotoEl.src = foto;
+        if (foto && foto.trim() !== '' && fotoSiswaEl) fotoSiswaEl.src = foto;
+        if (foto && foto.trim() !== '' && mobileFotoEl) mobileFotoEl.src = foto;
       });
 
       window.logout = function(){ 
