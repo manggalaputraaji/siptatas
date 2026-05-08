@@ -1,8 +1,5 @@
-/* ============================================================
-   app.js — Consolidated Application JavaScript
-   ============================================================ */
 
-// ─── Shared Constants ───
+
 const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
 const DB_URL = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json`;
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUBAwPygq9QGCoYAEjk1uADBbv6P1wZ6RbvFrxQLi_zmkIeNprRtuNyKYRhicGQWmv/exec';
@@ -10,7 +7,7 @@ const SCRIPT_URL_PROFILE = 'https://script.google.com/macros/s/AKfycbx1oGeWBTXQA
 const SHEET_ID_ADMIN = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
 const GVIZ_URL_ADMIN = `https://docs.google.com/spreadsheets/d/${SHEET_ID_ADMIN}/gviz/tq?tqx=out:json`;
 
-// ─── Shared Utilities ───
+
 function parseDate(dStr) {
   if (!dStr) return null;
   if (dStr instanceof Date) return dStr;
@@ -85,7 +82,7 @@ function getPoinClasses(p) {
   return 'border-transparent bg-blue-50 text-blue-700';
 }
 
-// ─── Theme ───
+
 function applyTheme() {
   const mode = localStorage.getItem('themeMode') || 'light';
   const accent = localStorage.getItem('themeAccent') || 'zinc';
@@ -121,7 +118,7 @@ function setAccent(color) {
   applyTheme();
 }
 
-// ─── Sidebar Toggle ───
+
 function initMenuToggle() {
   var sidebar = document.querySelector('.sidebar-container');
   var toggle = document.getElementById('mobileNavToggle');
@@ -156,19 +153,17 @@ function loadUserProfile() {
   if (foto && mobileFotoEl) mobileFotoEl.src = foto;
 }
 
-// ─── Apply theme immediately ───
+
 applyTheme();
 
-// ─── Init on DOM ready ───
+
 document.addEventListener('DOMContentLoaded', function () {
   initMenuToggle();
   loadUserProfile();
 });
 
 
-/* ============================================================
-   PAGE: Login (index.html)
-   ============================================================ */
+
 (function initLoginPage() {
   var loginForm = document.getElementById('loginForm');
   if (!loginForm) return;
@@ -209,9 +204,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 
-/* ============================================================
-   PAGE: Form (form.html)
-   ============================================================ */
+
 (function initFormPage() {
   var form = document.getElementById('violationForm');
   if (!form) return;
@@ -244,9 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 
-/* ============================================================
-   PAGE: Profile (profile.html)
-   ============================================================ */
+
 (function initProfilePage() {
   var profileForm = document.getElementById('profileForm');
   if (!profileForm) return;
@@ -356,9 +347,7 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 
 
-/* ============================================================
-   PAGE: Dashboard (dashboard.html)
-   ============================================================ */
+
 var _dashboardChartInstance = null;
 var _dashboardDailyData = [];
 var _dashboardFirstLoad = true;
@@ -559,9 +548,7 @@ function renderDashboardChart(dailyData) {
 })();
 
 
-/* ============================================================
-   PAGE: Database (database.html)
-   ============================================================ */
+
 (function initDatabasePage() {
   var databaseContent = document.getElementById('databaseContent');
   if (!databaseContent) return;
@@ -796,7 +783,7 @@ function renderDashboardChart(dailyData) {
     }
   }
 
-  // Sort
+
   window.sortTable = function(col) {
     if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
     document.querySelectorAll('.sort-icon').forEach(function(ic) { ic.innerText = '↕'; });
@@ -816,7 +803,7 @@ function renderDashboardChart(dailyData) {
     currentPage = 1; renderTable(); renderPagination();
   };
 
-  // Status update
+
   window.updateStatus = async function(rowIndex, newStatus, selectEl) {
     selectEl.disabled = true;
     var prevClass = selectEl.className;
@@ -837,7 +824,7 @@ function renderDashboardChart(dailyData) {
     } finally { selectEl.disabled = false; }
   };
 
-  // Search
+
   document.getElementById('searchInput').addEventListener('input', function(e) {
     var keyword = e.target.value.toLowerCase();
     currentData = allData.filter(function(r) { return r.nama.toLowerCase().includes(keyword); });
@@ -847,13 +834,13 @@ function renderDashboardChart(dailyData) {
     renderTable(); renderPagination();
   });
 
-  // Month select
+
   document.getElementById('pieMonthSelect').addEventListener('change', function(e) {
     pieActiveIndex = parseInt(e.target.value);
     renderInteractivePie();
   });
 
-  // Filter dropdown
+
   document.getElementById('filterBtn').addEventListener('click', function(e) {
     e.stopPropagation();
     document.getElementById('filterDropdown').classList.toggle('show');
@@ -868,6 +855,6 @@ function renderDashboardChart(dailyData) {
     });
   });
 
-  // Init
+
   window.addEventListener('load', function() { fetchDatabase(); });
 })();
