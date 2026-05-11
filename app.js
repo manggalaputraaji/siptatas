@@ -2,7 +2,7 @@
 
 const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
 const DB_URL = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json&headers=1`;
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwVV9yK9Kb4z2ayGbhW4k_UXtkcdhMTClxlyloBCTQJHn5mgV7hkkPY1brrbjDgz_V/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyv5VTOhdz3CptEYZgheLY9Ha7S7cfsAhiKQGn7HFYpGRc40oUWNMemSuLjcC7IA8yr/exec';
 const SCRIPT_URL_PROFILE = 'https://script.google.com/macros/s/AKfycbx1oGeWBTXQAi-SF8NVlXfxwAU9WWj2l-ELfVWMldm3jAJI8YFM8UrGhX4lTkmiN_Ti/exec';
 const SHEET_ID_ADMIN = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
 const GVIZ_URL_ADMIN = `https://docs.google.com/spreadsheets/d/${SHEET_ID_ADMIN}/gviz/tq?tqx=out:json&headers=1`;
@@ -13,7 +13,7 @@ function parseDate(dStr) {
   if (dStr instanceof Date) return dStr;
   const s = String(dStr).replace(/,/g, '');
   const serialNum = parseFloat(s);
-  if (!isNaN(serialNum) && serialNum > 1000 && serialNum < 100000) {
+  if (!isNaN(serialNum) && serialNum > 1000 && serialNum < 100000 && /^\d+(\.\d+)?$/.test(s)) {
     const excelEpoch = new Date(1899, 11, 30);
     const days = Math.floor(serialNum);
     const fracDay = serialNum - days;
