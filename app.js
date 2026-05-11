@@ -1,11 +1,11 @@
 
 
 const DB_ID = '19aDh5DCRpV0FJzxa7Yw6teAhnRwHOCP-zS3g8-YA_sg';
-const DB_URL = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json`;
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyUBAwPygq9QGCoYAEjk1uADBbv6P1wZ6RbvFrxQLi_zmkIeNprRtuNyKYRhicGQWmv/exec';
+const DB_URL = `https://docs.google.com/spreadsheets/d/${DB_ID}/gviz/tq?tqx=out:json&headers=1`;
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxwVV9yK9Kb4z2ayGbhW4k_UXtkcdhMTClxlyloBCTQJHn5mgV7hkkPY1brrbjDgz_V/exec';
 const SCRIPT_URL_PROFILE = 'https://script.google.com/macros/s/AKfycbx1oGeWBTXQAi-SF8NVlXfxwAU9WWj2l-ELfVWMldm3jAJI8YFM8UrGhX4lTkmiN_Ti/exec';
 const SHEET_ID_ADMIN = '1qwOcgSU-UOx4s2iKluk3rMqDTwjewzB8XWYUXlx6g_A';
-const GVIZ_URL_ADMIN = `https://docs.google.com/spreadsheets/d/${SHEET_ID_ADMIN}/gviz/tq?tqx=out:json`;
+const GVIZ_URL_ADMIN = `https://docs.google.com/spreadsheets/d/${SHEET_ID_ADMIN}/gviz/tq?tqx=out:json&headers=1`;
 
 
 function parseDate(dStr) {
