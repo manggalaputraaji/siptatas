@@ -224,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
       poin: formData.get('poin')
     };
     try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(data) });
       showAlert('Berhasil!', 'Data pelanggaran telah disimpan.', 'success');
       e.target.reset();
     } catch (err) {
@@ -330,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function () {
       foto: finalImageUrl
     };
     try {
-      await fetch(SCRIPT_URL_PROFILE, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+      await fetch(SCRIPT_URL_PROFILE, { method: 'POST', body: JSON.stringify(payload) });
       localStorage.setItem('namaLengkap', payload.nama);
       localStorage.setItem('siswaLogin', payload.newUsername);
       localStorage.setItem('fotoProfil', payload.foto);
@@ -364,7 +364,7 @@ function renderDashboardChart(dailyData) {
   var borderHSL = rs.getPropertyValue('--border').trim();
   var gridColor = borderHSL ? 'hsl(' + borderHSL + ')' : 'hsl(240, 5.9%, 90%)';
 
-  var getOrCreateTooltip = function(chart) {
+  var getOrCreateTooltip = function (chart) {
     var el = chart.canvas.parentNode.querySelector('.shadcn-tooltip');
     if (!el) {
       el = document.createElement('div');
@@ -375,7 +375,7 @@ function renderDashboardChart(dailyData) {
     return el;
   };
 
-  var externalTooltipHandler = function(context) {
+  var externalTooltipHandler = function (context) {
     var chart = context.chart, tooltip = context.tooltip;
     var el = getOrCreateTooltip(chart);
     if (tooltip.opacity === 0) { el.style.opacity = 0; return; }
@@ -385,7 +385,7 @@ function renderDashboardChart(dailyData) {
     var borderC = 'hsl(' + rs.getPropertyValue('--border').trim() + ')';
     var title = tooltip.title[0] || '';
     var value = tooltip.body && tooltip.body[0] ? tooltip.body[0].lines[0] : '0';
-    el.innerHTML = '<div style="background:'+cardBg+';color:'+cardFg+';border:1px solid '+borderC+';border-radius:0.5rem;padding:0.5rem 0.75rem;box-shadow:0 4px 6px -1px rgb(0 0 0/0.1);min-width:8rem;font-family:Inter,sans-serif;"><div style="font-size:0.75rem;color:'+mutedFg+';margin-bottom:0.375rem;">'+title+'</div><div style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem;"><div style="display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:0.625rem;height:0.625rem;border-radius:0.125rem;background:'+lineColor+';flex-shrink:0;"></span><span style="font-size:0.8125rem;color:'+mutedFg+';">Pelanggaran</span></div><span style="font-size:0.8125rem;font-weight:600;">'+value+'</span></div></div>';
+    el.innerHTML = '<div style="background:' + cardBg + ';color:' + cardFg + ';border:1px solid ' + borderC + ';border-radius:0.5rem;padding:0.5rem 0.75rem;box-shadow:0 4px 6px -1px rgb(0 0 0/0.1);min-width:8rem;font-family:Inter,sans-serif;"><div style="font-size:0.75rem;color:' + mutedFg + ';margin-bottom:0.375rem;">' + title + '</div><div style="display:flex;align-items:center;justify-content:space-between;gap:1.5rem;"><div style="display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:0.625rem;height:0.625rem;border-radius:0.125rem;background:' + lineColor + ';flex-shrink:0;"></span><span style="font-size:0.8125rem;color:' + mutedFg + ';">Pelanggaran</span></div><span style="font-size:0.8125rem;font-weight:600;">' + value + '</span></div></div>';
     el.style.opacity = 1;
     el.style.left = tooltip.caretX + chart.canvas.offsetLeft + 'px';
     el.style.top = tooltip.caretY + chart.canvas.offsetTop - 10 + 'px';
@@ -395,7 +395,7 @@ function renderDashboardChart(dailyData) {
   var animDuration = _dashboardFirstLoad ? 2500 : 0;
   var clipRevealPlugin = {
     id: 'clipReveal',
-    beforeDraw: function(chart) {
+    beforeDraw: function (chart) {
       if (!chart._clipReveal) return;
       var ctx2 = chart.ctx, ca = chart.chartArea;
       var clipWidth = ca.left + (ca.right - ca.left) * chart._clipReveal.progress;
@@ -403,15 +403,15 @@ function renderDashboardChart(dailyData) {
       ctx2.rect(ca.left, ca.top - 10, clipWidth - ca.left, ca.bottom - ca.top + 20);
       ctx2.clip();
     },
-    afterDraw: function(chart) { if (chart._clipReveal) chart.ctx.restore(); }
+    afterDraw: function (chart) { if (chart._clipReveal) chart.ctx.restore(); }
   };
 
   _dashboardChartInstance = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: dailyData.map(function(d) { return d.label; }),
+      labels: dailyData.map(function (d) { return d.label; }),
       datasets: [{
-        label: 'Pelanggaran', data: dailyData.map(function(d) { return d.count; }),
+        label: 'Pelanggaran', data: dailyData.map(function (d) { return d.count; }),
         borderColor: lineColor, borderWidth: 2, fill: false, tension: 0.4,
         pointRadius: 0, pointHoverRadius: 5, pointHoverBackgroundColor: lineColor,
         pointHoverBorderColor: lineColor, pointHoverBorderWidth: 2
@@ -447,17 +447,17 @@ function renderDashboardChart(dailyData) {
   function calculateDailyData(rows) {
     var now = new Date(), days = [];
     var dayOfWeek = now.getDay();
-    var sunday = new Date(now); sunday.setDate(now.getDate() - dayOfWeek); sunday.setHours(0,0,0,0);
-    var dayNames = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+    var sunday = new Date(now); sunday.setDate(now.getDate() - dayOfWeek); sunday.setHours(0, 0, 0, 0);
+    var dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
     for (var i = 0; i <= 6; i++) { var d = new Date(sunday); d.setDate(sunday.getDate() + i); days.push({ date: d, label: dayNames[i], count: 0 }); }
-    rows.forEach(function(r) {
+    rows.forEach(function (r) {
       var tgl = r.c[4] ? (r.c[4].f || r.c[4].v) : null;
       if (!tgl) return;
       var date = parseDate(tgl);
       if (!date || isNaN(date.getTime())) return;
-      days.forEach(function(day) {
-        var start = new Date(day.date); start.setHours(0,0,0,0);
-        var end = new Date(day.date); end.setHours(23,59,59,999);
+      days.forEach(function (day) {
+        var start = new Date(day.date); start.setHours(0, 0, 0, 0);
+        var end = new Date(day.date); end.setHours(23, 59, 59, 999);
         if (date >= start && date <= end) day.count++;
       });
     });
@@ -465,15 +465,15 @@ function renderDashboardChart(dailyData) {
   }
 
   function calculateStats(rows) {
-    var now = new Date(); now.setHours(0,0,0,0);
+    var now = new Date(); now.setHours(0, 0, 0, 0);
     var yesterday = new Date(now); yesterday.setDate(yesterday.getDate() - 1);
     var countSekarang = 0, countLalu = 0;
-    rows.forEach(function(r) {
+    rows.forEach(function (r) {
       var tgl = r.c[4] ? (r.c[4].f || r.c[4].v) : null;
       if (!tgl) return;
       var date = parseDate(tgl);
       if (!date || isNaN(date.getTime())) return;
-      var dateOnly = new Date(date); dateOnly.setHours(0,0,0,0);
+      var dateOnly = new Date(date); dateOnly.setHours(0, 0, 0, 0);
       if (dateOnly.getTime() === now.getTime()) countSekarang++;
       else if (dateOnly.getTime() === yesterday.getTime()) countLalu++;
     });
@@ -518,16 +518,16 @@ function renderDashboardChart(dailyData) {
       else if (diff < 0) { trendEl.innerHTML = '▼'; trendEl.className = 'text-emerald-500 text-xl font-bold ml-2'; }
       else { trendEl.innerHTML = '—'; trendEl.className = 'text-muted-foreground text-xl font-bold ml-2'; }
 
-      var allV = rows.map(function(r) {
+      var allV = rows.map(function (r) {
         var dateObj = parseDate(r.c[4] ? (r.c[4].f || r.c[4].v) : null);
         return { nama: (r.c[0] && r.c[0].v) || '-', kelas: (r.c[1] && r.c[1].v) || '-', hal: (r.c[2] && r.c[2].v) || '-', poin: (r.c[3] && r.c[3].v) || '-', tgl: formatDate(dateObj), status: (r.c[5] && r.c[5].v) || 'Belum Ditangani', date: dateObj };
-      }).filter(function(r) { return r.date && !isNaN(r.date.getTime()); }).sort(function(a,b) { return b.date - a.date; });
+      }).filter(function (r) { return r.date && !isNaN(r.date.getTime()); }).sort(function (a, b) { return b.date - a.date; });
 
       var html = '';
       if (allV.length === 0) {
         html = '<tr class="border-b transition-colors hover:bg-muted/50"><td colspan="6" class="p-4 align-middle text-center text-muted-foreground">Tidak ada data</td></tr>';
       } else {
-        allV.slice(0, 3).forEach(function(r, idx) {
+        allV.slice(0, 3).forEach(function (r, idx) {
           var rowDelay = _dashboardFirstLoad ? ' style="animation-delay:' + (idx * 150) + 'ms"' : '';
           var rowClass = _dashboardFirstLoad ? ' animate-row' : '';
           html += '<tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted' + rowClass + '"' + rowDelay + '><td class="p-4 align-middle font-medium">' + r.nama + '</td><td class="p-4 align-middle">' + r.kelas + '</td><td class="p-4 align-middle text-sm text-muted-foreground">' + r.hal + '</td><td class="p-4 align-middle"><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ' + getPoinClasses(r.poin) + '">' + r.poin + '</div></td><td class="p-4 align-middle text-muted-foreground text-sm">' + r.tgl + '</td><td class="p-4 align-middle"><span class="status-badge ' + getStatusBadgeClass(r.status) + '">' + r.status + '</span></td></tr>';
@@ -540,11 +540,11 @@ function renderDashboardChart(dailyData) {
     } catch (e) { console.error('Dashboard error:', e); }
   }
 
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function () {
     if (_dashboardChartInstance && window.innerWidth >= 1024) _dashboardChartInstance.resize();
   });
   setInterval(dashboardInit, 30000);
-  window.addEventListener('load', function() { dashboardInit(); });
+  window.addEventListener('load', function () { dashboardInit(); });
 })();
 
 
@@ -561,9 +561,9 @@ function renderDashboardChart(dailyData) {
   var currentTotalView = 'pertahun';
 
   var PIE_COLORS = [
-    'hsl(220,70%,50%)','hsl(160,60%,45%)','hsl(30,80%,55%)','hsl(280,65%,60%)',
-    'hsl(340,75%,55%)','hsl(197,71%,52%)','hsl(47,88%,50%)','hsl(142,58%,42%)',
-    'hsl(271,55%,50%)','hsl(20,80%,52%)','hsl(186,72%,44%)','hsl(325,65%,52%)'
+    'hsl(220,70%,50%)', 'hsl(160,60%,45%)', 'hsl(30,80%,55%)', 'hsl(280,65%,60%)',
+    'hsl(340,75%,55%)', 'hsl(197,71%,52%)', 'hsl(47,88%,50%)', 'hsl(142,58%,42%)',
+    'hsl(271,55%,50%)', 'hsl(20,80%,52%)', 'hsl(186,72%,44%)', 'hsl(325,65%,52%)'
   ];
 
   function getStatusClass(s) {
@@ -582,8 +582,8 @@ function renderDashboardChart(dailyData) {
     if (!statusDateStr) return 0;
     var sd = parseDate(statusDateStr);
     if (!sd) return 0;
-    var count = 0, cur = new Date(sd); cur.setHours(0,0,0,0);
-    var end = new Date(); end.setHours(0,0,0,0);
+    var count = 0, cur = new Date(sd); cur.setHours(0, 0, 0, 0);
+    var end = new Date(); end.setHours(0, 0, 0, 0);
     while (cur < end) { cur.setDate(cur.getDate() + 1); var day = cur.getDay(); if (day !== 0 && day !== 6) count++; }
     return count;
   }
@@ -607,7 +607,7 @@ function renderDashboardChart(dailyData) {
     if (paginatedData.length === 0) {
       html = '<tr class="border-b"><td colspan="6" class="py-6 text-center text-muted-foreground font-medium">Data tidak ditemukan</td></tr>';
     } else {
-      paginatedData.forEach(function(r) {
+      paginatedData.forEach(function (r) {
         html += '<tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"><td class="p-3 px-4 align-middle font-medium uppercase">' + r.nama + '</td><td class="p-3 px-4 align-middle">' + r.kelas + '</td><td class="p-3 px-4 align-middle text-sm text-muted-foreground truncate max-w-xs" title="' + r.hal + '">' + r.hal + '</td><td class="p-3 px-4 align-middle"><div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ' + getPoinClasses(r.poin) + '">' + r.poin + '</div></td><td class="p-3 px-4 align-middle text-muted-foreground text-sm">' + r.tglStr + '</td>' + buildStatusCell(r) + '</tr>';
       });
     }
@@ -618,24 +618,24 @@ function renderDashboardChart(dailyData) {
     var totalPages = Math.max(1, Math.ceil(currentData.length / itemsPerPage));
     var pagContainer = document.getElementById('pagination');
     pagContainer.innerHTML = '';
-    var createBtn = function(text, isDisabled, onClick, isActive) {
+    var createBtn = function (text, isDisabled, onClick, isActive) {
       var btn = document.createElement('button');
       btn.className = 'inline-flex h-8 w-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground ' + (isActive ? 'bg-primary text-primary-foreground shadow hover:bg-primary/90' : 'bg-transparent') + (isDisabled ? ' pointer-events-none opacity-50' : '');
       btn.innerHTML = text; btn.disabled = isDisabled;
       if (!isDisabled && !isActive) btn.onclick = onClick;
       return btn;
     };
-    pagContainer.appendChild(createBtn('&laquo;', currentPage === 1, function() { currentPage = 1; updateTableAndView(); }));
-    pagContainer.appendChild(createBtn('&lsaquo;', currentPage === 1, function() { currentPage--; updateTableAndView(); }));
+    pagContainer.appendChild(createBtn('&laquo;', currentPage === 1, function () { currentPage = 1; updateTableAndView(); }));
+    pagContainer.appendChild(createBtn('&lsaquo;', currentPage === 1, function () { currentPage--; updateTableAndView(); }));
     for (var i = 1; i <= totalPages; i++) {
       if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-        (function(pg) { pagContainer.appendChild(createBtn(pg, false, function() { currentPage = pg; updateTableAndView(); }, pg === currentPage)); })(i);
+        (function (pg) { pagContainer.appendChild(createBtn(pg, false, function () { currentPage = pg; updateTableAndView(); }, pg === currentPage)); })(i);
       } else if (i === currentPage - 2 || i === currentPage + 2) {
         var dots = document.createElement('span'); dots.className = 'px-1 text-muted-foreground'; dots.innerText = '...'; pagContainer.appendChild(dots);
       }
     }
-    pagContainer.appendChild(createBtn('&rsaquo;', currentPage === totalPages, function() { currentPage++; updateTableAndView(); }));
-    pagContainer.appendChild(createBtn('&raquo;', currentPage === totalPages, function() { currentPage = totalPages; updateTableAndView(); }));
+    pagContainer.appendChild(createBtn('&rsaquo;', currentPage === totalPages, function () { currentPage++; updateTableAndView(); }));
+    pagContainer.appendChild(createBtn('&raquo;', currentPage === totalPages, function () { currentPage = totalPages; updateTableAndView(); }));
   }
 
   function updateTableAndView() { renderTable(); renderPagination(); }
@@ -643,7 +643,7 @@ function renderDashboardChart(dailyData) {
   function updateTotalCard(data) {
     var now = new Date(), count = 0, prevCount = 0;
     var currentYear = now.getFullYear(), currentMonth = now.getMonth();
-    data.forEach(function(d) {
+    data.forEach(function (d) {
       var itemYear = d.date.getFullYear(), itemMonth = d.date.getMonth();
       if (currentTotalView === 'keseluruhan') { count++; }
       else if (currentTotalView === 'pertahun') { if (itemYear === currentYear) count++; else if (itemYear === currentYear - 1) prevCount++; }
@@ -677,68 +677,68 @@ function renderDashboardChart(dailyData) {
   function renderInteractivePie() {
     var wrap = document.getElementById('donutChartContainer');
     if (!wrap) return;
-    var SZ=280, CX=140, CY=140, IR=82, OR=112, EX=10, RW=13, GAP=0.014;
-    var total = globalMonthCounts.reduce(function(a,b){return a+b;},0);
+    var SZ = 280, CX = 140, CY = 140, IR = 82, OR = 112, EX = 10, RW = 13, GAP = 0.014;
+    var total = globalMonthCounts.reduce(function (a, b) { return a + b; }, 0);
     var NS = 'http://www.w3.org/2000/svg';
     wrap.innerHTML = '';
-    var svg = document.createElementNS(NS,'svg');
-    svg.setAttribute('viewBox','0 0 '+SZ+' '+SZ); svg.setAttribute('width','100%'); svg.setAttribute('height','100%'); svg.style.overflow = 'visible';
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 ' + SZ + ' ' + SZ); svg.setAttribute('width', '100%'); svg.setAttribute('height', '100%'); svg.style.overflow = 'visible';
     if (total === 0) {
-      var t = document.createElementNS(NS,'text');
-      t.setAttribute('x',CX); t.setAttribute('y',CY); t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','middle');
-      t.setAttribute('font-size','13'); t.setAttribute('font-family','Inter,sans-serif'); t.setAttribute('fill','hsl(var(--muted-foreground))');
+      var t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', CX); t.setAttribute('y', CY); t.setAttribute('text-anchor', 'middle'); t.setAttribute('dominant-baseline', 'middle');
+      t.setAttribute('font-size', '13'); t.setAttribute('font-family', 'Inter,sans-serif'); t.setAttribute('fill', 'hsl(var(--muted-foreground))');
       t.textContent = 'Tidak ada data tahun ini'; svg.appendChild(t); wrap.appendChild(svg); return;
     }
     var arcs = [], angle = -Math.PI / 2;
-    globalMonthCounts.forEach(function(cnt, i) {
+    globalMonthCounts.forEach(function (cnt, i) {
       if (cnt === 0) { arcs.push(null); return; }
       var sweep = (cnt / total) * Math.PI * 2 - GAP;
-      arcs.push({ i: i, cnt: cnt, color: PIE_COLORS[i], a1: angle + GAP/2, a2: angle + GAP/2 + sweep });
+      arcs.push({ i: i, cnt: cnt, color: PIE_COLORS[i], a1: angle + GAP / 2, a2: angle + GAP / 2 + sweep });
       angle += (cnt / total) * Math.PI * 2;
     });
     function sector(r1, r2, a1, a2) {
-      var c=Math.cos, s=Math.sin, lg=a2-a1>Math.PI?1:0;
-      return 'M'+(CX+r2*c(a1))+','+(CY+r2*s(a1))+'A'+r2+','+r2+' 0 '+lg+',1 '+(CX+r2*c(a2))+','+(CY+r2*s(a2))+'L'+(CX+r1*c(a2))+','+(CY+r1*s(a2))+'A'+r1+','+r1+' 0 '+lg+',0 '+(CX+r1*c(a1))+','+(CY+r1*s(a1))+'Z';
+      var c = Math.cos, s = Math.sin, lg = a2 - a1 > Math.PI ? 1 : 0;
+      return 'M' + (CX + r2 * c(a1)) + ',' + (CY + r2 * s(a1)) + 'A' + r2 + ',' + r2 + ' 0 ' + lg + ',1 ' + (CX + r2 * c(a2)) + ',' + (CY + r2 * s(a2)) + 'L' + (CX + r1 * c(a2)) + ',' + (CY + r1 * s(a2)) + 'A' + r1 + ',' + r1 + ' 0 ' + lg + ',0 ' + (CX + r1 * c(a1)) + ',' + (CY + r1 * s(a1)) + 'Z';
     }
     var arcIdx = 0;
-    var sliceDelay = Math.min(180, 2500 / Math.max(1, arcs.filter(function(a){return a;}).length));
-    arcs.forEach(function(arc) {
+    var sliceDelay = Math.min(180, 2500 / Math.max(1, arcs.filter(function (a) { return a; }).length));
+    arcs.forEach(function (arc) {
       if (!arc || arc.i === pieActiveIndex) return;
-      var p = document.createElementNS(NS,'path');
+      var p = document.createElementNS(NS, 'path');
       p.setAttribute('d', sector(IR, OR, arc.a1, arc.a2)); p.setAttribute('fill', arc.color);
-      p.setAttribute('stroke','white'); p.setAttribute('stroke-width','2'); p.style.cursor = 'pointer';
-      p.style.transformOrigin = CX+'px '+CY+'px'; p.style.opacity = '0';
+      p.setAttribute('stroke', 'white'); p.setAttribute('stroke-width', '2'); p.style.cursor = 'pointer';
+      p.style.transformOrigin = CX + 'px ' + CY + 'px'; p.style.opacity = '0';
       p.style.animation = 'donutSliceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both';
       p.style.animationDelay = (arcIdx * sliceDelay) + 'ms';
-      p.onmouseenter = function() { p.style.opacity = '.7'; };
-      p.onmouseleave = function() { p.style.opacity = '1'; };
-      (function(a) { p.onclick = function() { pieActiveIndex = a.i; document.getElementById('pieMonthSelect').value = a.i; renderInteractivePie(); }; })(arc);
+      p.onmouseenter = function () { p.style.opacity = '.7'; };
+      p.onmouseleave = function () { p.style.opacity = '1'; };
+      (function (a) { p.onclick = function () { pieActiveIndex = a.i; document.getElementById('pieMonthSelect').value = a.i; renderInteractivePie(); }; })(arc);
       svg.appendChild(p); arcIdx++;
     });
     var activeDelay = arcIdx * sliceDelay;
     var a = arcs[pieActiveIndex];
     if (a) {
-      var ring = document.createElementNS(NS,'path');
-      ring.setAttribute('d', sector(OR+EX+2, OR+EX+2+RW, a.a1, a.a2)); ring.setAttribute('fill', a.color);
-      ring.style.transformOrigin = CX+'px '+CY+'px'; ring.style.opacity = '0';
+      var ring = document.createElementNS(NS, 'path');
+      ring.setAttribute('d', sector(OR + EX + 2, OR + EX + 2 + RW, a.a1, a.a2)); ring.setAttribute('fill', a.color);
+      ring.style.transformOrigin = CX + 'px ' + CY + 'px'; ring.style.opacity = '0';
       ring.style.animation = 'donutRingIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both';
       ring.style.animationDelay = (activeDelay + 120) + 'ms'; svg.appendChild(ring);
-      var sp = document.createElementNS(NS,'path');
-      sp.setAttribute('d', sector(IR, OR+EX, a.a1, a.a2)); sp.setAttribute('fill', a.color);
-      sp.setAttribute('stroke','white'); sp.setAttribute('stroke-width','2');
-      sp.style.transformOrigin = CX+'px '+CY+'px'; sp.style.opacity = '0';
+      var sp = document.createElementNS(NS, 'path');
+      sp.setAttribute('d', sector(IR, OR + EX, a.a1, a.a2)); sp.setAttribute('fill', a.color);
+      sp.setAttribute('stroke', 'white'); sp.setAttribute('stroke-width', '2');
+      sp.style.transformOrigin = CX + 'px ' + CY + 'px'; sp.style.opacity = '0';
       sp.style.animation = 'donutSliceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both';
       sp.style.animationDelay = activeDelay + 'ms'; svg.appendChild(sp);
     }
     var textDelay = activeDelay + 300;
-    var tVal = document.createElementNS(NS,'text');
-    tVal.setAttribute('x',CX); tVal.setAttribute('y',CY-6); tVal.setAttribute('text-anchor','middle'); tVal.setAttribute('dominant-baseline','middle');
-    tVal.setAttribute('font-size','32'); tVal.setAttribute('font-weight','700'); tVal.setAttribute('font-family','Inter,sans-serif');
-    tVal.setAttribute('fill','hsl(var(--foreground))'); tVal.textContent = globalMonthCounts[pieActiveIndex] || 0;
+    var tVal = document.createElementNS(NS, 'text');
+    tVal.setAttribute('x', CX); tVal.setAttribute('y', CY - 6); tVal.setAttribute('text-anchor', 'middle'); tVal.setAttribute('dominant-baseline', 'middle');
+    tVal.setAttribute('font-size', '32'); tVal.setAttribute('font-weight', '700'); tVal.setAttribute('font-family', 'Inter,sans-serif');
+    tVal.setAttribute('fill', 'hsl(var(--foreground))'); tVal.textContent = globalMonthCounts[pieActiveIndex] || 0;
     tVal.style.opacity = '0'; tVal.style.animation = 'donutTextIn 0.5s ease-out both'; tVal.style.animationDelay = textDelay + 'ms'; svg.appendChild(tVal);
-    var tLbl = document.createElementNS(NS,'text');
-    tLbl.setAttribute('x',CX); tLbl.setAttribute('y',CY+22); tLbl.setAttribute('text-anchor','middle');
-    tLbl.setAttribute('font-size','13'); tLbl.setAttribute('font-family','Inter,sans-serif'); tLbl.setAttribute('fill','hsl(var(--muted-foreground))');
+    var tLbl = document.createElementNS(NS, 'text');
+    tLbl.setAttribute('x', CX); tLbl.setAttribute('y', CY + 22); tLbl.setAttribute('text-anchor', 'middle');
+    tLbl.setAttribute('font-size', '13'); tLbl.setAttribute('font-family', 'Inter,sans-serif'); tLbl.setAttribute('fill', 'hsl(var(--muted-foreground))');
     tLbl.textContent = 'Kasus'; tLbl.style.opacity = '0'; tLbl.style.animation = 'donutTextIn 0.5s ease-out both';
     tLbl.style.animationDelay = (textDelay + 100) + 'ms'; svg.appendChild(tLbl);
     wrap.appendChild(svg);
@@ -747,7 +747,7 @@ function renderDashboardChart(dailyData) {
   function processDonutAndYoY(data) {
     var now = new Date();
     globalMonthCounts = new Array(12).fill(0);
-    data.forEach(function(d) { if (d.date.getFullYear() === now.getFullYear()) globalMonthCounts[d.date.getMonth()]++; });
+    data.forEach(function (d) { if (d.date.getFullYear() === now.getFullYear()) globalMonthCounts[d.date.getMonth()]++; });
     pieActiveIndex = now.getMonth();
     document.getElementById('pieMonthSelect').value = pieActiveIndex;
     renderInteractivePie();
@@ -759,7 +759,7 @@ function renderDashboardChart(dailyData) {
       var text = await res.text();
       var json = JSON.parse(text.substr(47).slice(0, -2));
       var rawRows = json.table.rows || [];
-      allData = rawRows.map(function(r, idx) {
+      allData = rawRows.map(function (r, idx) {
         var rawDate = r.c[4] ? (r.c[4].f || r.c[4].v) : null;
         var dateObj = parseDate(rawDate);
         var tglStr = rawDate || '-';
@@ -768,10 +768,10 @@ function renderDashboardChart(dailyData) {
           nama: (r.c[0] && r.c[0].v) || '-', kelas: (r.c[1] && r.c[1].v) || '-',
           hal: (r.c[2] && r.c[2].v) || '-', poin: (r.c[3] && r.c[3].v) || '-',
           tglStr: tglStr, date: dateObj, timestamp: dateObj ? dateObj.getTime() : 0,
-          status: (r.c[5] && r.c[5].v) || 'Belum Ditangani', statusDate: (r.c[6] && r.c[6].v) || '', rowIndex: idx + 1
+          status: (r.c[5] && r.c[5].v) || 'Belum Ditangani', statusDate: (r.c[6] && r.c[6].v) || '', rowIndex: idx + 2
         };
-      }).filter(function(r) { return r.timestamp !== 0; });
-      allData.sort(function(a,b) { return b.timestamp - a.timestamp; });
+      }).filter(function (r) { return r.timestamp !== 0; });
+      allData.sort(function (a, b) { return b.timestamp - a.timestamp; });
       currentData = allData.slice();
       processDonutAndYoY(allData);
       updateTotalCard(allData);
@@ -784,13 +784,13 @@ function renderDashboardChart(dailyData) {
   }
 
 
-  window.sortTable = function(col) {
+  window.sortTable = function (col) {
     if (sortCol === col) sortAsc = !sortAsc; else { sortCol = col; sortAsc = true; }
-    document.querySelectorAll('.sort-icon').forEach(function(ic) { ic.innerText = '↕'; });
-    document.querySelectorAll('.table th').forEach(function(th) { th.classList.remove('active'); });
+    document.querySelectorAll('.sort-icon').forEach(function (ic) { ic.innerText = '↕'; });
+    document.querySelectorAll('.table th').forEach(function (th) { th.classList.remove('active'); });
     var activeIcon = document.getElementById('icon-' + col);
     if (activeIcon) { activeIcon.parentElement.classList.add('active'); activeIcon.innerText = sortAsc ? '⬆' : '⬇'; }
-    currentData.sort(function(a, b) {
+    currentData.sort(function (a, b) {
       var valA, valB;
       if (col === 'nama') { valA = a.nama.toLowerCase(); valB = b.nama.toLowerCase(); }
       else if (col === 'poin') { valA = getPoinWeight(a.poin); valB = getPoinWeight(b.poin); }
@@ -804,51 +804,51 @@ function renderDashboardChart(dailyData) {
   };
 
 
-  window.updateStatus = async function(rowIndex, newStatus, selectEl) {
+  window.updateStatus = async function (rowIndex, newStatus, selectEl) {
     selectEl.disabled = true;
     var prevClass = selectEl.className;
     selectEl.className = 'status-select ' + getStatusClass(newStatus);
     try {
-      await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ type: 'UPDATE_STATUS', rowIndex: rowIndex, status: newStatus }) });
-      var item = allData.find(function(d) { return d.rowIndex === rowIndex; });
+      await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ type: 'UPDATE_STATUS', rowIndex: rowIndex, status: newStatus }) });
+      var item = allData.find(function (d) { return d.rowIndex === rowIndex; });
       if (item) { item.status = newStatus; item.statusDate = newStatus === 'Sudah Ditangani' ? new Date().toLocaleString('id-ID') : ''; }
-      var cur = currentData.find(function(d) { return d.rowIndex === rowIndex; });
+      var cur = currentData.find(function (d) { return d.rowIndex === rowIndex; });
       if (cur) { cur.status = newStatus; cur.statusDate = newStatus === 'Sudah Ditangani' ? new Date().toLocaleString('id-ID') : ''; }
       showAlert('Berhasil!', 'Status diubah ke "' + newStatus + '"', 'success');
       renderTable();
     } catch (err) {
       showAlert('Gagal!', 'Gagal mengubah status. Periksa koneksi.', 'destructive');
       selectEl.className = prevClass;
-      var orig = allData.find(function(d) { return d.rowIndex === rowIndex; });
+      var orig = allData.find(function (d) { return d.rowIndex === rowIndex; });
       if (orig) selectEl.value = orig.status;
     } finally { selectEl.disabled = false; }
   };
 
 
-  document.getElementById('searchInput').addEventListener('input', function(e) {
+  document.getElementById('searchInput').addEventListener('input', function (e) {
     var keyword = e.target.value.toLowerCase();
-    currentData = allData.filter(function(r) { return r.nama.toLowerCase().includes(keyword); });
+    currentData = allData.filter(function (r) { return r.nama.toLowerCase().includes(keyword); });
     currentPage = 1; sortCol = '';
-    document.querySelectorAll('.sort-icon').forEach(function(ic) { ic.innerText = '↕'; });
-    document.querySelectorAll('.table th').forEach(function(th) { th.classList.remove('active'); });
+    document.querySelectorAll('.sort-icon').forEach(function (ic) { ic.innerText = '↕'; });
+    document.querySelectorAll('.table th').forEach(function (th) { th.classList.remove('active'); });
     renderTable(); renderPagination();
   });
 
 
-  document.getElementById('pieMonthSelect').addEventListener('change', function(e) {
+  document.getElementById('pieMonthSelect').addEventListener('change', function (e) {
     pieActiveIndex = parseInt(e.target.value);
     renderInteractivePie();
   });
 
 
-  document.getElementById('filterBtn').addEventListener('click', function(e) {
+  document.getElementById('filterBtn').addEventListener('click', function (e) {
     e.stopPropagation();
     document.getElementById('filterDropdown').classList.toggle('show');
   });
-  document.addEventListener('click', function() { document.getElementById('filterDropdown').classList.remove('show'); });
-  document.querySelectorAll('.filter-option').forEach(function(opt) {
-    opt.addEventListener('click', function(e) {
-      document.querySelectorAll('.filter-option').forEach(function(o) { o.classList.remove('bg-accent', 'text-accent-foreground', 'font-medium'); });
+  document.addEventListener('click', function () { document.getElementById('filterDropdown').classList.remove('show'); });
+  document.querySelectorAll('.filter-option').forEach(function (opt) {
+    opt.addEventListener('click', function (e) {
+      document.querySelectorAll('.filter-option').forEach(function (o) { o.classList.remove('bg-accent', 'text-accent-foreground', 'font-medium'); });
       e.target.classList.add('bg-accent', 'text-accent-foreground', 'font-medium');
       currentTotalView = e.target.getAttribute('data-view');
       updateTotalCard(allData);
@@ -856,5 +856,5 @@ function renderDashboardChart(dailyData) {
   });
 
 
-  window.addEventListener('load', function() { fetchDatabase(); });
+  window.addEventListener('load', function () { fetchDatabase(); });
 })();

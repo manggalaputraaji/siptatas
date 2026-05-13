@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8" />
   <title>LEXACORE | Database Pelanggar</title>
@@ -35,20 +36,29 @@
 
 
 </head>
+
 <body class="min-h-screen flex w-full">
 
 
-  <header class="lg:hidden fixed top-0 left-0 right-0 h-14 bg-background border-b z-30 flex items-center px-4 justify-between">
+  <header
+    class="lg:hidden fixed top-0 left-0 right-0 h-14 bg-background border-b z-30 flex items-center px-4 justify-between">
     <div class="flex items-center gap-2">
-      <button id="mobileNavToggle" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 -ml-1">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+      <button id="mobileNavToggle"
+        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-8 w-8 -ml-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect width="18" height="18" x="3" y="3" rx="2" />
+          <path d="M9 3v18" />
+        </svg>
       </button>
       <span class="font-semibold text-sm tracking-tight">LEXACORE</span>
     </div>
-    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32" class="h-8 w-8 rounded-lg border bg-muted object-cover">
+    <img id="mobileFotoSiswa" src="https://via.placeholder.com/32"
+      class="h-8 w-8 rounded-lg border bg-muted object-cover">
   </header>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
-  <aside class="sidebar-container fixed lg:sticky top-0 left-0 h-[100dvh] w-[16rem] flex flex-col" style="background-color:hsl(var(--sidebar-background));color:hsl(var(--sidebar-foreground));border-right:1px solid hsl(var(--sidebar-border));">
+  <aside class="sidebar-container fixed lg:sticky top-0 left-0 h-[100dvh] w-[16rem] flex flex-col"
+    style="background-color:hsl(var(--sidebar-background));color:hsl(var(--sidebar-foreground));border-right:1px solid hsl(var(--sidebar-border));">
     <div class="flex flex-col gap-2 p-4 pb-2">
       <a href="dashboard.html" class="flex flex-col items-start gap-1 px-1 py-1">
         <div class="h-14 flex items-center">
@@ -60,24 +70,70 @@
     </div>
     <div class="flex-1 overflow-y-auto px-3 py-2">
       <div class="pb-4">
-        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Platform</span></div>
+        <div class="px-3 py-1.5"><span class="text-xs font-medium"
+            style="color:hsl(var(--sidebar-foreground)/0.5)">Platform</span></div>
         <ul class="space-y-0.5 mt-1">
-          <li><a href="dashboard.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg> Dashboard</a></li>
-          <li><a href="form.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg> Input Pelanggaran</a></li>
-          <li><a href="database.html" class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="background-color:hsl(var(--sidebar-accent));color:hsl(var(--sidebar-accent-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg> Database</a></li>
+          <li><a href="dashboard.html"
+              class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect width="7" height="9" x="3" y="3" rx="1" />
+                <rect width="7" height="5" x="14" y="3" rx="1" />
+                <rect width="7" height="9" x="14" y="12" rx="1" />
+                <rect width="7" height="5" x="3" y="16" rx="1" />
+              </svg> Dashboard</a></li>
+          <li><a href="form.html"
+              class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+              </svg> Input Pelanggaran</a></li>
+          <li><a href="database.html"
+              class="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              style="background-color:hsl(var(--sidebar-accent));color:hsl(var(--sidebar-accent-foreground))"><svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="12" cy="5" rx="9" ry="3" />
+                <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+                <path d="M3 12A9 3 0 0 0 21 12" />
+              </svg> Database</a></li>
         </ul>
       </div>
       <div class="pb-4">
-        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Pengaturan</span></div>
+        <div class="px-3 py-1.5"><span class="text-xs font-medium"
+            style="color:hsl(var(--sidebar-foreground)/0.5)">Pengaturan</span></div>
         <ul class="space-y-0.5 mt-1">
-          <li><a href="profile.html" class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors" style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Pengaturan Akun</a></li>
+          <li><a href="profile.html"
+              class="sidebar-menu-btn flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+              style="color:hsl(var(--sidebar-foreground))"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg> Pengaturan Akun</a></li>
         </ul>
       </div>
       <div class="pb-4">
-        <div class="px-3 py-1.5"><span class="text-xs font-medium" style="color:hsl(var(--sidebar-foreground)/0.5)">Tampilan</span></div>
+        <div class="px-3 py-1.5"><span class="text-xs font-medium"
+            style="color:hsl(var(--sidebar-foreground)/0.5)">Tampilan</span></div>
         <div class="mt-1">
           <button class="dark-toggle" onclick="toggleDarkMode()">
-            <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" />
+              <path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" />
+              <path d="m19.07 4.93-1.41 1.41" />
+            </svg>
             <span id="themeLabel">Mode Terang</span>
           </button>
           <div class="theme-swatch-row mt-1.5">
@@ -92,10 +148,22 @@
       </div>
     </div>
     <div class="p-3" style="border-top:1px solid hsl(var(--sidebar-border));">
-      <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer" onclick="window.location.href='profile.html'">
-        <img id="fotoSiswa" src="https://via.placeholder.com/40" class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
-        <div class="flex-1 overflow-hidden"><p id="adminName" class="text-sm font-medium leading-none truncate">Admin</p><p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p></div>
-        <button onclick="event.stopPropagation();logout()" class="inline-flex items-center justify-center rounded-md h-7 w-7 transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 flex-shrink-0" title="Logout"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg></button>
+      <div class="flex items-center gap-3 rounded-lg px-2 py-2 transition-colors sidebar-menu-btn cursor-pointer"
+        onclick="window.location.href='profile.html'">
+        <img id="fotoSiswa" src="https://via.placeholder.com/40"
+          class="h-8 w-8 rounded-lg border object-cover flex-shrink-0">
+        <div class="flex-1 overflow-hidden">
+          <p id="adminName" class="text-sm font-medium leading-none truncate">Admin</p>
+          <p class="text-xs truncate mt-0.5" style="color:hsl(var(--sidebar-foreground)/0.5)">Administrator</p>
+        </div>
+        <button onclick="event.stopPropagation();logout()"
+          class="inline-flex items-center justify-center rounded-md h-7 w-7 transition-colors text-red-500 hover:bg-red-50 hover:text-red-600 flex-shrink-0"
+          title="Logout"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" x2="9" y1="12" y2="12" />
+          </svg></button>
       </div>
     </div>
   </aside>
@@ -104,21 +172,22 @@
 
   <main class="flex-1 w-full lg:max-w-[calc(100%-16rem)] p-4 lg:p-8 pt-20 lg:pt-8 min-h-screen">
     <div class="mx-auto max-w-6xl space-y-6">
-      
+
       <div>
         <h1 class="text-3xl font-bold tracking-tight">Database Pelanggar</h1>
         <p class="text-muted-foreground">Kelola Dan Analisis Data Pelanggaran Siswa.</p>
       </div>
-      
+
       <div class="grid gap-4 md:grid-cols-2">
-        
+
         <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col p-0">
           <div class="flex-row items-start space-y-0 p-6 flex justify-between pb-0">
             <div class="grid gap-1">
-              <h3 class="font-semibold leading-none tracking-tight">Statistik Bulanan - Interaktif</h3>
+              <h2 class="font-semibold leading-none tracking-tight">Statistik Bulanan - Interaktif</h2>
               <p class="text-sm text-muted-foreground">Januari - Desember</p>
             </div>
-            <select id="pieMonthSelect" class="ml-auto h-8 w-[130px] rounded-lg pl-2.5 border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-ring font-medium">
+            <select id="pieMonthSelect"
+              class="ml-auto h-8 w-[130px] rounded-lg pl-2.5 border border-input bg-background text-sm focus:outline-none focus:ring-1 focus:ring-ring font-medium">
               <option value="0">Januari</option>
               <option value="1">Februari</option>
               <option value="2">Maret</option>
@@ -135,61 +204,91 @@
           </div>
           <div class="p-4 pt-2 flex flex-1 justify-center pb-4">
             <div id="donutChartContainer" class="mx-auto w-full max-w-[280px] h-[280px]">
-              <svg viewBox="0 0 280 280" width="100%" height="100%"><circle class="donut-skeleton-ring" cx="140" cy="140" r="97" fill="none" stroke="hsl(var(--muted))" stroke-width="30"/></svg>
+              <svg viewBox="0 0 280 280" width="100%" height="100%">
+                <circle class="donut-skeleton-ring" cx="140" cy="140" r="97" fill="none" stroke="hsl(var(--muted))"
+                  stroke-width="30" />
+              </svg>
             </div>
           </div>
         </div>
 
         <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col p-6 relative">
           <div class="flex justify-between items-start mb-2">
-            <h4 class="text-xl font-bold tracking-tight">Total Pelanggaran</h4>
-            <button id="filterBtn" class="inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground h-8 w-8 text-muted-foreground transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            <h4 class="text-4xl font-bold tracking-tight">Total Pelanggaran</h4>
+            <button id="filterBtn"
+              class="inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground h-8 w-8 text-muted-foreground transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
             </button>
           </div>
-          <p id="totalLabel" class="text-sm text-muted-foreground capitalize">Per Tahun</p>
-          
+          <p id="totalLabel" class="text-lg text-muted-foreground capitalize">Per Tahun</p>
+
           <div class="flex items-baseline gap-3 mt-6">
-            <div id="totalAngka" class="text-6xl font-bold skeleton text-transparent inline-block rounded w-24 h-16">0</div>
-            <span class="text-2xl font-bold text-muted-foreground">Siswa</span>
-            <span id="totalTrend" class="text-3xl font-bold text-emerald-500 hidden"></span>
+            <div id="totalAngka" class="text-9xl font-bold skeleton text-transparent inline-block rounded w-24 h-16">0
+            </div>
+            <span class="text-4xl font-bold text-muted-foreground">Siswa</span>
+            <span id="totalTrend" class="text-5xl font-bold text-emerald-500 hidden"></span>
           </div>
 
-          <div id="filterDropdown" class="filter-dropdown absolute top-14 right-6 w-48 rounded-md border bg-popover text-popover-foreground shadow-md z-50">
+          <div id="filterDropdown"
+            class="filter-dropdown absolute top-14 right-6 w-48 rounded-md border bg-popover text-popover-foreground shadow-md z-50">
             <div class="p-1">
-              <div class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground" data-view="perminggu">Per Minggu</div>
-              <div class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground" data-view="perbulan">Per Bulan</div>
-              <div class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground bg-accent text-accent-foreground font-medium" data-view="pertahun">Per Tahun</div>
-              <div class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground" data-view="keseluruhan">Keseluruhan</div>
+              <div
+                class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                data-view="perminggu">Per Minggu</div>
+              <div
+                class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                data-view="perbulan">Per Bulan</div>
+              <div
+                class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground bg-accent text-accent-foreground font-medium"
+                data-view="pertahun">Per Tahun</div>
+              <div
+                class="filter-option relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+                data-view="keseluruhan">Keseluruhan</div>
             </div>
           </div>
         </div>
       </div>
 
       <div class="w-full relative flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute left-3 text-muted-foreground"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-        <input type="text" id="searchInput" class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50" placeholder="Cari nama siswa...">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+          class="absolute left-3 text-muted-foreground">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input type="text" id="searchInput"
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 pl-9 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder="Cari nama siswa...">
       </div>
-      
+
       <div class="rounded-xl border bg-card text-card-foreground shadow-sm flex flex-col overflow-hidden">
         <div class="flex-1 overflow-auto max-h-[500px]">
           <table class="table w-full caption-bottom text-sm relative">
             <thead class="[&_tr]:border-b sticky top-0 bg-muted/80 backdrop-blur z-10">
               <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('nama')">NAMA <span class="sort-icon" id="icon-nama">↕</span></th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground"
+                  onclick="sortTable('nama')">NAMA <span class="sort-icon" id="icon-nama">↕</span></th>
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground">KELAS</th>
                 <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground w-1/3">PELANGGARAN</th>
-                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('poin')">POIN <span class="sort-icon" id="icon-poin">↕</span></th>
-                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('tgl')">TANGGAL <span class="sort-icon" id="icon-tgl">↕</span></th>
-                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground" onclick="sortTable('status')">STATUS <span class="sort-icon" id="icon-status">↕</span></th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground"
+                  onclick="sortTable('poin')">POIN <span class="sort-icon" id="icon-poin">↕</span></th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground"
+                  onclick="sortTable('tgl')">TANGGAL <span class="sort-icon" id="icon-tgl">↕</span></th>
+                <th class="h-10 px-4 text-left align-middle font-medium text-muted-foreground"
+                  onclick="sortTable('status')">STATUS <span class="sort-icon" id="icon-status">↕</span></th>
               </tr>
             </thead>
             <tbody id="databaseContent" class="[&_tr:last-child]:border-0">
-              <tr><td colspan="6" class="p-8 text-center text-muted-foreground">Menarik Data Dari Sheets...</td></tr>
+              <tr>
+                <td colspan="6" class="p-8 text-center text-muted-foreground">Memuat Data Dari Sheets...</td>
+              </tr>
             </tbody>
           </table>
         </div>
-        
+
         <div id="pagination" class="flex items-center justify-end px-4 py-3 border-t bg-card gap-1">
         </div>
       </div>
@@ -198,4 +297,5 @@
 
   <script src="app.js?v=2"></script>
 </body>
+
 </html>
